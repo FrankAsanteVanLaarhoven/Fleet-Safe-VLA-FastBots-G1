@@ -19,7 +19,7 @@ export default function SplitWithCodeExample() {
                       What's new
                     </span>
                     <span className="inline-flex items-center space-x-2 text-sm/6 font-medium text-gray-600">
-                      <span>Just shipped v0.1.0</span>
+                      <span>Just shipped v1.0.0</span>
                       <ChevronRightIcon className="size-5 text-gray-400" aria-hidden="true" />
                     </span>
                   </a>

@@ -1,5 +1,0 @@
-url,title,load_time_ms,technologies,rest_apis_count,graphql_endpoints_count,websocket_endpoints_count,local_storage_items,session_storage_items,has_storage_error,timestamp
-https://crawler.dev/login,,0,,0,0,0,2,0,False,2025-07-15T17:59:42.895258+00:00
-https://crawler.dev/signup,,0,,0,0,0,2,0,False,2025-07-15T17:58:48.949235+00:00
-https://crawler.dev/docs,,0,,0,0,0,2,0,False,2025-07-15T17:59:43.425184+00:00
-https://crawler.dev,,0,,0,0,0,2,0,False,2025-07-15T17:58:37.963813+00:00

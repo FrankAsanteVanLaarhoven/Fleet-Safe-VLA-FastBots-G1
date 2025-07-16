@@ -54,13 +54,13 @@ export default function RootLayout({
                   /setTimeout.*kr.*enqueue.*capture/i,
                   /anonymous.*Ee.*retriableRequest.*se/i,
                   
-                  // Clerk specific patterns
-                  /clerk/i,
-                  /clerk\\.orchids\\.app/i,
+                  // Authentication service patterns
+                  /auth/i,
+                  /authentication/i,
                   /sess_2zrXaPE4lwVhPMlqHiPUc1Ktjaq/i,
-                  /__clerk_api_version/i,
-                  /_clerk_js_version/i,
-                  /tokens.*clerk/i,
+                  /__auth_api_version/i,
+                  /_auth_js_version/i,
+                  /tokens.*auth/i,
                   
                   // Checkout/Checkpoint patterns
                   /checkout/i,

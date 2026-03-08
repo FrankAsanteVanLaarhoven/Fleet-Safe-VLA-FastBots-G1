@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  pipeline/g1_safety_qos.xml — DDS QoS Profiles for FLEET SAFE VLA - HFB-S
+
+  Three DSEO-driven profiles for Unitree G1 safety:
+    1. G1NormalProfile:    Balanced QoS for full policy operation
+    2. G1DegradedProfile:  Tightened deadlines, shed non-critical traffic
+    3. G1EmergencyProfile: Minimal latency, transient_local for E-stop
+
+  Applied by DSEO runtime mode switching.
+  Compatible with CycloneDDS and FastDDS.
+-->
+<dds xmlns="http://www.omg.org/dds/"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <!-- ═════════════════════════════════════════════════════════════
+       Normal Mode — Full RL policy, balanced QoS
+       ═════════════════════════════════════════════════════════════ -->
+  <qos_profile name="G1NormalProfile">
+
+    <!-- rt/lowcmd — robot command topic -->
+    <datawriter_qos topic_name="rt/lowcmd">
+      <reliability>
+        <kind>RELIABLE</kind>
+        <max_blocking_time>
+          <sec>0</sec>
+          <nanosec>20000000</nanosec>  <!-- 20ms max block -->
+        </max_blocking_time>
+      </reliability>
+      <deadline>
+        <period>
+          <sec>0</sec>
+          <nanosec>20000000</nanosec>  <!-- 20ms deadline (50Hz) -->
+        </period>
+      </deadline>
+      <history>
+        <kind>KEEP_LAST</kind>
+        <depth>1</depth>
+      </history>
+      <durability>
+        <kind>VOLATILE</kind>
+      </durability>
+    </datawriter_qos>
+
+    <!-- rt/lowstate — robot state topic -->
+    <datareader_qos topic_name="rt/lowstate">
+      <reliability>
+        <kind>RELIABLE</kind>
+      </reliability>
+      <deadline>
+        <period>
+          <sec>0</sec>
+          <nanosec>20000000</nanosec>
+        </period>
+      </deadline>
+      <history>
+        <kind>KEEP_LAST</kind>
+        <depth>1</depth>
+      </history>
+    </datareader_qos>
+
+    <!-- dds/safety/* topics — safety telemetry -->
+    <datawriter_qos topic_name="dds/safety/mode">
+      <reliability>
+        <kind>RELIABLE</kind>
+      </reliability>
+      <history>
+        <kind>KEEP_LAST</kind>
+        <depth>5</depth>
+      </history>
+    </datawriter_qos>
+  </qos_profile>
+
+
+  <!-- ═════════════════════════════════════════════════════════════
+       Degraded Mode — Tightened safety, shed non-critical traffic
+       ═════════════════════════════════════════════════════════════ -->
+  <qos_profile name="G1DegradedProfile">
+
+    <datawriter_qos topic_name="rt/lowcmd">
+      <reliability>
+        <kind>RELIABLE</kind>
+        <max_blocking_time>
+          <sec>0</sec>
+          <nanosec>10000000</nanosec>  <!-- 10ms -->
+        </max_blocking_time>
+      </reliability>
+      <deadline>
+        <period>
+          <sec>0</sec>
+          <nanosec>10000000</nanosec>  <!-- 10ms deadline (100Hz) -->
+        </period>
+      </deadline>
+      <history>
+        <kind>KEEP_LAST</kind>
+        <depth>1</depth>
+      </history>
+    </datawriter_qos>
+
+    <datareader_qos topic_name="rt/lowstate">
+      <reliability>
+        <kind>RELIABLE</kind>
+      </reliability>
+      <deadline>
+        <period>
+          <sec>0</sec>
+          <nanosec>10000000</nanosec>
+        </period>
+      </deadline>
+    </datareader_qos>
+
+    <!-- Non-critical sensors: best-effort to reduce load -->
+    <datareader_qos topic_name="rt/pointcloud">
+      <reliability>
+        <kind>BEST_EFFORT</kind>
+      </reliability>
+      <history>
+        <kind>KEEP_LAST</kind>
+        <depth>1</depth>
+      </history>
+    </datareader_qos>
+
+    <datareader_qos topic_name="rt/camera_rgb">
+      <reliability>
+        <kind>BEST_EFFORT</kind>
+      </reliability>
+      <history>
+        <kind>KEEP_LAST</kind>
+        <depth>1</depth>
+      </history>
+    </datareader_qos>
+
+    <!-- Safety mode: higher priority -->
+    <datawriter_qos topic_name="dds/safety/mode">
+      <reliability>
+        <kind>RELIABLE</kind>
+      </reliability>
+      <history>
+        <kind>KEEP_LAST</kind>
+        <depth>10</depth>
+      </history>
+      <durability>
+        <kind>TRANSIENT_LOCAL</kind>
+      </durability>
+    </datawriter_qos>
+  </qos_profile>
+
+
+  <!-- ═════════════════════════════════════════════════════════════
+       Emergency Mode — E-stop, minimal latency, only safety topics
+       ═════════════════════════════════════════════════════════════ -->
+  <qos_profile name="G1EmergencyProfile">
+
+    <datawriter_qos topic_name="rt/lowcmd">
+      <reliability>
+        <kind>RELIABLE</kind>
+        <max_blocking_time>
+          <sec>0</sec>
+          <nanosec>5000000</nanosec>   <!-- 5ms -->
+        </max_blocking_time>
+      </reliability>
+      <deadline>
+        <period>
+          <sec>0</sec>
+          <nanosec>5000000</nanosec>   <!-- 5ms deadline (200Hz) -->
+        </period>
+      </deadline>
+      <history>
+        <kind>KEEP_LAST</kind>
+        <depth>1</depth>
+      </history>
+    </datawriter_qos>
+
+    <datareader_qos topic_name="rt/lowstate">
+      <reliability>
+        <kind>RELIABLE</kind>
+      </reliability>
+      <deadline>
+        <period>
+          <sec>0</sec>
+          <nanosec>5000000</nanosec>
+        </period>
+      </deadline>
+    </datareader_qos>
+
+    <!-- E-stop command: transient_local so late joiners get it -->
+    <datawriter_qos topic_name="dds/safety/estop">
+      <reliability>
+        <kind>RELIABLE</kind>
+      </reliability>
+      <durability>
+        <kind>TRANSIENT_LOCAL</kind>
+      </durability>
+      <history>
+        <kind>KEEP_LAST</kind>
+        <depth>1</depth>
+      </history>
+    </datawriter_qos>
+
+    <datawriter_qos topic_name="dds/safety/mode">
+      <reliability>
+        <kind>RELIABLE</kind>
+      </reliability>
+      <durability>
+        <kind>TRANSIENT_LOCAL</kind>
+      </durability>
+      <history>
+        <kind>KEEP_LAST</kind>
+        <depth>1</depth>
+      </history>
+    </datawriter_qos>
+  </qos_profile>
+</dds>

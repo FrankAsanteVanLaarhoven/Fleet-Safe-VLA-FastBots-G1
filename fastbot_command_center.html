@@ -4,15 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0a0e17">
-<meta name="description" content="SAFER-VLA: State-of-the-Art Fleet Autonomy for Robotics Education — Digital Twin Command Center with WebRTC streaming, VLA inference, and fleet control for Unitree G1 humanoid robots.">
+<meta name="description" content="FLEET SAFE VLA - HFB-S: State-of-the-Art Fleet Autonomy & Safety for Robotics — Digital Twin Command Center with WebRTC, VLA inference, RoboPocket, DSEO, and fleet control for Unitree G1 humanoid robots.">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="SAFER-VLA">
+<meta name="apple-mobile-web-app-title" content="FLEET SAFE VLA">
 <link rel="manifest" href="/pwa/manifest.json">
 <link rel="apple-touch-icon" href="/pwa/icons/icon-192.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/pwa/icons/icon-192.png">
-<title>SAFER-VLA — Command Center</title>
+<title>FLEET SAFE VLA - HFB-S — Command Center</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/loaders/STLLoader.js"></script>
@@ -549,7 +549,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overf
 <div class="app">
   <!-- Header -->
   <div class="hdr">
-    <h1><span class="pulse"></span>SAFER-VLA — Command Center
+    <h1><span class="pulse"></span>FLEET SAFE VLA - HFB-S — Command Center
       <button onclick="document.getElementById('eph-sidebar').classList.toggle('expanded')" style="background:none;border:1px solid var(--bd);border-radius:4px;padding:2px 8px;cursor:pointer;color:var(--muted);font-size:11px;margin-left:12px" title="Toggle Sidebar (≡)">☰</button>
     </h1>
     <div class="right">
@@ -731,6 +731,23 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overf
     <div class="sb-item" data-widget="log" draggable="true" onclick="widgetMgr.spawn('log')">
       <div class="sb-icon">📝</div>
       <div class="sb-info"><div class="sb-name">Event Log</div><div class="sb-desc">System events • FSM transitions</div></div>
+      <div class="sb-add">+</div>
+    </div>
+
+    <div class="sb-section-label">SAFETY & POLICY</div>
+    <div class="sb-item" data-widget="robopocket" draggable="true" onclick="widgetMgr.spawn('robopocket')">
+      <div class="sb-icon">📱</div>
+      <div class="sb-info"><div class="sb-name">RoboPocket</div><div class="sb-desc">Inference • AR Foresight • Finetuning</div></div>
+      <div class="sb-add">+</div>
+    </div>
+    <div class="sb-item" data-widget="dseo" draggable="true" onclick="widgetMgr.spawn('dseo')">
+      <div class="sb-icon">🔒</div>
+      <div class="sb-info"><div class="sb-name">DSEO Monitor</div><div class="sb-desc">Risk Score • Mode • QoS</div></div>
+      <div class="sb-add">+</div>
+    </div>
+    <div class="sb-item" data-widget="safetymetrics" draggable="true" onclick="widgetMgr.spawn('safetymetrics')">
+      <div class="sb-icon">📐</div>
+      <div class="sb-info"><div class="sb-name">Safety Metrics</div><div class="sb-desc">COM Margin • Forces • Height</div></div>
       <div class="sb-add">+</div>
     </div>
   </div>
@@ -3781,7 +3798,7 @@ function showInstallBanner(){
   banner.innerHTML=`
     <img src="/pwa/icons/icon-192.png" width="40" height="40" style="border-radius:8px">
     <div>
-      <div style="font-size:13px;font-weight:600;color:#e2e8f0">Install SAFER-VLA</div>
+      <div style="font-size:13px;font-weight:600;color:#e2e8f0">Install FLEET SAFE VLA</div>
       <div style="font-size:11px;color:#64748b">Add to home screen for offline access</div>
     </div>
     <button id="pwa-install-btn" style="padding:8px 20px;background:rgba(0,255,229,.15);
@@ -3795,7 +3812,7 @@ function showInstallBanner(){
     if(!deferredInstallPrompt)return;
     deferredInstallPrompt.prompt();
     const{outcome}=await deferredInstallPrompt.userChoice;
-    if(outcome==='accepted')toast('✅ SAFER-VLA installed!');
+    if(outcome==='accepted')toast('✅ FLEET SAFE VLA installed!');
     deferredInstallPrompt=null;
     banner.remove();
   });
@@ -4303,7 +4320,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#0a0e17;color:#e2e8f0;h
 </style></head><body>
 <div class="logo">🤖</div>
 <div class="title">G1-FASTBOT</div>
-<div class="subtitle">SAFER-VLA Desktop Launcher</div>
+<div class="subtitle">FLEET SAFE VLA - HFB-S Desktop Launcher</div>
 <div class="status"><div class="dot off" id="d"></div><span id="s">Checking...</span></div>
 <div class="btns">
   <button class="btn start" onclick="startSrv()">▶ Start</button>
@@ -4357,7 +4374,7 @@ document.addEventListener('keydown',e=>{
   }
 });
 
-console.log('[SAFER-VLA] v7 Ephemeral Dashboard + Widget Manager loaded');
+console.log('[FLEET SAFE VLA - HFB-S] v7 Ephemeral Dashboard + Widget Manager loaded');
 </script>
 </body>
 </html>

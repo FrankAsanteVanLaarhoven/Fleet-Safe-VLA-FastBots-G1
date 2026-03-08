@@ -16,6 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/loaders/STLLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/controls/OrbitControls.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -323,6 +324,47 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overf
 .split-1x2 .viewport{grid-template-columns:1fr 1fr}
 .split-2x2 .viewport{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
 .split-1x3 .viewport{grid-template-columns:1fr 1fr 1fr}
+
+/* ═══ ZONE EDITOR ═══════════════════════════════════════════════════ */
+.zone-toolbar{position:absolute;top:52px;left:50%;transform:translateX(-50%);z-index:250;
+  display:flex;gap:4px;padding:4px 8px;background:rgba(10,14,23,.95);border:1px solid var(--bd);
+  border-radius:8px;backdrop-filter:blur(12px);transition:opacity .3s}
+.zone-toolbar.hidden{opacity:0;pointer-events:none}
+.zone-btn{padding:4px 10px;border:1px solid var(--bd);border-radius:5px;background:transparent;
+  color:var(--muted);font-size:10px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;
+  transition:all .2s;display:flex;align-items:center;gap:4px}
+.zone-btn:hover{color:var(--text);border-color:var(--bd2);background:rgba(255,255,255,.03)}
+.zone-btn.active{color:var(--cyan);border-color:rgba(0,255,229,.3);background:rgba(0,255,229,.06)}
+.zone-btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.zone-btn.green{color:#22c55e}.zone-btn.amber{color:#facc15}.zone-btn.red{color:#ef4444}
+
+/* Zone properties panel */
+.zone-props{position:absolute;top:52px;right:12px;z-index:260;width:230px;
+  background:rgba(10,14,23,.97);border:1px solid var(--bd);border-radius:10px;
+  padding:12px;backdrop-filter:blur(16px);display:none;
+  box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.zone-props.visible{display:block}
+.zone-props h4{font-size:10px;font-weight:700;color:var(--cyan);text-transform:uppercase;
+  letter-spacing:.5px;margin-bottom:8px}
+.zone-props label{font-size:9px;color:var(--muted);display:block;margin-top:6px}
+.zone-props input,.zone-props select{width:100%;padding:4px 8px;margin-top:2px;
+  background:var(--sf);border:1px solid var(--bd);border-radius:4px;color:var(--text);
+  font-family:'Inter',sans-serif;font-size:10px;outline:none}
+.zone-props input:focus,.zone-props select:focus{border-color:rgba(0,255,229,.3)}
+.zone-props .zp-row{display:flex;gap:6px;margin-top:6px}
+.zone-props .zp-row button{flex:1;padding:5px;border:1px solid var(--bd);border-radius:5px;
+  background:transparent;color:var(--text);font-size:9px;font-weight:600;
+  font-family:'Inter',sans-serif;cursor:pointer;transition:all .2s}
+.zone-props .zp-row button:hover{border-color:var(--cyan);color:var(--cyan)}
+.zone-props .zp-row button.danger{color:var(--red)}
+.zone-props .zp-row button.danger:hover{border-color:var(--red);background:rgba(239,68,68,.1)}
+
+/* Zone color chips */
+.zone-colors{display:flex;gap:6px;margin-top:4px}
+.zone-chip{width:24px;height:24px;border-radius:4px;cursor:pointer;border:2px solid transparent;transition:all .2s}
+.zone-chip.green-c{background:rgba(34,197,94,.3)}.zone-chip.amber-c{background:rgba(250,204,21,.3)}
+.zone-chip.red-c{background:rgba(239,68,68,.3)}
+.zone-chip.selected{border-color:var(--text);transform:scale(1.15)}
 .vp-pane{position:relative;background:#050810;overflow:hidden}
 .vp-pane canvas{width:100%;height:100%;display:block}
 .vp-pane-label{position:absolute;bottom:6px;left:8px;font-size:9px;font-weight:600;color:var(--muted);
@@ -615,6 +657,47 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overf
       <div class="badge green" id="b-safety">SAFE</div>
       <div class="badge cyan" id="b-cam">FOLLOW CAM</div>
     </div>
+    <!-- Zone Editor Toolbar -->
+    <div class="zone-toolbar" id="zone-toolbar">
+      <button class="zone-btn" id="zb-toggle" onclick="toggleZoneVis()" title="Toggle zone visibility">
+        <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>Zones
+      </button>
+      <button class="zone-btn green" id="zb-add-green" onclick="startZoneDraw('green')" title="Add green zone">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg>Green
+      </button>
+      <button class="zone-btn amber" id="zb-add-amber" onclick="startZoneDraw('amber')" title="Add amber zone">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg>Amber
+      </button>
+      <button class="zone-btn red" id="zb-add-red" onclick="startZoneDraw('red')" title="Add red zone">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg>Red
+      </button>
+      <button class="zone-btn" id="zb-clear" onclick="clearAllZones()" title="Reset to default zones">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Reset
+      </button>
+    </div>
+    <!-- Zone Properties Panel -->
+    <div class="zone-props" id="zone-props">
+      <h4>⚡ Zone Properties</h4>
+      <label>Name</label>
+      <input type="text" id="zp-name" value="" placeholder="Zone name">
+      <label>Color / Level</label>
+      <div class="zone-colors">
+        <div class="zone-chip green-c" data-color="green" onclick="setZoneColor('green')"></div>
+        <div class="zone-chip amber-c" data-color="amber" onclick="setZoneColor('amber')"></div>
+        <div class="zone-chip red-c" data-color="red" onclick="setZoneColor('red')"></div>
+      </div>
+      <label>Speed Multiplier</label>
+      <input type="range" id="zp-speed" min="0" max="100" value="100" oninput="setZoneSpeed(this.value)">
+      <div style="display:flex;justify-content:space-between;font-size:8px;color:var(--dim)"><span>0.0 (stop)</span><span id="zp-speed-val">1.0</span><span>1.0 (full)</span></div>
+      <label>Reward Weight</label>
+      <input type="range" id="zp-reward" min="-100" max="100" value="0" oninput="setZoneReward(this.value)">
+      <div style="display:flex;justify-content:space-between;font-size:8px;color:var(--dim)"><span>-1.0 (penalty)</span><span id="zp-reward-val">0.0</span><span>+1.0 (reward)</span></div>
+      <div class="zp-row">
+        <button onclick="applyZoneProps()">Apply</button>
+        <button class="danger" onclick="deleteSelectedZone()">Delete</button>
+        <button onclick="closeZoneProps()">Close</button>
+      </div>
+    </div>
     <div class="cam-strip">
       <div class="cam-thumb active" id="ct-follow" onclick="switchCam(0)">
         <canvas id="tc0"></canvas><div class="cam-label">FOLLOW CAM</div></div>
@@ -624,6 +707,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overf
         <canvas id="tc2"></canvas><div class="cam-label">FIRST PERSON</div></div>
       <div class="cam-thumb" id="ct-sec" onclick="switchCam(3)">
         <canvas id="tc3"></canvas><div class="cam-label">SECURITY CAM</div></div>
+      <div class="cam-thumb" id="ct-free" onclick="switchCam(4)">
+        <canvas id="tc4"></canvas><div class="cam-label">FREE CAM</div></div>
+      <div class="cam-thumb" id="ct-iso" onclick="switchCam(5)">
+        <canvas id="tc5"></canvas><div class="cam-label">ISOMETRIC</div></div>
+      <div class="cam-thumb" id="ct-side" onclick="switchCam(6)">
+        <canvas id="tc6"></canvas><div class="cam-label">SIDE VIEW</div></div>
+      <div class="cam-thumb" id="ct-corner" onclick="switchCam(7)">
+        <canvas id="tc7"></canvas><div class="cam-label">CORNER VIEW</div></div>
     </div>
   </div>
 
@@ -1378,7 +1469,7 @@ let rPath=[],rPathIdx=0; // current path (array of nav node IDs) and index along
 let rPathLine=null;      // Three.js line showing planned path
 let linScale=1,angScale=1,battery=100;
 let activeCam=0,keys={};
-const camNames=["FOLLOW CAM","TOP-DOWN","FIRST PERSON","SECURITY CAM"];
+const camNames=["FOLLOW CAM","TOP-DOWN","FIRST PERSON","SECURITY CAM","FREE CAM","ISOMETRIC","SIDE VIEW","CORNER VIEW"];
 
 // ═══════════════════════════════════════════════════════════════════
 //  THREE.JS SETUP
@@ -1408,16 +1499,297 @@ cams.push(new THREE.PerspectiveCamera(90,1,.05,100));
 // 3: Security cam
 cams.push(new THREE.PerspectiveCamera(70,1,.1,200));
 cams[3].position.set(-2,8,5); cams[3].lookAt(5,0,2);
+// 4: Free Cam (OrbitControls)
+cams.push(new THREE.PerspectiveCamera(55,1,.1,300));
+cams[4].position.set(8,12,-4);
+cams[4].lookAt(5,0,2);
+// 5: Isometric
+cams.push(new THREE.PerspectiveCamera(45,1,.1,200));
+cams[5].position.set(18,14,18);
+cams[5].lookAt(5,0,2);
+// 6: Side View
+cams.push(new THREE.PerspectiveCamera(50,1,.1,200));
+cams[6].position.set(5,4,-8);
+cams[6].lookAt(5,1,2);
+// 7: Corner View (low diagonal)
+cams.push(new THREE.PerspectiveCamera(65,1,.1,200));
+cams[7].position.set(-5,2,8);
+cams[7].lookAt(5,.5,2);
 
-// Thumbnail renderers
+// OrbitControls for Free Cam (cam 4)
+const orbitControls=new THREE.OrbitControls(cams[4],renderer.domElement);
+orbitControls.target.set(5,0,2);
+orbitControls.enableDamping=true;
+orbitControls.dampingFactor=0.08;
+orbitControls.minDistance=2;
+orbitControls.maxDistance=60;
+orbitControls.maxPolarAngle=Math.PI/2.05;
+orbitControls.mouseButtons={LEFT:THREE.MOUSE.ROTATE,MIDDLE:THREE.MOUSE.DOLLY,RIGHT:THREE.MOUSE.PAN};
+orbitControls.enabled=false; // enabled only when Free Cam is active
+orbitControls.update();
+
+// Thumbnail renderers (8 cameras)
 const tRenderers=[];
-for(let i=0;i<4;i++){
+for(let i=0;i<8;i++){
   const c=document.getElementById("tc"+i);
+  if(!c)continue;
   const r=new THREE.WebGLRenderer({canvas:c,antialias:false});
   r.setPixelRatio(1);
   r.toneMapping=THREE.ACESFilmicToneMapping;
   r.toneMappingExposure=1.2;
   tRenderers.push(r);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  3D SAFETY ZONE MESHES
+// ═══════════════════════════════════════════════════════════════════
+const zoneMeshGroup=new THREE.Group();
+zoneMeshGroup.name='zones';
+scene.add(zoneMeshGroup);
+let zonesVisible=true;
+
+const ZONE_COLORS={green:0x22c55e,amber:0xfacc15,red:0xef4444};
+const ZONE_ALPHA={green:.08,amber:.12,red:.18};
+
+function buildZoneMeshes(){
+  // Clear existing
+  while(zoneMeshGroup.children.length)zoneMeshGroup.remove(zoneMeshGroup.children[0]);
+  TRAFFIC_ZONES.forEach((z,idx)=>{
+    const w=z.mxX-z.mnX,d=z.mxY-z.mnY;
+    const col=ZONE_COLORS[z.color]||0x3b82f6;
+    const alpha=ZONE_ALPHA[z.color]||.1;
+    // Floor overlay
+    const geo=new THREE.PlaneGeometry(w,d);
+    const mat=new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:alpha,side:THREE.DoubleSide,depthWrite:false});
+    const mesh=new THREE.Mesh(geo,mat);
+    mesh.rotation.x=-Math.PI/2;
+    mesh.position.set(z.mnX+w/2,.02,z.mnY+d/2);
+    mesh.userData={zoneIdx:idx,type:'zone'};
+    zoneMeshGroup.add(mesh);
+    // Wireframe border
+    const edgeGeo=new THREE.EdgesGeometry(new THREE.BoxGeometry(w,.01,d));
+    const edgeMat=new THREE.LineBasicMaterial({color:col,transparent:true,opacity:.4});
+    const edge=new THREE.LineSegments(edgeGeo,edgeMat);
+    edge.position.copy(mesh.position);
+    edge.position.y=.03;
+    zoneMeshGroup.add(edge);
+    // Vertical walls (ghosted)
+    if(z.color==='red'){
+      const wallH=1.5;
+      const wallGeo=new THREE.BoxGeometry(w,wallH,d);
+      const wallMat=new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:.04,side:THREE.DoubleSide,depthWrite:false});
+      const wallMesh=new THREE.Mesh(wallGeo,wallMat);
+      wallMesh.position.set(z.mnX+w/2,wallH/2,z.mnY+d/2);
+      zoneMeshGroup.add(wallMesh);
+      // Red zone top edge glow
+      const topEdge=new THREE.EdgesGeometry(wallGeo);
+      const topMat=new THREE.LineBasicMaterial({color:0xef4444,transparent:true,opacity:.25});
+      const topLine=new THREE.LineSegments(topEdge,topMat);
+      topLine.position.copy(wallMesh.position);
+      zoneMeshGroup.add(topLine);
+    }
+    // Zone label
+    const lc=document.createElement('canvas');lc.width=256;lc.height=64;
+    const lg=lc.getContext('2d');
+    lg.fillStyle='rgba(0,0,0,0)';lg.fillRect(0,0,256,64);
+    lg.font='bold 18px Inter';
+    lg.fillStyle=z.color==='green'?'rgba(34,197,94,.5)':z.color==='amber'?'rgba(250,204,21,.5)':'rgba(239,68,68,.6)';
+    lg.textAlign='center';lg.fillText(z.name,128,36);
+    const lt=new THREE.CanvasTexture(lc);
+    const ls=new THREE.Sprite(new THREE.SpriteMaterial({map:lt,transparent:true,depthTest:false}));
+    ls.position.set(z.mnX+w/2,.5,z.mnY+d/2);
+    ls.scale.set(w*.6,.15*w,1);
+    zoneMeshGroup.add(ls);
+  });
+}
+buildZoneMeshes();
+
+// ═══════════════════════════════════════════════════════════════════
+//  ZONE EDITOR STATE
+// ═══════════════════════════════════════════════════════════════════
+let zoneDrawMode=null; // null | 'green' | 'amber' | 'red'
+let zoneDrawStart=null;
+let zoneDrawPreview=null;
+let selectedZoneIdx=-1;
+
+// Default zones (for reset)
+const DEFAULT_ZONES=JSON.parse(JSON.stringify(TRAFFIC_ZONES));
+
+function toggleZoneVis(){
+  zonesVisible=!zonesVisible;
+  zoneMeshGroup.visible=zonesVisible;
+  const btn=document.getElementById('zb-toggle');
+  btn.classList.toggle('active',zonesVisible);
+  toast(zonesVisible?'Zones visible':'Zones hidden');
+}
+
+function startZoneDraw(color){
+  zoneDrawMode=zoneDrawMode===color?null:color;
+  document.querySelectorAll('[id^=zb-add-]').forEach(b=>b.classList.remove('active'));
+  if(zoneDrawMode){
+    document.getElementById('zb-add-'+color).classList.add('active');
+    renderer.domElement.style.cursor='crosshair';
+    toast('Click and drag on the floor to place a '+color+' zone');
+  } else {
+    renderer.domElement.style.cursor='';
+  }
+}
+
+function clearAllZones(){
+  TRAFFIC_ZONES.length=0;
+  DEFAULT_ZONES.forEach(z=>TRAFFIC_ZONES.push(JSON.parse(JSON.stringify(z))));
+  buildZoneMeshes();
+  closeZoneProps();
+  toast('Zones reset to default');
+}
+
+// Raycaster for floor intersection
+const zoneRay=new THREE.Raycaster();
+const zoneMouse=new THREE.Vector2();
+
+function getFloorIntersection(event){
+  const rect=renderer.domElement.getBoundingClientRect();
+  zoneMouse.x=((event.clientX-rect.left)/rect.width)*2-1;
+  zoneMouse.y=-((event.clientY-rect.top)/rect.height)*2+1;
+  zoneRay.setFromCamera(zoneMouse,cams[activeCam]);
+  const plane=new THREE.Plane(new THREE.Vector3(0,1,0),0);
+  const pt=new THREE.Vector3();
+  zoneRay.ray.intersectPlane(plane,pt);
+  return pt;
+}
+
+// Mouse handlers for zone drawing
+renderer.domElement.addEventListener('mousedown',e=>{
+  if(!zoneDrawMode)return;
+  if(e.button!==0)return;
+  const pt=getFloorIntersection(e);
+  if(!pt)return;
+  zoneDrawStart={x:pt.x,z:pt.z};
+  // Create preview rectangle
+  const preGeo=new THREE.PlaneGeometry(0.01,0.01);
+  const col=ZONE_COLORS[zoneDrawMode];
+  const preMat=new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:.25,side:THREE.DoubleSide,depthWrite:false});
+  zoneDrawPreview=new THREE.Mesh(preGeo,preMat);
+  zoneDrawPreview.rotation.x=-Math.PI/2;
+  zoneDrawPreview.position.set(pt.x,.05,pt.z);
+  scene.add(zoneDrawPreview);
+});
+
+renderer.domElement.addEventListener('mousemove',e=>{
+  if(!zoneDrawStart||!zoneDrawPreview)return;
+  const pt=getFloorIntersection(e);
+  if(!pt)return;
+  const w=Math.abs(pt.x-zoneDrawStart.x),d=Math.abs(pt.z-zoneDrawStart.z);
+  zoneDrawPreview.geometry.dispose();
+  zoneDrawPreview.geometry=new THREE.PlaneGeometry(Math.max(w,.1),Math.max(d,.1));
+  zoneDrawPreview.position.set((pt.x+zoneDrawStart.x)/2,.05,(pt.z+zoneDrawStart.z)/2);
+});
+
+renderer.domElement.addEventListener('mouseup',e=>{
+  if(!zoneDrawStart||!zoneDrawPreview)return;
+  const pt=getFloorIntersection(e);
+  scene.remove(zoneDrawPreview);
+  zoneDrawPreview.geometry.dispose();
+  zoneDrawPreview.material.dispose();
+  zoneDrawPreview=null;
+  if(!pt){zoneDrawStart=null;return;}
+  const mnX=Math.min(zoneDrawStart.x,pt.x);
+  const mxX=Math.max(zoneDrawStart.x,pt.x);
+  const mnY=Math.min(zoneDrawStart.z,pt.z);
+  const mxY=Math.max(zoneDrawStart.z,pt.z);
+  if(mxX-mnX<.2||mxY-mnY<.2){zoneDrawStart=null;return;} // too small
+  const speedDefaults={green:1.0,amber:0.5,red:0.0};
+  const newZone={name:'Zone-'+(TRAFFIC_ZONES.length+1),mnX:+mnX.toFixed(1),mxX:+mxX.toFixed(1),
+    mnY:+mnY.toFixed(1),mxY:+mxY.toFixed(1),color:zoneDrawMode,speedMul:speedDefaults[zoneDrawMode],rewardWeight:0};
+  TRAFFIC_ZONES.push(newZone);
+  buildZoneMeshes();
+  zoneDrawStart=null;
+  toast('Added '+zoneDrawMode+' zone: '+newZone.name);
+  // Exit draw mode
+  startZoneDraw(null);
+  renderer.domElement.style.cursor='';
+});
+
+// Right-click to select zone for editing
+renderer.domElement.addEventListener('contextmenu',e=>{
+  e.preventDefault();
+  if(zoneDrawMode)return;
+  const pt=getFloorIntersection(e);
+  if(!pt)return;
+  // Find which zone contains this point
+  for(let i=TRAFFIC_ZONES.length-1;i>=0;i--){
+    const z=TRAFFIC_ZONES[i];
+    if(pt.x>=z.mnX&&pt.x<=z.mxX&&pt.z>=z.mnY&&pt.z<=z.mxY){
+      openZoneProps(i);
+      return;
+    }
+  }
+  closeZoneProps();
+});
+
+// Double-click to select zone
+renderer.domElement.addEventListener('dblclick',e=>{
+  if(zoneDrawMode)return;
+  const pt=getFloorIntersection(e);
+  if(!pt)return;
+  for(let i=TRAFFIC_ZONES.length-1;i>=0;i--){
+    const z=TRAFFIC_ZONES[i];
+    if(pt.x>=z.mnX&&pt.x<=z.mxX&&pt.z>=z.mnY&&pt.z<=z.mxY){
+      openZoneProps(i);
+      return;
+    }
+  }
+});
+
+function openZoneProps(idx){
+  selectedZoneIdx=idx;
+  const z=TRAFFIC_ZONES[idx];
+  document.getElementById('zp-name').value=z.name;
+  document.getElementById('zp-speed').value=Math.round(z.speedMul*100);
+  document.getElementById('zp-speed-val').textContent=z.speedMul.toFixed(1);
+  document.getElementById('zp-reward').value=Math.round((z.rewardWeight||0)*100);
+  document.getElementById('zp-reward-val').textContent=(z.rewardWeight||0).toFixed(1);
+  document.querySelectorAll('.zone-chip').forEach(c=>c.classList.toggle('selected',c.dataset.color===z.color));
+  document.getElementById('zone-props').classList.add('visible');
+}
+
+function closeZoneProps(){
+  selectedZoneIdx=-1;
+  document.getElementById('zone-props').classList.remove('visible');
+}
+
+function setZoneColor(color){
+  if(selectedZoneIdx<0)return;
+  document.querySelectorAll('.zone-chip').forEach(c=>c.classList.toggle('selected',c.dataset.color===color));
+}
+
+function setZoneSpeed(val){
+  document.getElementById('zp-speed-val').textContent=(val/100).toFixed(1);
+}
+
+function setZoneReward(val){
+  document.getElementById('zp-reward-val').textContent=(val/100).toFixed(1);
+}
+
+function applyZoneProps(){
+  if(selectedZoneIdx<0)return;
+  const z=TRAFFIC_ZONES[selectedZoneIdx];
+  z.name=document.getElementById('zp-name').value||z.name;
+  const selColor=document.querySelector('.zone-chip.selected');
+  if(selColor)z.color=selColor.dataset.color;
+  z.speedMul=parseInt(document.getElementById('zp-speed').value)/100;
+  z.rewardWeight=parseInt(document.getElementById('zp-reward').value)/100;
+  buildZoneMeshes();
+  toast('Zone "'+z.name+'" updated');
+}
+
+function deleteSelectedZone(){
+  if(selectedZoneIdx<0)return;
+  const name=TRAFFIC_ZONES[selectedZoneIdx].name;
+  TRAFFIC_ZONES.splice(selectedZoneIdx,1);
+  buildZoneMeshes();
+  closeZoneProps();
+  toast('Deleted zone: '+name);
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1499,31 +1871,7 @@ makeLabel("WARD A",9.5,1.5,3.5);
 makeLabel("ICU",8.5,1.5,3);
 makeLabel("CORRIDOR",5,1.5,4.5);
 
-// ═══════════════════════════════════════════════════════════════════
-//  TRAFFIC ZONE FLOOR OVERLAYS (Green / Amber / Red)
-// ═══════════════════════════════════════════════════════════════════
-const ZONE_COLORS={green:0x22c55e,amber:0xf59e0b,red:0xef4444};
-TRAFFIC_ZONES.forEach(z=>{
-  const w=z.mxX-z.mnX,h=z.mxY-z.mnY;
-  const geo=new THREE.PlaneGeometry(w,h);
-  const mat=new THREE.MeshBasicMaterial({
-    color:ZONE_COLORS[z.color]||0x22c55e,
-    transparent:true,opacity:z.color==='red'?0.08:z.color==='amber'?0.04:0.025,
-    side:THREE.DoubleSide
-  });
-  const mesh=new THREE.Mesh(geo,mat);
-  mesh.rotation.x=-Math.PI/2;
-  mesh.position.set((z.mnX+z.mxX)/2,0.02,(z.mnY+z.mxY)/2);
-  scene.add(mesh);
-  // Zone border
-  const border=new THREE.LineSegments(
-    new THREE.EdgesGeometry(geo),
-    new THREE.LineBasicMaterial({color:ZONE_COLORS[z.color],transparent:true,opacity:z.color==='red'?0.5:0.2})
-  );
-  border.rotation.x=-Math.PI/2;
-  border.position.copy(mesh.position);
-  scene.add(border);
-});
+// (Zone floor overlays now rendered by buildZoneMeshes() in zone editor)
 
 // ICU warning particles (kept from original)
 const icuParts=[];
@@ -1754,6 +2102,10 @@ function switchCam(i){
   activeCam=i;
   document.querySelectorAll(".cam-thumb").forEach((t,j)=>t.className="cam-thumb"+(j===i?" active":""));
   document.getElementById("b-cam").textContent=camNames[i];
+  // Enable OrbitControls only for Free Cam (4)
+  orbitControls.enabled=(i===4);
+  if(i===4)renderer.domElement.style.cursor='grab';
+  else if(!zoneDrawMode)renderer.domElement.style.cursor='';
 }
 document.getElementById("sl-lin").addEventListener("input",e=>{
   linScale=e.target.value/100;
@@ -1979,6 +2331,32 @@ function animate(now){
   const sAngle=now/8000;
   cams[3].lookAt(5+2*Math.sin(sAngle),0,2+2*Math.cos(sAngle));
 
+  // Free Cam (4) — updated by OrbitControls
+  if(activeCam===4)orbitControls.update();
+
+  // Isometric (5) — gentle rotation
+  const isoAngle=now/20000;
+  cams[5].position.set(5+14*Math.cos(isoAngle),14,2+14*Math.sin(isoAngle));
+  cams[5].lookAt(5,0,2);
+
+  // Side View (6) — tracks robot laterally
+  cams[6].position.set(rx,3,-6);
+  cams[6].lookAt(rx,.5,ry);
+
+  // Corner View (7) — low cinematic angle
+  cams[7].position.set(-4+Math.sin(now/6000),2.5,7+Math.cos(now/6000));
+  cams[7].lookAt(rx,.3,ry);
+
+  // Red zone pulse
+  zoneMeshGroup.children.forEach(c=>{
+    if(c.userData&&c.userData.type==='zone'){
+      const z=TRAFFIC_ZONES[c.userData.zoneIdx];
+      if(z&&z.color==='red'){
+        c.material.opacity=.12+.06*Math.sin(now/400);
+      }
+    }
+  });
+
   // ── Render ─────────────────────────────────────────────────────
   const rect=vp.getBoundingClientRect();
   renderer.setSize(rect.width,rect.height);
@@ -1986,9 +2364,8 @@ function animate(now){
   cams.forEach(c=>c.updateProjectionMatrix());
   renderer.render(scene,cams[activeCam]);
 
-  // Thumbnails
-  for(let i=0;i<4;i++){
-    const tc=document.getElementById("tc"+i);
+  // Thumbnails (all 8 cameras)
+  for(let i=0;i<tRenderers.length;i++){
     tRenderers[i].setSize(140,90);
     tRenderers[i].render(scene,cams[i]);
   }
@@ -2656,7 +3033,7 @@ document.addEventListener('keydown',e=>{
   if(k==='e'&&!e.ctrlKey){spawnEphCard('entities');return}
   if(k==='f'){setCamMode('freefly');return}
   if(k==='tab'){e.preventDefault();cycleEntity();return}
-  if(k>='1'&&k<='4'){switchCam(parseInt(k)-1);return}
+  if(k>='1'&&k<='8'){switchCam(parseInt(k)-1);return}
 });
 
 function closeAllEph(){Object.keys(ephCards).forEach(closeEphCard)}

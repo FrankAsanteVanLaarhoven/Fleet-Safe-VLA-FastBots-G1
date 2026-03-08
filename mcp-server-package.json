@@ -1,0 +1,47 @@
+{
+  "name": "figma-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP Server for extracting Figma and design assets from websites",
+  "main": "mcp-server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node mcp-server.js",
+    "dev": "nodemon mcp-server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "mcp",
+    "figma",
+    "design",
+    "extraction",
+    "web-scraping",
+    "ai"
+  ],
+  "author": "AuraAI Team",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.4.0",
+    "axios": "^1.6.0",
+    "cheerio": "^1.0.0-rc.12",
+    "fs-extra": "^11.1.1",
+    "puppeteer": "^21.5.2",
+    "playwright": "^1.40.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "bin": {
+    "figma-mcp-server": "./mcp-server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/auraai/figma-mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/auraai/figma-mcp-server/issues"
+  },
+  "homepage": "https://github.com/auraai/figma-mcp-server#readme"
+} 

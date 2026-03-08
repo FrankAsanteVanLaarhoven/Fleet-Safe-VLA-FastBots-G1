@@ -1,0 +1,1209 @@
+{
+  "session_id": "session_1752956508",
+  "start_time": "2025-07-19T21:21:48.519734",
+  "targets": [
+    "https://example-shop.com/products/premium-headphones",
+    "https://example-news.com/tech/ai-breakthrough",
+    "https://example-bank.com/about-us",
+    "https://example-blog.com/post/web-scraping-guide"
+  ],
+  "business_context": {
+    "domain_keywords": [
+      "headphones",
+      "technology",
+      "ai",
+      "web scraping"
+    ],
+    "market_context": {
+      "industry": "technology",
+      "market_size": "large",
+      "business_objectives": [
+        "competitive_intelligence",
+        "market_research",
+        "lead_generation"
+      ]
+    },
+    "competitor_analysis": {
+      "has_competitor_data": true,
+      "competitor_coverage": 0.4
+    },
+    "freshness_score": 0.9,
+    "high_value_targets": true
+  },
+  "crawl_results": [],
+  "stealth_metrics": {},
+  "value_assessment_metrics": {},
+  "processing_metrics": {},
+  "overall_performance": {},
+  "stealth_configs": {
+    "https://example-shop.com/products/premium-headphones": {
+      "behavior": {
+        "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "mouse_patterns": [
+          {
+            "speed": 121.16871686733433,
+            "acceleration": "smooth",
+            "pauses": 0.12284057354509233,
+            "curvature": 0.12759968604406496
+          },
+          {
+            "speed": 179.0155588580863,
+            "acceleration": "smooth",
+            "pauses": 0.2315699907727476,
+            "curvature": 0.19654465256797288
+          },
+          {
+            "speed": 151.45883691997432,
+            "acceleration": "smooth",
+            "pauses": 0.10282672762446703,
+            "curvature": 0.11670547677195701
+          },
+          {
+            "speed": 174.65626383801262,
+            "acceleration": "smooth",
+            "pauses": 0.2118472070500524,
+            "curvature": 0.28136034696471535
+          },
+          {
+            "speed": 157.36880742352517,
+            "acceleration": "smooth",
+            "pauses": 0.18566145332961578,
+            "curvature": 0.24285179420584138
+          },
+          {
+            "speed": 102.64482378921157,
+            "acceleration": "smooth",
+            "pauses": 0.1801676132105164,
+            "curvature": 0.1812253284908069
+          },
+          {
+            "speed": 190.93932114757155,
+            "acceleration": "smooth",
+            "pauses": 0.20198490876082517,
+            "curvature": 0.14696974340653482
+          },
+          {
+            "speed": 189.68423848073866,
+            "acceleration": "smooth",
+            "pauses": 0.23763756781650155,
+            "curvature": 0.16994497503885359
+          },
+          {
+            "speed": 109.94407836354898,
+            "acceleration": "smooth",
+            "pauses": 0.189902594237872,
+            "curvature": 0.16029899704881084
+          },
+          {
+            "speed": 171.2316350878335,
+            "acceleration": "smooth",
+            "pauses": 0.12975904693101992,
+            "curvature": 0.2479827119883943
+          }
+        ],
+        "timing_patterns": {
+          "page_load_wait": [
+            1.948235294117647,
+            3.896470588235294
+          ],
+          "click_delay": [
+            0.48705882352941177,
+            1.4611764705882353
+          ]
+        },
+        "scroll_patterns": [
+          {
+            "speed": 2.9331904761886918,
+            "direction_changes": 0.3685947989850094,
+            "pause_frequency": 0.6676936395200421,
+            "scroll_distance": 108.35417499878281
+          },
+          {
+            "speed": 5.010979853500382,
+            "direction_changes": 0.49186561019892355,
+            "pause_frequency": 0.5520795542732361,
+            "scroll_distance": 424.018767041773
+          },
+          {
+            "speed": 4.866063264466329,
+            "direction_changes": 0.31404135050841764,
+            "pause_frequency": 0.589663368505456,
+            "scroll_distance": 329.138014176751
+          },
+          {
+            "speed": 4.696658927331955,
+            "direction_changes": 0.49381335940684695,
+            "pause_frequency": 0.45071611962787445,
+            "scroll_distance": 242.76936638812253
+          },
+          {
+            "speed": 2.0519750395353435,
+            "direction_changes": 0.30114765625570483,
+            "pause_frequency": 0.4051537049838786,
+            "scroll_distance": 366.0538701880198
+          },
+          {
+            "speed": 4.160975406492097,
+            "direction_changes": 0.5825415754820681,
+            "pause_frequency": 0.352411694086958,
+            "scroll_distance": 380.56149932707217
+          },
+          {
+            "speed": 2.4742445508729007,
+            "direction_changes": 0.3326732957971775,
+            "pause_frequency": 0.6750488318192938,
+            "scroll_distance": 473.1529911696217
+          },
+          {
+            "speed": 3.0565946601550302,
+            "direction_changes": 0.19774745626279705,
+            "pause_frequency": 0.46572123620213,
+            "scroll_distance": 446.25253800152416
+          }
+        ],
+        "click_patterns": [
+          {
+            "pressure": 0.9133274312961129,
+            "duration": 84.41396717608959,
+            "double_click_frequency": 0.010724920275988162,
+            "accuracy": 0.9454157598489317
+          },
+          {
+            "pressure": 0.968085448916285,
+            "duration": 79.65254968990297,
+            "double_click_frequency": 0.024211519370400433,
+            "accuracy": 0.9441623772264122
+          },
+          {
+            "pressure": 0.9189945860957017,
+            "duration": 101.5514447746207,
+            "double_click_frequency": 0.02485443010134481,
+            "accuracy": 0.9694235660151483
+          },
+          {
+            "pressure": 0.9459259330672898,
+            "duration": 93.47624278015633,
+            "double_click_frequency": 0.02702927156289799,
+            "accuracy": 0.9513671887606241
+          },
+          {
+            "pressure": 0.9108925913892736,
+            "duration": 113.86154293156265,
+            "double_click_frequency": 0.016823039068432025,
+            "accuracy": 0.9608123701895868
+          },
+          {
+            "pressure": 0.9024171184664781,
+            "duration": 98.86640760095527,
+            "double_click_frequency": 0.023969907738284724,
+            "accuracy": 0.9510047048212859
+          }
+        ],
+        "keyboard_patterns": [
+          {
+            "typing_speed": 271.0335095060549,
+            "error_rate": 0.01813701211670073,
+            "pause_pattern": "consistent",
+            "correction_frequency": 0.047310778744948837
+          },
+          {
+            "typing_speed": 299.0153175005754,
+            "error_rate": 0.013788997750385798,
+            "pause_pattern": "consistent",
+            "correction_frequency": 0.033818365799624724
+          },
+          {
+            "typing_speed": 251.34011123682123,
+            "error_rate": 0.011374164463418162,
+            "pause_pattern": "consistent",
+            "correction_frequency": 0.019816719514633166
+          },
+          {
+            "typing_speed": 256.6515009395661,
+            "error_rate": 0.024142147634727495,
+            "pause_pattern": "consistent",
+            "correction_frequency": 0.03465750205860268
+          },
+          {
+            "typing_speed": 261.0959261020437,
+            "error_rate": 0.01302940279348319,
+            "pause_pattern": "consistent",
+            "correction_frequency": 0.03440676478907708
+          }
+        ]
+      },
+      "fingerprint": {
+        "canvas_hash": "95a780a84987",
+        "webgl_hash": "c636d3a1412f",
+        "audio_hash": "4b865099ac07",
+        "font_list": [
+          "Arial",
+          "Helvetica",
+          "Times New Roman",
+          "Courier New"
+        ],
+        "screen_resolution": [
+          1920,
+          1080
+        ],
+        "color_depth": 24,
+        "timezone": "America/New_York",
+        "language": "en-US",
+        "platform": "MacIntel",
+        "hardware_concurrency": 8,
+        "device_memory": 8,
+        "connection_type": "wifi"
+      },
+      "proxy": {
+        "proxy_type": "datacenter",
+        "rotation_frequency": "per_hour",
+        "geographic_distribution": "local",
+        "session_persistence": true,
+        "fallback_strategy": "retry_with_delay"
+      },
+      "timing": {
+        "request_spacing": [
+          1.0,
+          3.0
+        ],
+        "session_duration": [
+          1200.0,
+          3600.0
+        ],
+        "page_dwell_time": [
+          10.0,
+          45.0
+        ],
+        "randomization_factor": 0.2
+      },
+      "session": {
+        "session_persistence": true,
+        "cookie_management": "full",
+        "local_storage": true,
+        "session_storage": true,
+        "cache_control": "default"
+      },
+      "quantum_entropy": 0.522072
+    },
+    "https://example-news.com/tech/ai-breakthrough": {
+      "behavior": {
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "mouse_patterns": [
+          {
+            "speed": 159.1545983821622,
+            "acceleration": "natural",
+            "pauses": 0.4306519307220327,
+            "curvature": 0.35799712465017797
+          },
+          {
+            "speed": 95.73605967846773,
+            "acceleration": "natural",
+            "pauses": 0.6143080846216291,
+            "curvature": 0.4927996955893046
+          },
+          {
+            "speed": 198.94497773693732,
+            "acceleration": "natural",
+            "pauses": 0.7478606563330136,
+            "curvature": 0.27742470429529553
+          },
+          {
+            "speed": 116.98493747188127,
+            "acceleration": "natural",
+            "pauses": 0.21632228111853288,
+            "curvature": 0.3931916447887178
+          },
+          {
+            "speed": 192.33899124563231,
+            "acceleration": "natural",
+            "pauses": 0.2645847669277577,
+            "curvature": 0.2979442582711722
+          },
+          {
+            "speed": 142.0045994991662,
+            "acceleration": "natural",
+            "pauses": 0.8110837074786109,
+            "curvature": 0.21459968232041945
+          },
+          {
+            "speed": 136.97784181641052,
+            "acceleration": "natural",
+            "pauses": 0.3685124636585946,
+            "curvature": 0.24508110672461167
+          },
+          {
+            "speed": 137.2959531407272,
+            "acceleration": "natural",
+            "pauses": 0.5889251694562421,
+            "curvature": 0.5274777954999295
+          },
+          {
+            "speed": 228.9505875209573,
+            "acceleration": "natural",
+            "pauses": 0.7412092713306837,
+            "curvature": 0.419486678487259
+          },
+          {
+            "speed": 260.30211223447634,
+            "acceleration": "natural",
+            "pauses": 0.6841429230116249,
+            "curvature": 0.4000100487097279
+          }
+        ],
+        "timing_patterns": {
+          "page_load_wait": [
+            1.0664961333333334,
+            3.1994884
+          ],
+          "click_delay": [
+            0.31994884,
+            1.0664961333333334
+          ]
+        },
+        "scroll_patterns": [
+          {
+            "speed": 4.032255987639736,
+            "direction_changes": 0.2052353285679359,
+            "pause_frequency": 0.3505868067083233,
+            "scroll_distance": 169.54633422101628
+          },
+          {
+            "speed": 3.2982580378442705,
+            "direction_changes": 0.3049330931782928,
+            "pause_frequency": 0.4743608365820872,
+            "scroll_distance": 127.9342707380074
+          },
+          {
+            "speed": 3.0351124302762473,
+            "direction_changes": 0.4124349374585903,
+            "pause_frequency": 0.24506123133341914,
+            "scroll_distance": 93.73960724773103
+          },
+          {
+            "speed": 1.8787951844574924,
+            "direction_changes": 0.26918056242539207,
+            "pause_frequency": 0.3947204691323995,
+            "scroll_distance": 245.3833624503025
+          },
+          {
+            "speed": 4.060288348645332,
+            "direction_changes": 0.3063935781524266,
+            "pause_frequency": 0.31602788915960284,
+            "scroll_distance": 90.23475440418036
+          },
+          {
+            "speed": 2.3593582505941417,
+            "direction_changes": 0.30857869969781165,
+            "pause_frequency": 0.3388461972606214,
+            "scroll_distance": 191.19219750330276
+          },
+          {
+            "speed": 3.999395826743248,
+            "direction_changes": 0.29338249780491404,
+            "pause_frequency": 0.4817533813037026,
+            "scroll_distance": 202.79993510176823
+          },
+          {
+            "speed": 2.0940015332101396,
+            "direction_changes": 0.4008977922572752,
+            "pause_frequency": 0.22677732567451853,
+            "scroll_distance": 228.24429563398564
+          }
+        ],
+        "click_patterns": [
+          {
+            "pressure": 0.8079214922963027,
+            "duration": 136.84101012249994,
+            "double_click_frequency": 0.04349680075568744,
+            "accuracy": 0.956499735255057
+          },
+          {
+            "pressure": 0.8352341654394666,
+            "duration": 141.40159221843788,
+            "double_click_frequency": 0.03551756802657403,
+            "accuracy": 1.010399932701453
+          },
+          {
+            "pressure": 0.8323046620751557,
+            "duration": 206.00399412860713,
+            "double_click_frequency": 0.04375397877778226,
+            "accuracy": 1.0443677095512949
+          },
+          {
+            "pressure": 0.7815651080635554,
+            "duration": 208.83370147500298,
+            "double_click_frequency": 0.04112267398162803,
+            "accuracy": 0.9550883795748689
+          },
+          {
+            "pressure": 0.903129349703301,
+            "duration": 135.5946173905914,
+            "double_click_frequency": 0.04886569771927291,
+            "accuracy": 1.0075225680186777
+          },
+          {
+            "pressure": 1.001634929262026,
+            "duration": 156.65462234309157,
+            "double_click_frequency": 0.060381596859666216,
+            "accuracy": 0.9788357008117823
+          }
+        ],
+        "keyboard_patterns": [
+          {
+            "typing_speed": 215.89500501094903,
+            "error_rate": 0.06896384365934563,
+            "pause_pattern": "variable",
+            "correction_frequency": 0.11543898383348394
+          },
+          {
+            "typing_speed": 214.45752485723605,
+            "error_rate": 0.0637209310241199,
+            "pause_pattern": "variable",
+            "correction_frequency": 0.055380655294897996
+          },
+          {
+            "typing_speed": 252.54334617043625,
+            "error_rate": 0.07975792756759821,
+            "pause_pattern": "variable",
+            "correction_frequency": 0.05560080904074331
+          },
+          {
+            "typing_speed": 166.80695897788263,
+            "error_rate": 0.08250274873016605,
+            "pause_pattern": "variable",
+            "correction_frequency": 0.09966072725482275
+          },
+          {
+            "typing_speed": 213.75322955074404,
+            "error_rate": 0.04263657749755206,
+            "pause_pattern": "variable",
+            "correction_frequency": 0.12356954313396629
+          }
+        ]
+      },
+      "fingerprint": {
+        "canvas_hash": "36d79bfd220f",
+        "webgl_hash": "6c3f0c1c2648",
+        "audio_hash": "c4c9a2d8a9e1",
+        "font_list": [
+          "Arial",
+          "Helvetica",
+          "Times New Roman",
+          "Courier New"
+        ],
+        "screen_resolution": [
+          1920,
+          1080
+        ],
+        "color_depth": 24,
+        "timezone": "America/New_York",
+        "language": "en-US",
+        "platform": "MacIntel",
+        "hardware_concurrency": 8,
+        "device_memory": 8,
+        "connection_type": "wifi"
+      },
+      "proxy": {
+        "proxy_type": "datacenter",
+        "rotation_frequency": "per_hour",
+        "geographic_distribution": "local",
+        "session_persistence": true,
+        "fallback_strategy": "retry_with_delay"
+      },
+      "timing": {
+        "request_spacing": [
+          1.0,
+          3.0
+        ],
+        "session_duration": [
+          1200.0,
+          3600.0
+        ],
+        "page_dwell_time": [
+          10.0,
+          45.0
+        ],
+        "randomization_factor": 0.2
+      },
+      "session": {
+        "session_persistence": true,
+        "cookie_management": "full",
+        "local_storage": true,
+        "session_storage": true,
+        "cache_control": "default"
+      },
+      "quantum_entropy": 0.666839
+    },
+    "https://example-bank.com/about-us": {
+      "behavior": {
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "mouse_patterns": [
+          {
+            "speed": 140.90237743944672,
+            "acceleration": "natural",
+            "pauses": 0.38126376180421584,
+            "curvature": 0.316941178529904
+          },
+          {
+            "speed": 84.75682482632392,
+            "acceleration": "natural",
+            "pauses": 0.5438577991671876,
+            "curvature": 0.4362842758915284
+          },
+          {
+            "speed": 176.1295031857153,
+            "acceleration": "natural",
+            "pauses": 0.6620942501310535,
+            "curvature": 0.24560899146489099
+          },
+          {
+            "speed": 103.56883170169547,
+            "acceleration": "natural",
+            "pauses": 0.1915139368423163,
+            "curvature": 0.34809950892544317
+          },
+          {
+            "speed": 170.28110664914328,
+            "acceleration": "natural",
+            "pauses": 0.23424156809383972,
+            "curvature": 0.263775315080974
+          },
+          {
+            "speed": 125.71918047082666,
+            "acceleration": "natural",
+            "pauses": 0.7180667341556735,
+            "curvature": 0.1899888896963601
+          },
+          {
+            "speed": 121.26890309579566,
+            "acceleration": "natural",
+            "pauses": 0.32625059390921934,
+            "curvature": 0.21697463318068297
+          },
+          {
+            "speed": 121.5505326707012,
+            "acceleration": "natural",
+            "pauses": 0.5213858559779693,
+            "curvature": 0.4669854103366476
+          },
+          {
+            "speed": 202.69399958145743,
+            "acceleration": "natural",
+            "pauses": 0.656205661490699,
+            "curvature": 0.3713789667647844
+          },
+          {
+            "speed": 230.45005824009002,
+            "acceleration": "natural",
+            "pauses": 0.6056838152375646,
+            "curvature": 0.35413596236492134
+          }
+        ],
+        "timing_patterns": {
+          "page_load_wait": [
+            0.9441878666666668,
+            2.8325636000000003
+          ],
+          "click_delay": [
+            0.28325636000000004,
+            0.9441878666666668
+          ]
+        },
+        "scroll_patterns": [
+          {
+            "speed": 3.5698274563115677,
+            "direction_changes": 0.18169846189646302,
+            "pause_frequency": 0.3103806931515153,
+            "scroll_distance": 150.10236474927837
+          },
+          {
+            "speed": 2.9200061051651582,
+            "direction_changes": 0.2699626540831467,
+            "pause_frequency": 0.4199600282870126,
+            "scroll_distance": 113.26246986393978
+          },
+          {
+            "speed": 2.687038650275474,
+            "direction_changes": 0.36513593586195825,
+            "pause_frequency": 0.21695703714575823,
+            "scroll_distance": 82.98933022173767
+          },
+          {
+            "speed": 1.663330566020986,
+            "direction_changes": 0.23831030703336611,
+            "pause_frequency": 0.34945300412383384,
+            "scroll_distance": 217.24222551403335
+          },
+          {
+            "speed": 3.594645000706012,
+            "direction_changes": 0.27125564723045065,
+            "pause_frequency": 0.27978507295676575,
+            "scroll_distance": 79.88642208555
+          },
+          {
+            "speed": 2.0887815376960406,
+            "direction_changes": 0.2731901739351055,
+            "pause_frequency": 0.29998652420770017,
+            "scroll_distance": 169.26582989076203
+          },
+          {
+            "speed": 3.5407357753898503,
+            "direction_changes": 0.25973670795595927,
+            "pause_frequency": 0.4265047787195567,
+            "scroll_distance": 179.54236503924534
+          },
+          {
+            "speed": 1.853856548226658,
+            "direction_changes": 0.35492189740969826,
+            "pause_frequency": 0.20076997247778322,
+            "scroll_distance": 202.06870689716104
+          }
+        ],
+        "click_patterns": [
+          {
+            "pressure": 0.7152671691937335,
+            "duration": 121.14776358002263,
+            "double_click_frequency": 0.03850848608702964,
+            "accuracy": 0.8468061123438083
+          },
+          {
+            "pressure": 0.7394475612101645,
+            "duration": 125.18532747297675,
+            "double_click_frequency": 0.031444330397509,
+            "accuracy": 0.8945249092988072
+          },
+          {
+            "pressure": 0.7368540201315894,
+            "duration": 182.37897509592668,
+            "double_click_frequency": 0.03873617033308154,
+            "accuracy": 0.9245971821902434
+          },
+          {
+            "pressure": 0.6919333966426925,
+            "duration": 184.8841649969288,
+            "double_click_frequency": 0.03640662971462145,
+            "accuracy": 0.8455566142283114
+          },
+          {
+            "pressure": 0.799556367218347,
+            "duration": 120.04431007673485,
+            "double_click_frequency": 0.04326166541132497,
+            "accuracy": 0.8919775275160338
+          },
+          {
+            "pressure": 0.8867650969186791,
+            "duration": 138.6891044895765,
+            "double_click_frequency": 0.05345689435053581,
+            "accuracy": 0.8665805372196208
+          }
+        ],
+        "keyboard_patterns": [
+          {
+            "typing_speed": 191.13566175637075,
+            "error_rate": 0.061054909049069614,
+            "pause_pattern": "variable",
+            "correction_frequency": 0.10220017163610129
+          },
+          {
+            "typing_speed": 189.8630351829693,
+            "error_rate": 0.056413265876204696,
+            "pause_pattern": "variable",
+            "correction_frequency": 0.04902947244080502
+          },
+          {
+            "typing_speed": 223.5810855837381,
+            "error_rate": 0.07061110221228345,
+            "pause_pattern": "variable",
+            "correction_frequency": 0.0492243784410534
+          },
+          {
+            "typing_speed": 147.6771474550255,
+            "error_rate": 0.07304114087521449,
+            "pause_pattern": "variable",
+            "correction_frequency": 0.08823140236155845
+          },
+          {
+            "typing_speed": 189.2395101066414,
+            "error_rate": 0.037746915240619426,
+            "pause_pattern": "variable",
+            "correction_frequency": 0.1093982994124632
+          }
+        ]
+      },
+      "fingerprint": {
+        "canvas_hash": "fc3faccd3e81",
+        "webgl_hash": "e5c5f0b19d1e",
+        "audio_hash": "1ce38fca7235",
+        "font_list": [
+          "Arial",
+          "Helvetica",
+          "Times New Roman",
+          "Courier New"
+        ],
+        "screen_resolution": [
+          1920,
+          1080
+        ],
+        "color_depth": 24,
+        "timezone": "America/New_York",
+        "language": "en-US",
+        "platform": "MacIntel",
+        "hardware_concurrency": 8,
+        "device_memory": 8,
+        "connection_type": "wifi"
+      },
+      "proxy": {
+        "proxy_type": "datacenter",
+        "rotation_frequency": "per_hour",
+        "geographic_distribution": "local",
+        "session_persistence": true,
+        "fallback_strategy": "retry_with_delay"
+      },
+      "timing": {
+        "request_spacing": [
+          1.0,
+          3.0
+        ],
+        "session_duration": [
+          1200.0,
+          3600.0
+        ],
+        "page_dwell_time": [
+          10.0,
+          45.0
+        ],
+        "randomization_factor": 0.2
+      },
+      "session": {
+        "session_persistence": true,
+        "cookie_management": "full",
+        "local_storage": true,
+        "session_storage": true,
+        "cache_control": "default"
+      },
+      "quantum_entropy": 0.622875
+    },
+    "https://example-blog.com/post/web-scraping-guide": {
+      "behavior": {
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "mouse_patterns": [
+          {
+            "speed": 142.34170332456893,
+            "acceleration": "natural",
+            "pauses": 0.3851583930474658,
+            "curvature": 0.32017875088751213
+          },
+          {
+            "speed": 85.62262066405364,
+            "acceleration": "natural",
+            "pauses": 0.5494133378485936,
+            "curvature": 0.44074094484895837
+          },
+          {
+            "speed": 177.92867618531818,
+            "acceleration": "natural",
+            "pauses": 0.6688575809557141,
+            "curvature": 0.24811790143119794
+          },
+          {
+            "speed": 104.6267932710393,
+            "acceleration": "natural",
+            "pauses": 0.19347026271607426,
+            "curvature": 0.3516553654191352
+          },
+          {
+            "speed": 172.02053794193813,
+            "acceleration": "natural",
+            "pauses": 0.23663435917697076,
+            "curvature": 0.2664697950872852
+          },
+          {
+            "speed": 127.00340912612931,
+            "acceleration": "natural",
+            "pauses": 0.7254018271221465,
+            "curvature": 0.19192963712585692
+          },
+          {
+            "speed": 122.50767191189435,
+            "acceleration": "natural",
+            "pauses": 0.32958326248006603,
+            "curvature": 0.21919104153111027
+          },
+          {
+            "speed": 122.79217834909663,
+            "acceleration": "natural",
+            "pauses": 0.5267118424679288,
+            "curvature": 0.4717556931472467
+          },
+          {
+            "speed": 204.76453043876617,
+            "acceleration": "natural",
+            "pauses": 0.6629088400439012,
+            "curvature": 0.37517262425849274
+          },
+          {
+            "speed": 232.8041188321153,
+            "acceleration": "natural",
+            "pauses": 0.6118709102271126,
+            "curvature": 0.35775348157749487
+          }
+        ],
+        "timing_patterns": {
+          "page_load_wait": [
+            0.9538328,
+            2.8614984000000003
+          ],
+          "click_delay": [
+            0.28614984,
+            0.9538328
+          ]
+        },
+        "scroll_patterns": [
+          {
+            "speed": 3.606293448984383,
+            "direction_changes": 0.18355452212942008,
+            "pause_frequency": 0.31355124977386273,
+            "scroll_distance": 151.63566903361902
+          },
+          {
+            "speed": 2.9498341353819315,
+            "direction_changes": 0.27272033811303575,
+            "pause_frequency": 0.4242499441167857,
+            "scroll_distance": 114.41945250433632
+          },
+          {
+            "speed": 2.7144869045487376,
+            "direction_changes": 0.3688658204361223,
+            "pause_frequency": 0.21917326575167728,
+            "scroll_distance": 83.83707100047957
+          },
+          {
+            "speed": 1.6803215833671468,
+            "direction_changes": 0.24074466051865026,
+            "pause_frequency": 0.3530226866487813,
+            "scroll_distance": 219.461367335528
+          },
+          {
+            "speed": 3.6313645060214186,
+            "direction_changes": 0.2740265392596653,
+            "pause_frequency": 0.28264309356007694,
+            "scroll_distance": 80.70246647931434
+          },
+          {
+            "speed": 2.110118561174323,
+            "direction_changes": 0.2759808272658118,
+            "pause_frequency": 0.3030509037967921,
+            "scroll_distance": 170.99489007310822
+          },
+          {
+            "speed": 3.576904594869755,
+            "direction_changes": 0.2623899333583347,
+            "pause_frequency": 0.43086154955121414,
+            "scroll_distance": 181.3764006188657
+          },
+          {
+            "speed": 1.8727937994331723,
+            "direction_changes": 0.3585474449939326,
+            "pause_frequency": 0.2028208492876279,
+            "scroll_distance": 204.13285035375557
+          }
+        ],
+        "click_patterns": [
+          {
+            "pressure": 0.7225736644431912,
+            "duration": 122.38529494900415,
+            "double_click_frequency": 0.0389018524860157,
+            "accuracy": 0.8554562854588782
+          },
+          {
+            "pressure": 0.7470010605540464,
+            "duration": 126.46410278921857,
+            "double_click_frequency": 0.03176553604005338,
+            "accuracy": 0.9036625326678215
+          },
+          {
+            "pressure": 0.7443810263042676,
+            "duration": 184.24198681033465,
+            "double_click_frequency": 0.03913186253972913,
+            "accuracy": 0.9340419955555067
+          },
+          {
+            "pressure": 0.6990015360642317,
+            "duration": 186.7727673701829,
+            "double_click_frequency": 0.03677852552994105,
+            "accuracy": 0.8541940236483058
+          },
+          {
+            "pressure": 0.807723881470874,
+            "duration": 121.27056960474978,
+            "double_click_frequency": 0.04370358581033864,
+            "accuracy": 0.9010891292337041
+          },
+          {
+            "pressure": 0.8958234533581683,
+            "duration": 140.1058216642888,
+            "double_click_frequency": 0.05400295959922215,
+            "accuracy": 0.8754327072215026
+          }
+        ],
+        "keyboard_patterns": [
+          {
+            "typing_speed": 193.08812352838117,
+            "error_rate": 0.061678588454662835,
+            "pause_pattern": "variable",
+            "correction_frequency": 0.10324415226419954
+          },
+          {
+            "typing_speed": 191.80249700137722,
+            "error_rate": 0.05698953062996867,
+            "pause_pattern": "variable",
+            "correction_frequency": 0.04953031132017924
+          },
+          {
+            "typing_speed": 225.86497922522534,
+            "error_rate": 0.07133239868036345,
+            "pause_pattern": "variable",
+            "correction_frequency": 0.049727208296424054
+          },
+          {
+            "typing_speed": 149.1856780052951,
+            "error_rate": 0.07378726032792374,
+            "pause_pattern": "variable",
+            "correction_frequency": 0.08913269120854186
+          },
+          {
+            "typing_speed": 191.1726025805522,
+            "error_rate": 0.038132502149631556,
+            "pause_pattern": "variable",
+            "correction_frequency": 0.11051580932957142
+          }
+        ]
+      },
+      "fingerprint": {
+        "canvas_hash": "bd1a955f0daf",
+        "webgl_hash": "a75982f6e497",
+        "audio_hash": "dffcdd41b55d",
+        "font_list": [
+          "Arial",
+          "Helvetica",
+          "Times New Roman",
+          "Courier New"
+        ],
+        "screen_resolution": [
+          1920,
+          1080
+        ],
+        "color_depth": 24,
+        "timezone": "America/New_York",
+        "language": "en-US",
+        "platform": "MacIntel",
+        "hardware_concurrency": 8,
+        "device_memory": 8,
+        "connection_type": "wifi"
+      },
+      "proxy": {
+        "proxy_type": "datacenter",
+        "rotation_frequency": "per_hour",
+        "geographic_distribution": "local",
+        "session_persistence": true,
+        "fallback_strategy": "retry_with_delay"
+      },
+      "timing": {
+        "request_spacing": [
+          1.0,
+          3.0
+        ],
+        "session_duration": [
+          1200.0,
+          3600.0
+        ],
+        "page_dwell_time": [
+          10.0,
+          45.0
+        ],
+        "randomization_factor": 0.2
+      },
+      "session": {
+        "session_persistence": true,
+        "cookie_management": "full",
+        "local_storage": true,
+        "session_storage": true,
+        "cache_control": "default"
+      },
+      "quantum_entropy": 0.315811
+    }
+  },
+  "value_assessments": {
+    "https://example-shop.com/products/premium-headphones": {
+      "should_extract": "True",
+      "priority_level": "critical",
+      "extraction_depth": "comprehensive",
+      "confidence": 0.6732804800724639,
+      "reasoning": "High business value; High ROI potential"
+    },
+    "https://example-news.com/tech/ai-breakthrough": {
+      "should_extract": "True",
+      "priority_level": "high",
+      "extraction_depth": "detailed",
+      "confidence": 0.6475832589285715,
+      "reasoning": "Moderate business value; High ROI potential"
+    },
+    "https://example-bank.com/about-us": {
+      "should_extract": "False",
+      "priority_level": "high",
+      "extraction_depth": "detailed",
+      "confidence": 0.608379745989305,
+      "reasoning": "Moderate business value; High ROI potential"
+    },
+    "https://example-blog.com/post/web-scraping-guide": {
+      "should_extract": "False",
+      "priority_level": "high",
+      "extraction_depth": "detailed",
+      "confidence": 0.608379745989305,
+      "reasoning": "Moderate business value; High ROI potential"
+    }
+  },
+  "extracted_data": {
+    "https://example-shop.com/products/premium-headphones": {
+      "data": {
+        "title": "Comprehensive data from https://example-shop.com/products/premium-headphones",
+        "content": "Full content extraction with all metadata",
+        "metadata": {
+          "extraction_depth": "comprehensive",
+          "timestamp": "2025-07-19T21:22:01.232924"
+        },
+        "structured_data": {
+          "type": "product",
+          "price": "$299.99",
+          "rating": 4.5
+        },
+        "images": [
+          "image1.jpg",
+          "image2.jpg"
+        ],
+        "links": [
+          "link1",
+          "link2",
+          "link3"
+        ]
+      },
+      "extraction_depth": "comprehensive",
+      "stealth_applied": true,
+      "extraction_success": true
+    },
+    "https://example-news.com/tech/ai-breakthrough": {
+      "data": {
+        "title": "Detailed data from https://example-news.com/tech/ai-breakthrough",
+        "content": "Detailed content extraction",
+        "metadata": {
+          "extraction_depth": "detailed",
+          "timestamp": "2025-07-19T21:22:01.334151"
+        },
+        "structured_data": {
+          "type": "product",
+          "price": "$299.99"
+        }
+      },
+      "extraction_depth": "detailed",
+      "stealth_applied": true,
+      "extraction_success": true
+    },
+    "https://example-bank.com/about-us": {
+      "data": null,
+      "extraction_depth": "none",
+      "stealth_applied": false,
+      "extraction_success": false,
+      "reason": "Moderate business value; High ROI potential"
+    },
+    "https://example-blog.com/post/web-scraping-guide": {
+      "data": null,
+      "extraction_depth": "none",
+      "stealth_applied": false,
+      "extraction_success": false,
+      "reason": "Moderate business value; High ROI potential"
+    }
+  },
+  "processed_data": {
+    "processed_dataframe": "                                                 url  ... timestamp_2025-07-19T21:22:01.334151\n0  https://example-shop.com/products/premium-head...  ...                                False\n1      https://example-news.com/tech/ai-breakthrough  ...                                 True\n\n[2 rows x 15 columns]",
+    "quality_score": 0.1,
+    "processing_summary": {
+      "original_shape": [
+        2,
+        5
+      ],
+      "processing_stages": [
+        "quality_analysis",
+        "data_cleaning",
+        "structure_optimization"
+      ],
+      "quality_improvements": [
+        {
+          "stage": "initial",
+          "quality_score": 0.1,
+          "issues_found": 1
+        },
+        {
+          "stage": "post_cleaning",
+          "quality_score": 0.1,
+          "issues_found": 1
+        }
+      ],
+      "data_loss": 0.0
+    },
+    "feature_metadata": {
+      "url_https://example-news.com/tech/ai-breakthrough": {
+        "type": "one_hot",
+        "base_feature": "url"
+      },
+      "url_https://example-shop.com/products/premium-headphones": {
+        "type": "one_hot",
+        "base_feature": "url"
+      },
+      "title_Comprehensive data from https://example-shop.com/products/premium-headphones": {
+        "type": "one_hot",
+        "base_feature": "title"
+      },
+      "title_Detailed data from https://example-news.com/tech/ai-breakthrough": {
+        "type": "one_hot",
+        "base_feature": "title"
+      },
+      "content_Detailed content extraction": {
+        "type": "one_hot",
+        "base_feature": "content"
+      },
+      "content_Full content extraction with all metadata": {
+        "type": "one_hot",
+        "base_feature": "content"
+      },
+      "extraction_depth_comprehensive": {
+        "type": "one_hot",
+        "base_feature": "extraction_depth"
+      },
+      "extraction_depth_detailed": {
+        "type": "one_hot",
+        "base_feature": "extraction_depth"
+      },
+      "timestamp_2025-07-19T21:22:01.232924": {
+        "type": "one_hot",
+        "base_feature": "timestamp"
+      },
+      "timestamp_2025-07-19T21:22:01.334151": {
+        "type": "one_hot",
+        "base_feature": "timestamp"
+      }
+    }
+  },
+  "performance_metrics": {
+    "overall_success": false,
+    "overall_success_rate": 0.5,
+    "stealth_success_rate": 1.0,
+    "value_assessment_accuracy": 0.0,
+    "processing_success_rate": 0.0,
+    "data_quality_score": 0.1,
+    "high_priority_extractions": 4,
+    "total_extractions": 2,
+    "efficiency_score": 0.3
+  },
+  "end_time": "2025-07-19T21:22:01.346907",
+  "duration_seconds": 12.82718801498413
+}

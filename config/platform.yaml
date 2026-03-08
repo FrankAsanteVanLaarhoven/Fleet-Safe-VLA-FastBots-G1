@@ -1,0 +1,341 @@
+# Universal Crawler & Cybersecurity Platform Configuration
+# Patent-Grade Production System with Five Core Innovations
+
+# Quantum TLS Fingerprint Randomization Engine (QTLS-FRE)
+tls_engine:
+  quantum_device: "simulated"  # Options: simulated, idq_quantis, ibm_quantum
+  gan_model_path: "models/evasion_gan.pth"
+  stealth_levels:
+    low:
+      entropy_bits: 32
+      gan_temperature: 0.1
+      session_lifetime: 300
+    medium:
+      entropy_bits: 64
+      gan_temperature: 0.3
+      session_lifetime: 600
+    high:
+      entropy_bits: 128
+      gan_temperature: 0.5
+      session_lifetime: 1800
+    extreme:
+      entropy_bits: 256
+      gan_temperature: 0.8
+      session_lifetime: 3600
+  
+  # Post-quantum cryptography settings
+  post_quantum:
+    algorithm: "ML-KEM768"
+    hybrid_mode: true
+    key_exchange: "X25519"
+    signature: "Ed25519"
+  
+  # Behavioral patterns
+  behavioral_patterns:
+    mouse_movement: true
+    keyboard_timing: true
+    scroll_patterns: true
+    click_patterns: true
+    human_delays: true
+
+# Multi-Agent Red-Team Orchestrator (MARO)
+orchestrator:
+  max_agents: 50
+  agent_pools:
+    - name: "playwright"
+      max_instances: 20
+      capabilities: ["javascript", "screenshots", "network_interception"]
+    - name: "selenium"
+      max_instances: 15
+      capabilities: ["javascript", "browser_automation"]
+    - name: "puppeteer"
+      max_instances: 15
+      capabilities: ["javascript", "pdf_generation", "performance_metrics"]
+  
+  # Agent types and configurations
+  agent_types:
+    reconnaissance:
+      max_concurrent: 10
+      timeout: 300
+      stealth_required: true
+    exploitation:
+      max_concurrent: 5
+      timeout: 600
+      stealth_required: true
+    evasion:
+      max_concurrent: 8
+      timeout: 180
+      stealth_required: true
+    reporting:
+      max_concurrent: 3
+      timeout: 120
+      stealth_required: false
+  
+  # Policy configuration
+  policy_graph: "config/policies/default.yaml"
+  craft_score_weights:
+    reconnaissance: 0.3
+    exploitation: 0.4
+    evasion: 0.2
+    reporting: 0.1
+
+# Dynamic Context Optimizer for Hybrid RAG-CAG (DCO-RAG/CAG)
+optimizer:
+  switch_threshold: 0.5
+  cache_size: 10000
+  latency_target: 0.05  # 50ms
+  
+  # Neural network predictor
+  predictor:
+    model_type: "transformer"
+    hidden_size: 512
+    num_layers: 6
+    learning_rate: 0.001
+    batch_size: 32
+  
+  # Cache management
+  cache:
+    ttl: 3600  # 1 hour
+    max_size_mb: 1024
+    eviction_policy: "lru"
+  
+  # RAG configuration
+  rag:
+    vector_store: "qdrant"
+    embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
+    top_k: 10
+    similarity_threshold: 0.7
+
+# Tri-Modal Semantic Locator (TriSL)
+locator:
+  # Hash algorithms
+  hash_algorithms:
+    blake3:
+      enabled: true
+      output_size: 64
+    simhash:
+      enabled: true
+      hash_bits: 64
+    perceptual:
+      enabled: true
+      hash_size: 64
+  
+  # Sector ontology
+  sector_ontology: "config/ontology/50_sectors.yaml"
+  bert_model: "sentence-transformers/all-mpnet-base-v2"
+  
+  # Deduplication settings
+  deduplication:
+    threshold: 0.97
+    min_similarity: 0.8
+    max_cluster_size: 1000
+  
+  # Database configuration
+  database:
+    type: "postgresql"
+    connection_pool_size: 20
+    max_connections: 100
+
+# Autonomous Self-Healing Guard (SH-Guard)
+guard:
+  monitoring_interval: 5  # seconds
+  
+  # Threat detection thresholds
+  threat_thresholds:
+    low: 0.3
+    medium: 0.5
+    high: 0.7
+    critical: 0.9
+  
+  # Mitigation strategies
+  mitigations:
+    process_isolation:
+      enabled: true
+      timeout: 30
+    network_quarantine:
+      enabled: true
+      duration: 3600
+    service_restart:
+      enabled: true
+      max_attempts: 3
+    container_recreation:
+      enabled: true
+      backup_required: true
+    kernel_patch:
+      enabled: true
+      rollback_enabled: true
+  
+  # GAN retraining
+  gan_retraining:
+    enabled: true
+    batch_size: 64
+    epochs: 100
+    learning_rate: 0.0002
+    model_save_path: "models/evasion_gan_retrained.pth"
+
+# API Configuration
+api:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 4
+  timeout: 300
+  rate_limit:
+    requests_per_minute: 1000
+    burst_size: 100
+  
+  # Authentication
+  auth:
+    enabled: true
+    jwt_secret: "${JWT_SECRET}"
+    token_expiry: 3600
+  
+  # CORS
+  cors:
+    allowed_origins: ["*"]
+    allowed_methods: ["GET", "POST", "PUT", "DELETE"]
+    allowed_headers: ["*"]
+
+# Storage Configuration
+storage:
+  # Redis
+  redis_url: "redis://localhost:6379"
+  redis_pool_size: 20
+  
+  # PostgreSQL
+  database_url: "postgresql+asyncpg://crawler:password@localhost/crawler_db"
+  database_pool_size: 20
+  
+  # File storage
+  file_storage:
+    type: "s3"  # Options: local, s3, gcs
+    bucket: "crawler-data"
+    region: "us-west-2"
+    access_key: "${AWS_ACCESS_KEY}"
+    secret_key: "${AWS_SECRET_KEY}"
+
+# Monitoring and Observability
+monitoring:
+  metrics_port: 9090
+  log_level: "INFO"
+  
+  # Prometheus
+  prometheus:
+    enabled: true
+    scrape_interval: 15
+  
+  # Logging
+  logging:
+    level: "INFO"
+    format: "json"
+    output: "stdout"
+    file_path: "logs/platform.log"
+    max_size: "100MB"
+    max_files: 10
+  
+  # Health checks
+  health_checks:
+    interval: 30
+    timeout: 10
+    failure_threshold: 3
+
+# Security Configuration
+security:
+  # TLS/SSL
+  tls:
+    enabled: true
+    cert_file: "certs/server.crt"
+    key_file: "certs/server.key"
+    ca_file: "certs/ca.crt"
+  
+  # Rate limiting
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 1000
+    burst_size: 100
+  
+  # Input validation
+  input_validation:
+    max_url_length: 2048
+    max_urls_per_request: 100
+    allowed_protocols: ["http", "https"]
+    blocked_domains: ["malware.example.com", "phishing.example.com"]
+
+# Performance Configuration
+performance:
+  # Crawl limits
+  crawl_limits:
+    max_concurrent_crawls: 50
+    max_pages_per_crawl: 10000
+    max_depth: 10
+    max_duration: 3600  # 1 hour
+  
+  # Resource limits
+  resource_limits:
+    max_memory_mb: 8192
+    max_cpu_percent: 80
+    max_disk_gb: 100
+  
+  # Caching
+  caching:
+    enabled: true
+    ttl: 3600
+    max_size_mb: 1024
+
+# Deployment Configuration
+deployment:
+  # Environment
+  environment: "production"  # Options: development, staging, production
+  
+  # Docker
+  docker:
+    image: "universal-crawler:latest"
+    registry: "registry.example.com"
+    pull_policy: "Always"
+  
+  # Kubernetes
+  kubernetes:
+    namespace: "crawler"
+    replicas: 3
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "500m"
+      limits:
+        memory: "4Gi"
+        cpu: "1000m"
+  
+  # Auto-scaling
+  autoscaling:
+    enabled: true
+    min_replicas: 2
+    max_replicas: 10
+    target_cpu_utilization: 70
+    target_memory_utilization: 80
+
+# Patent Information
+patent_info:
+  innovations:
+    - name: "Quantum TLS Fingerprint Randomization Engine"
+      patent_class: "H04L9/08, H04L9/32, G06N3/00"
+      novelty: "Hybrid ML-KEM768/X25519 handshake with quantum entropy and GAN behavior"
+    - name: "Multi-Agent Red-Team Orchestrator"
+      patent_class: "G06F11/36, G06N3/04"
+      novelty: "Policy-aware orchestration graph with CRAFT-score optimizer"
+    - name: "Dynamic Context Optimizer for Hybrid RAG-CAG"
+      patent_class: "G06F16/951, G06N5/04"
+      novelty: "RL-guided switch for retrieval/cache mode selection"
+    - name: "Tri-Modal Semantic Locator"
+      patent_class: "G06F16/243, G06F16/28"
+      novelty: "BLAKE3+SimHash+perceptual hash fusion with BERT-E5 ontology"
+    - name: "Autonomous Self-Healing Guard"
+      patent_class: "G06F21/57, G06F11/30"
+      novelty: "Closed-loop threat detection with GAN retraining"
+  
+  # Performance targets
+  performance_targets:
+    waf_detection_rate: "<0.5%"
+    auto_classification_f1: "≥0.92"
+    zero_day_finds_per_quarter: "≥25"
+    data_deduplication: "≥97%"
+    mttr: "≤30s"
+    cost_per_10k_pages: "≤£0.04" 

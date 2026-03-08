@@ -1,0 +1,52 @@
+{
+  "senior_engineers": {
+    "count": 8,
+    "skills": [
+      "Distributed systems (Kubernetes, Docker)",
+      "AI/ML (PyTorch, TensorFlow, transformers)",
+      "Web technologies (React, Next.js, TypeScript)",
+      "Big data (Apache Spark, Kafka, Delta Lake)",
+      "DevOps (AWS, GCP, Terraform)",
+      "Computer vision (OpenCV, CAPTCHA solving)",
+      "Network security (TLS, fingerprinting)",
+      "Data engineering (ETL, real-time processing)"
+    ],
+    "experience": "5+ years",
+    "salary_range": "$120K - $180K"
+  },
+  "ml_researchers": {
+    "count": 3,
+    "skills": [
+      "Neural networks and deep learning",
+      "Reinforcement learning",
+      "GANs and behavioral synthesis",
+      "Natural language processing",
+      "Research publication experience"
+    ],
+    "experience": "PhD or 3+ years research",
+    "salary_range": "$140K - $200K"
+  },
+  "data_scientists": {
+    "count": 2,
+    "skills": [
+      "Statistical analysis",
+      "A/B testing frameworks",
+      "Bayesian inference",
+      "Causal inference",
+      "Data visualization"
+    ],
+    "experience": "3+ years",
+    "salary_range": "$100K - $150K"
+  },
+  "product_managers": {
+    "count": 2,
+    "skills": [
+      "Enterprise SaaS experience",
+      "Data product development",
+      "Customer success management",
+      "Technical product strategy"
+    ],
+    "experience": "5+ years",
+    "salary_range": "$130K - $180K"
+  }
+}

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FastBot Hospital Patrol — Live Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0e17;--surface:#111827;--surface2:#1a2332;--border:#1e293b;
+  --cyan:#00ffe5;--green:#22c55e;--yellow:#facc15;--red:#ef4444;--blue:#3b82f6;
+  --orange:#f97316;--purple:#a855f7;--text:#e2e8f0;--muted:#64748b;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow:hidden;height:100vh}
+.app{display:grid;grid-template-columns:1fr 340px;grid-template-rows:56px 1fr;height:100vh;gap:0}
+
+/* Header */
+.header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;background:var(--surface);border-bottom:1px solid var(--border);z-index:10}
+.header h1{font-size:16px;font-weight:600;letter-spacing:-.3px;display:flex;align-items:center;gap:10px}
+.header h1 .dot{width:8px;height:8px;border-radius:50%;background:var(--cyan);
+  box-shadow:0 0 12px var(--cyan);animation:pulse 2s infinite}
+.header .meta{display:flex;gap:16px;font-size:12px;color:var(--muted)}
+.header .meta span{display:flex;align-items:center;gap:4px}
+
+/* Canvas area */
+.canvas-wrap{position:relative;background:var(--bg);overflow:hidden}
+canvas{display:block;width:100%;height:100%}
+.canvas-overlay{position:absolute;top:12px;left:12px;display:flex;gap:8px}
+.badge{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:500;
+  background:rgba(0,255,229,.1);border:1px solid rgba(0,255,229,.2);color:var(--cyan)}
+.badge.warn{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.3);color:var(--red)}
+.badge.ok{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.25);color:var(--green)}
+
+/* Sidebar */
+.sidebar{background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px}
+.card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px}
+.card h3{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:10px}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat{text-align:center}
+.stat .val{font-size:22px;font-weight:700;font-family:'JetBrains Mono',monospace;line-height:1.1}
+.stat .lbl{font-size:10px;color:var(--muted);margin-top:2px}
+.stat .val.cyan{color:var(--cyan)}
+.stat .val.green{color:var(--green)}
+.stat .val.yellow{color:var(--yellow)}
+.stat .val.red{color:var(--red)}
+
+/* Route progress */
+.route{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.route .wp{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:500;
+  background:var(--surface);border:1px solid var(--border);color:var(--muted);transition:.3s}
+.route .wp.active{background:rgba(0,255,229,.1);border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 10px rgba(0,255,229,.15)}
+.route .wp.done{background:rgba(34,197,94,.1);border-color:var(--green);color:var(--green)}
+.route .arrow{color:var(--muted);font-size:10px}
+
+/* Log */
+.log{max-height:180px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:10.5px;line-height:1.6;color:var(--muted)}
+.log .entry{padding:2px 0;border-bottom:1px solid rgba(30,41,59,.5)}
+.log .entry.arrive{color:var(--green)}
+.log .entry.warn{color:var(--yellow)}
+.log .entry.ep{color:var(--cyan)}
+
+/* Speedometer */
+.speed-bar{height:4px;background:var(--surface);border-radius:2px;overflow:hidden;margin-top:6px}
+.speed-bar .fill{height:100%;border-radius:2px;transition:width .15s;background:linear-gradient(90deg,var(--green),var(--cyan))}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.log::-webkit-scrollbar{width:4px}
+.log::-webkit-scrollbar-track{background:transparent}
+.log::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Header -->
+  <div class="header">
+    <h1><span class="dot"></span>FastBot Hospital Patrol — Live</h1>
+    <div class="meta">
+      <span>🏥 Omniverse Hospital</span>
+      <span>🤖 robot_1</span>
+      <span id="hdr-time">00:00</span>
+    </div>
+  </div>
+
+  <!-- Canvas -->
+  <div class="canvas-wrap">
+    <canvas id="sim"></canvas>
+    <div class="canvas-overlay">
+      <div class="badge" id="badge-mode">CMDP PATROL</div>
+      <div class="badge ok" id="badge-safety">SAFE</div>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="card">
+      <h3>Telemetry</h3>
+      <div class="stat-grid">
+        <div class="stat"><div class="val cyan" id="s-x">0.00</div><div class="lbl">X (m)</div></div>
+        <div class="stat"><div class="val cyan" id="s-y">0.00</div><div class="lbl">Y (m)</div></div>
+        <div class="stat"><div class="val green" id="s-v">0.00</div><div class="lbl">Speed (m/s)</div></div>
+        <div class="stat"><div class="val yellow" id="s-h">0°</div><div class="lbl">Heading</div></div>
+      </div>
+      <div class="speed-bar"><div class="fill" id="speed-fill" style="width:0%"></div></div>
+    </div>
+
+    <div class="card">
+      <h3>Route Progress</h3>
+      <div class="route" id="route-bar"></div>
+    </div>
+
+    <div class="card">
+      <h3>Safety Monitor</h3>
+      <div class="stat-grid">
+        <div class="stat"><div class="val green" id="s-zd">—</div><div class="lbl">Zone Dist (m)</div></div>
+        <div class="stat"><div class="val green" id="s-viol">0</div><div class="lbl">Violations</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Episode</h3>
+      <div class="stat-grid">
+        <div class="stat"><div class="val cyan" id="s-ep">1</div><div class="lbl">Episode</div></div>
+        <div class="stat"><div class="val" id="s-steps">0</div><div class="lbl">Steps</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Event Log</h3>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── CONFIG (mirrored from hospital_fleet.yaml) ────────────────────────
+const WAYPOINTS = { dock:{x:0,y:0}, pharmacy:{x:5,y:1}, ward_a:{x:10,y:3} };
+const SAFETY_ZONES = [{ name:"icu", minX:8, maxX:9, minY:2, maxY:4 }];
+const PATROL = ["dock","pharmacy","ward_a"];
+const INIT = { x:1, y:2, yaw:0 };
+const KP_L=.5, KP_A=2.0, MAX_L=.22, MAX_A=2.84, ARRIVE=.3, DT=1/60, SAFETY_D=.4;
+
+// ─── STATE ───────────────────────────────────────────────────────────
+let rx=INIT.x, ry=INIT.y, rth=INIT.yaw;
+let routeIdx=0, ep=1, steps=0, viols=0, totalViols=0, tStart=performance.now();
+let trail=[];
+
+// ─── CANVAS ──────────────────────────────────────────────────────────
+const canvas = document.getElementById("sim");
+const ctx = canvas.getContext("2d");
+let W, H, scale, ox, oy;
+
+function resize(){
+  const r = canvas.parentElement.getBoundingClientRect();
+  canvas.width = r.width * devicePixelRatio;
+  canvas.height = r.height * devicePixelRatio;
+  W = canvas.width; H = canvas.height;
+  // World coords: x=-3..13, y=-2..7 → fit to canvas
+  const worldW=18, worldH=11;
+  scale = Math.min(W/worldW, H/worldH) * .85;
+  ox = W/2 - 5*scale;
+  oy = H/2 + 2.5*scale;
+}
+window.addEventListener("resize", resize);
+resize();
+
+function toScreen(wx,wy){ return [ox + wx*scale, oy - wy*scale]; }
+
+// ─── DRAW ────────────────────────────────────────────────────────────
+function drawGrid(){
+  ctx.strokeStyle="rgba(30,41,59,.6)";
+  ctx.lineWidth=1;
+  for(let x=-3;x<=13;x++){
+    const [sx]=toScreen(x,0),[,sy0]=toScreen(0,-2),[,sy1]=toScreen(0,7);
+    ctx.beginPath(); ctx.moveTo(sx,sy0); ctx.lineTo(sx,sy1); ctx.stroke();
+  }
+  for(let y=-2;y<=7;y++){
+    const [sx0]=toScreen(-3,0),[sx1]=toScreen(13,0),[,sy]=toScreen(0,y);
+    ctx.beginPath(); ctx.moveTo(sx0,sy); ctx.lineTo(sx1,sy); ctx.stroke();
+  }
+  // Axis labels
+  ctx.fillStyle="rgba(100,116,139,.5)";
+  ctx.font=`${10*devicePixelRatio}px Inter`;
+  for(let x=-2;x<=12;x+=2){ const[sx,sy]=toScreen(x,-1.7); ctx.fillText(x+"m",sx-8,sy); }
+  for(let y=0;y<=6;y+=2){ const[sx,sy]=toScreen(-2.5,y); ctx.fillText(y+"m",sx,sy+4); }
+}
+
+function drawHospital(){
+  // Hospital floor outline
+  ctx.fillStyle="rgba(30,41,59,.3)";
+  const [ax,ay]=toScreen(-1,-1),[bx,by]=toScreen(12,6);
+  ctx.fillRect(ax,by,bx-ax,ay-by);
+  ctx.strokeStyle="rgba(100,116,139,.3)"; ctx.lineWidth=2;
+  ctx.strokeRect(ax,by,bx-ax,ay-by);
+  
+  // Room labels
+  ctx.fillStyle="rgba(100,116,139,.4)";
+  ctx.font=`${11*devicePixelRatio}px Inter`;
+  const rooms=[{t:"Lobby",x:.5,y:.5},{t:"Pharmacy",x:4.5,y:1.5},{t:"Ward A",x:9.5,y:3.5},
+               {t:"ICU",x:8.3,y:2.8},{t:"Corridor",x:5,y:4}];
+  rooms.forEach(r=>{const[sx,sy]=toScreen(r.x,r.y);ctx.fillText(r.t,sx,sy)});
+  
+  // Walls (decorative)
+  ctx.strokeStyle="rgba(100,116,139,.2)";ctx.lineWidth=1.5;
+  [[2,0,2,5],[7,0,7,2],[7,4,7,6],[4,2,7,2],[4,4,7,4]].forEach(([x1,y1,x2,y2])=>{
+    const[a,b]=toScreen(x1,y1),[c,d]=toScreen(x2,y2);
+    ctx.beginPath();ctx.moveTo(a,b);ctx.lineTo(c,d);ctx.stroke();
+  });
+}
+
+function drawSafetyZones(){
+  SAFETY_ZONES.forEach(z=>{
+    const [x1,y1]=toScreen(z.minX,z.maxY), [x2,y2]=toScreen(z.maxX,z.minY);
+    // Fill
+    ctx.fillStyle="rgba(239,68,68,.08)";
+    ctx.fillRect(x1,y1,x2-x1,y2-y1);
+    // Border
+    ctx.strokeStyle="rgba(239,68,68,.4)";ctx.lineWidth=2;
+    ctx.setLineDash([6,4]);
+    ctx.strokeRect(x1,y1,x2-x1,y2-y1);
+    ctx.setLineDash([]);
+    // Label
+    ctx.fillStyle="rgba(239,68,68,.6)";
+    ctx.font=`bold ${10*devicePixelRatio}px Inter`;
+    ctx.fillText("⚠ ICU FORBIDDEN",(x1+x2)/2-40,(y1+y2)/2);
+  });
+}
+
+function drawWaypoints(now){
+  const cols={dock:"#22c55e", pharmacy:"#3b82f6", ward_a:"#f97316"};
+  Object.entries(WAYPOINTS).forEach(([name,{x,y}])=>{
+    const [sx,sy]=toScreen(x,y);
+    const c=cols[name]||"#fff";
+    // Glow
+    const grad=ctx.createRadialGradient(sx,sy,0,sx,sy,18*devicePixelRatio);
+    grad.addColorStop(0,c+"40"); grad.addColorStop(1,c+"00");
+    ctx.fillStyle=grad; ctx.beginPath(); ctx.arc(sx,sy,18*devicePixelRatio,0,Math.PI*2); ctx.fill();
+    // Dot
+    ctx.fillStyle=c; ctx.beginPath(); ctx.arc(sx,sy,6*devicePixelRatio,0,Math.PI*2); ctx.fill();
+    // Ring pulse for active
+    const activeWP = PATROL[routeIdx % PATROL.length];
+    if(name===activeWP){
+      const r = 10 + 6*Math.sin(now/400);
+      ctx.strokeStyle=c+"80"; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(sx,sy,r*devicePixelRatio,0,Math.PI*2); ctx.stroke();
+    }
+    // Label
+    ctx.fillStyle="#e2e8f0"; ctx.font=`500 ${11*devicePixelRatio}px Inter`;
+    ctx.fillText(name.toUpperCase(), sx+10*devicePixelRatio, sy-10*devicePixelRatio);
+  });
+}
+
+function drawTrail(){
+  if(trail.length<2) return;
+  ctx.strokeStyle="rgba(0,255,229,.15)"; ctx.lineWidth=2;
+  ctx.beginPath();
+  trail.forEach(([tx,ty],i)=>{
+    const [sx,sy]=toScreen(tx,ty);
+    i===0?ctx.moveTo(sx,sy):ctx.lineTo(sx,sy);
+  });
+  ctx.stroke();
+}
+
+function drawRobot(now){
+  const [sx,sy]=toScreen(rx,ry);
+  const r=14*devicePixelRatio;
+  
+  // Shadow glow
+  const glow=ctx.createRadialGradient(sx,sy,0,sx,sy,r*2.5);
+  glow.addColorStop(0,"rgba(0,255,229,.15)"); glow.addColorStop(1,"rgba(0,255,229,0)");
+  ctx.fillStyle=glow; ctx.beginPath(); ctx.arc(sx,sy,r*2.5,0,Math.PI*2); ctx.fill();
+  
+  // Body
+  ctx.fillStyle="#00ffe5";
+  ctx.beginPath(); ctx.arc(sx,sy,r,0,Math.PI*2); ctx.fill();
+  
+  // Dark inner ring
+  ctx.fillStyle="rgba(10,14,23,.5)";
+  ctx.beginPath(); ctx.arc(sx,sy,r*.7,0,Math.PI*2); ctx.fill();
+  
+  // Direction arrow
+  ctx.save(); ctx.translate(sx,sy); ctx.rotate(-rth);
+  ctx.fillStyle="#22c55e";
+  ctx.beginPath();
+  ctx.moveTo(r*1.3,0); ctx.lineTo(r*.4,-r*.4); ctx.lineTo(r*.4,r*.4);
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+  
+  // Beacon pulse
+  const beaconR = (3 + 3*Math.abs(Math.sin(now/200))) * devicePixelRatio;
+  ctx.fillStyle="#facc15";
+  ctx.beginPath(); ctx.arc(sx,sy,beaconR,0,Math.PI*2); ctx.fill();
+  
+  // Line to target
+  const wp = WAYPOINTS[PATROL[routeIdx%PATROL.length]];
+  if(wp){
+    const [tx,ty]=toScreen(wp.x,wp.y);
+    ctx.strokeStyle="rgba(0,255,229,.2)";ctx.lineWidth=1;ctx.setLineDash([4,6]);
+    ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(tx,ty);ctx.stroke();
+    ctx.setLineDash([]);
+  }
+}
+
+// ─── POLICY STEP ─────────────────────────────────────────────────────
+function wrap(a){while(a>Math.PI)a-=2*Math.PI;while(a<-Math.PI)a+=2*Math.PI;return a}
+
+function checkSafety(px,py){
+  let md=Infinity,nn="none",vv=false;
+  SAFETY_ZONES.forEach(z=>{
+    const dx=Math.max(z.minX-px,0,px-z.maxX), dy=Math.max(z.minY-py,0,py-z.maxY);
+    const d=Math.sqrt(dx*dx+dy*dy);
+    if(d<md){md=d;nn=z.name}
+    if(d<SAFETY_D)vv=true;
+  });
+  return {dist:md,name:nn,violating:vv};
+}
+
+function policyStep(){
+  const wpName=PATROL[routeIdx%PATROL.length];
+  const wp=WAYPOINTS[wpName];
+  const dx=wp.x-rx, dy=wp.y-ry;
+  const dist=Math.sqrt(dx*dx+dy*dy);
+  const hErr=wrap(Math.atan2(dy,dx)-rth);
+  
+  const safety=checkSafety(rx,ry);
+  if(safety.violating){viols++;totalViols++}
+  
+  let lv=KP_L*dist, av=KP_A*hErr;
+  if(safety.dist<SAFETY_D*2) lv*=Math.max(.1,safety.dist/(SAFETY_D*2));
+  lv=Math.max(0,Math.min(lv,MAX_L));
+  av=Math.max(-MAX_A,Math.min(av,MAX_A));
+  
+  rth=wrap(rth+av*DT);
+  rx+=lv*Math.cos(rth)*DT;
+  ry+=lv*Math.sin(rth)*DT;
+  
+  steps++;
+  if(steps%3===0) trail.push([rx,ry]);
+  if(trail.length>500) trail.shift();
+  
+  // UI updates
+  document.getElementById("s-x").textContent=rx.toFixed(2);
+  document.getElementById("s-y").textContent=ry.toFixed(2);
+  document.getElementById("s-v").textContent=lv.toFixed(3);
+  document.getElementById("s-h").textContent=Math.round(rth*180/Math.PI)+"°";
+  document.getElementById("speed-fill").style.width=(lv/MAX_L*100)+"%";
+  document.getElementById("s-zd").textContent=safety.dist<100?safety.dist.toFixed(2):"—";
+  document.getElementById("s-zd").className="val "+(safety.dist<SAFETY_D?"red":safety.dist<SAFETY_D*2?"yellow":"green");
+  document.getElementById("s-viol").textContent=totalViols;
+  document.getElementById("s-viol").className="val "+(totalViols>0?"red":"green");
+  document.getElementById("s-ep").textContent=ep;
+  document.getElementById("s-steps").textContent=steps;
+  
+  // Safety badge
+  const badge=document.getElementById("badge-safety");
+  if(safety.violating){badge.className="badge warn";badge.textContent="⚠ VIOLATION"}
+  else if(safety.dist<SAFETY_D*2){badge.className="badge warn";badge.textContent="CAUTION"}
+  else{badge.className="badge ok";badge.textContent="SAFE"}
+  
+  // Arrival check
+  if(dist<ARRIVE){
+    addLog(`ARRIVED ${wpName.toUpperCase()}`, "arrive");
+    routeIdx++;
+    if(routeIdx>=PATROL.length){
+      addLog(`Episode ${ep} complete (${steps} steps, ${viols} violations)`, "ep");
+      routeIdx=0; ep++; steps=0; viols=0; tStart=performance.now();
+    }
+    updateRoute();
+  }
+  
+  if(steps%200===0 && steps>0){
+    addLog(`Step ${steps}: (${rx.toFixed(1)},${ry.toFixed(1)}) → ${wpName} d=${dist.toFixed(2)}`, "");
+  }
+  
+  return {lv, dist, safety, wpName};
+}
+
+// ─── ROUTE BAR ───────────────────────────────────────────────────────
+function updateRoute(){
+  const bar=document.getElementById("route-bar");
+  bar.innerHTML=PATROL.map((w,i)=>{
+    const cls = i < (routeIdx%PATROL.length) ? "done" : i===(routeIdx%PATROL.length) ? "active" : "";
+    return `<span class="wp ${cls}">${w}</span>${i<PATROL.length-1?'<span class="arrow">→</span>':''}`;
+  }).join("");
+}
+updateRoute();
+
+// ─── LOG ─────────────────────────────────────────────────────────────
+function addLog(msg,cls){
+  const log=document.getElementById("log");
+  const t=((performance.now()-tStart)/1000).toFixed(1);
+  log.innerHTML=`<div class="entry ${cls}">[${t}s] ${msg}</div>`+log.innerHTML;
+  if(log.children.length>50) log.removeChild(log.lastChild);
+}
+addLog("FastBot patrol started — dock → pharmacy → ward_a","ep");
+
+// ─── ANIMATION LOOP ─────────────────────────────────────────────────
+function frame(now){
+  resize();
+  ctx.clearRect(0,0,W,H);
+  
+  drawGrid();
+  drawHospital();
+  drawSafetyZones();
+  drawTrail();
+  drawWaypoints(now);
+  policyStep();
+  drawRobot(now);
+  
+  // Timer
+  const elapsed=((now-tStart)/1000);
+  const m=Math.floor(elapsed/60), s=Math.floor(elapsed%60);
+  document.getElementById("hdr-time").textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

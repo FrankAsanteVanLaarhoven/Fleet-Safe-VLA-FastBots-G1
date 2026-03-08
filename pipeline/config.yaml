@@ -1,0 +1,81 @@
+# ═══════════════════════════════════════════════════════════════════
+# SAFER-VLA Pipeline Configuration
+# FastBot Command Center → Isaac Mimic → LeRobot → GR00T N1.6
+# ═══════════════════════════════════════════════════════════════════
+
+project:
+  name: "SAFER-VLA Hospital Navigation"
+  description: "State-of-the-art VLA pipeline for hospital robot navigation"
+  author: "Frank Van Laarhoven"
+  institution: "Newcastle University"
+  email: "***REDACTED_EMAIL***"
+
+robot:
+  embodiment: UNITREE_G1
+  joint_count: 23  # 7+7 arms + 3+3 hands + 3 nav
+  img_height: 224
+  img_width: 224
+  fps: 30
+
+data:
+  hdf5_dir: ./datasets
+  lerobot_dir: ./datasets/lerobot
+  hf_repo: "FAVL/hospital-navigate-g1"
+  task_name: "Hospital-Navigate-G1-v0"
+  task_description: "Navigate to the pharmacy and deliver medical supplies."
+
+training:
+  # Isaac-GR00T fine-tuning (single GPU)
+  single_gpu:
+    model: "nvidia/GR00T-N1.6-3B"
+    max_steps: 2000
+    save_steps: 500
+    batch_size: 24
+    tune_diffusion: false
+    num_gpus: 1
+  
+  # LeRobot multi-GPU training (production)
+  multi_gpu:
+    model: "nvidia/GR00T-N1.6-3B"
+    max_steps: 200000
+    save_freq: 1000
+    eval_freq: 1000
+    batch_size: 48
+    tune_diffusion: true
+    num_gpus: 8
+    mixed_precision: bf16
+    policy_type: groot
+    video_backend: pyav
+
+deployment:
+  groot_server:
+    host: "0.0.0.0"
+    port: 5556
+    device: "cuda:0"
+  camera:
+    host: "localhost"
+    port: 5557
+  bridge:
+    rate_hz: 10
+    with_hands: true
+    dds_interface: "lo"
+
+infrastructure:
+  gcp:
+    instance: "isaac-l4-dev"
+    zone: "us-central1-a"
+    machine_type: "g2-standard-4"
+    gpu: "NVIDIA L4"
+    vram: "24GB"
+  aws_multigpu:
+    instance_type: "p4d.24xlarge"
+    gpus: "8x A100"
+    vram: "320GB total"
+
+integrations:
+  wandb:
+    entity: "f-a-v-l-org"
+    project: "safer-vla"
+  huggingface:
+    username: "FAVL"
+    org: "FAVL"

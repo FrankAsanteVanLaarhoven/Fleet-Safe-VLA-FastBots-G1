@@ -1,0 +1,366 @@
+{
+  "database_name": "trefis_analytics_db",
+  "version": "2.1.0",
+  "last_updated": "2024-07-21T17:00:00Z",
+  "tables": {
+    "companies": {
+      "table_name": "companies",
+      "description": "Core company information and metadata",
+      "columns": {
+        "company_id": {
+          "type": "VARCHAR(10)",
+          "primary_key": true,
+          "description": "Unique company identifier (ticker symbol)"
+        },
+        "company_name": {
+          "type": "VARCHAR(255)",
+          "nullable": false,
+          "description": "Full company name"
+        },
+        "sector": {
+          "type": "VARCHAR(100)",
+          "nullable": false,
+          "description": "Primary business sector"
+        },
+        "industry": {
+          "type": "VARCHAR(100)",
+          "nullable": true,
+          "description": "Specific industry classification"
+        },
+        "market_cap": {
+          "type": "DECIMAL(20,2)",
+          "nullable": true,
+          "description": "Market capitalization in USD"
+        },
+        "trefis_score": {
+          "type": "INTEGER",
+          "nullable": true,
+          "description": "Trefis proprietary rating score (0-100)"
+        },
+        "created_at": {
+          "type": "TIMESTAMP",
+          "default": "CURRENT_TIMESTAMP",
+          "description": "Record creation timestamp"
+        },
+        "updated_at": {
+          "type": "TIMESTAMP",
+          "default": "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+          "description": "Record last update timestamp"
+        }
+      },
+      "indexes": [
+        "idx_company_id",
+        "idx_sector",
+        "idx_market_cap",
+        "idx_trefis_score"
+      ],
+      "row_count": 8500
+    },
+    "financial_statements": {
+      "table_name": "financial_statements",
+      "description": "Quarterly and annual financial data",
+      "columns": {
+        "statement_id": {
+          "type": "BIGINT",
+          "primary_key": true,
+          "auto_increment": true,
+          "description": "Unique statement identifier"
+        },
+        "company_id": {
+          "type": "VARCHAR(10)",
+          "foreign_key": "companies.company_id",
+          "description": "Reference to companies table"
+        },
+        "period_type": {
+          "type": "ENUM('quarterly', 'annual')",
+          "nullable": false,
+          "description": "Financial period type"
+        },
+        "fiscal_year": {
+          "type": "INTEGER",
+          "nullable": false,
+          "description": "Fiscal year"
+        },
+        "fiscal_period": {
+          "type": "VARCHAR(10)",
+          "nullable": true,
+          "description": "Fiscal period (Q1, Q2, Q3, Q4)"
+        },
+        "revenue": {
+          "type": "DECIMAL(20,2)",
+          "nullable": true,
+          "description": "Total revenue in USD"
+        },
+        "net_income": {
+          "type": "DECIMAL(20,2)",
+          "nullable": true,
+          "description": "Net income in USD"
+        },
+        "eps_basic": {
+          "type": "DECIMAL(10,4)",
+          "nullable": true,
+          "description": "Basic earnings per share"
+        },
+        "eps_diluted": {
+          "type": "DECIMAL(10,4)",
+          "nullable": true,
+          "description": "Diluted earnings per share"
+        },
+        "total_assets": {
+          "type": "DECIMAL(20,2)",
+          "nullable": true,
+          "description": "Total assets in USD"
+        },
+        "total_liabilities": {
+          "type": "DECIMAL(20,2)",
+          "nullable": true,
+          "description": "Total liabilities in USD"
+        },
+        "operating_cash_flow": {
+          "type": "DECIMAL(20,2)",
+          "nullable": true,
+          "description": "Operating cash flow in USD"
+        },
+        "filing_date": {
+          "type": "DATE",
+          "nullable": true,
+          "description": "SEC filing date"
+        },
+        "created_at": {
+          "type": "TIMESTAMP",
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": [
+        "idx_company_id",
+        "idx_fiscal_year",
+        "idx_period_type",
+        "idx_filing_date"
+      ],
+      "row_count": 125000
+    },
+    "market_data": {
+      "table_name": "market_data",
+      "description": "Daily market price and volume data",
+      "columns": {
+        "data_id": {
+          "type": "BIGINT",
+          "primary_key": true,
+          "auto_increment": true
+        },
+        "company_id": {
+          "type": "VARCHAR(10)",
+          "foreign_key": "companies.company_id"
+        },
+        "date": {
+          "type": "DATE",
+          "nullable": false
+        },
+        "open_price": {
+          "type": "DECIMAL(10,4)",
+          "nullable": true
+        },
+        "high_price": {
+          "type": "DECIMAL(10,4)",
+          "nullable": true
+        },
+        "low_price": {
+          "type": "DECIMAL(10,4)",
+          "nullable": true
+        },
+        "close_price": {
+          "type": "DECIMAL(10,4)",
+          "nullable": true
+        },
+        "volume": {
+          "type": "BIGINT",
+          "nullable": true
+        },
+        "adjusted_close": {
+          "type": "DECIMAL(10,4)",
+          "nullable": true
+        },
+        "created_at": {
+          "type": "TIMESTAMP",
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": [
+        "idx_company_id",
+        "idx_date",
+        "idx_company_date"
+      ],
+      "row_count": 8500000
+    },
+    "analyst_reports": {
+      "table_name": "analyst_reports",
+      "description": "Trefis analyst reports and research",
+      "columns": {
+        "report_id": {
+          "type": "VARCHAR(50)",
+          "primary_key": true
+        },
+        "title": {
+          "type": "VARCHAR(500)",
+          "nullable": false
+        },
+        "author": {
+          "type": "VARCHAR(255)",
+          "nullable": false
+        },
+        "report_date": {
+          "type": "DATE",
+          "nullable": false
+        },
+        "summary": {
+          "type": "TEXT",
+          "nullable": true
+        },
+        "content": {
+          "type": "LONGTEXT",
+          "nullable": true
+        },
+        "report_type": {
+          "type": "ENUM('sector_analysis', 'company_analysis', 'market_outlook', 'earnings_preview')",
+          "nullable": false
+        },
+        "sector": {
+          "type": "VARCHAR(100)",
+          "nullable": true
+        },
+        "company_id": {
+          "type": "VARCHAR(10)",
+          "foreign_key": "companies.company_id",
+          "nullable": true
+        },
+        "rating": {
+          "type": "ENUM('Strong Buy', 'Buy', 'Hold', 'Sell', 'Strong Sell')",
+          "nullable": true
+        },
+        "target_price": {
+          "type": "DECIMAL(10,2)",
+          "nullable": true
+        },
+        "created_at": {
+          "type": "TIMESTAMP",
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": [
+        "idx_report_id",
+        "idx_author",
+        "idx_report_date",
+        "idx_report_type",
+        "idx_company_id"
+      ],
+      "row_count": 15000
+    },
+    "api_requests": {
+      "table_name": "api_requests",
+      "description": "API request logging and analytics",
+      "columns": {
+        "request_id": {
+          "type": "VARCHAR(50)",
+          "primary_key": true
+        },
+        "endpoint": {
+          "type": "VARCHAR(255)",
+          "nullable": false
+        },
+        "method": {
+          "type": "ENUM('GET', 'POST', 'PUT', 'DELETE')",
+          "nullable": false
+        },
+        "user_id": {
+          "type": "VARCHAR(50)",
+          "nullable": true
+        },
+        "api_key": {
+          "type": "VARCHAR(100)",
+          "nullable": true
+        },
+        "status_code": {
+          "type": "INTEGER",
+          "nullable": false
+        },
+        "response_time": {
+          "type": "INTEGER",
+          "nullable": true,
+          "description": "Response time in milliseconds"
+        },
+        "request_size": {
+          "type": "INTEGER",
+          "nullable": true,
+          "description": "Request size in bytes"
+        },
+        "response_size": {
+          "type": "INTEGER",
+          "nullable": true,
+          "description": "Response size in bytes"
+        },
+        "ip_address": {
+          "type": "VARCHAR(45)",
+          "nullable": true
+        },
+        "user_agent": {
+          "type": "TEXT",
+          "nullable": true
+        },
+        "created_at": {
+          "type": "TIMESTAMP",
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": [
+        "idx_request_id",
+        "idx_endpoint",
+        "idx_user_id",
+        "idx_status_code",
+        "idx_created_at"
+      ],
+      "row_count": 2500000
+    }
+  },
+  "views": {
+    "company_summary": {
+      "description": "Aggregated company information with latest financials",
+      "sql": "SELECT c.*, fs.revenue, fs.net_income, fs.eps_diluted FROM companies c LEFT JOIN financial_statements fs ON c.company_id = fs.company_id WHERE fs.fiscal_year = (SELECT MAX(fiscal_year) FROM financial_statements)"
+    },
+    "market_performance": {
+      "description": "Daily market performance summary",
+      "sql": "SELECT company_id, date, close_price, volume, (close_price - LAG(close_price) OVER (PARTITION BY company_id ORDER BY date)) / LAG(close_price) OVER (PARTITION BY company_id ORDER BY date) * 100 as daily_return FROM market_data"
+    }
+  },
+  "stored_procedures": {
+    "get_company_financials": {
+      "description": "Retrieve company financial data for specified period",
+      "parameters": ["p_company_id VARCHAR(10)", "p_start_date DATE", "p_end_date DATE"]
+    },
+    "calculate_valuation_metrics": {
+      "description": "Calculate valuation metrics for companies",
+      "parameters": ["p_company_id VARCHAR(10)"]
+    }
+  },
+  "database_stats": {
+    "total_size_gb": 45.2,
+    "index_size_gb": 12.8,
+    "data_size_gb": 32.4,
+    "tables_count": 15,
+    "views_count": 8,
+    "stored_procedures_count": 12,
+    "daily_inserts": 50000,
+    "daily_updates": 25000,
+    "daily_deletes": 1000
+  },
+  "backup_schedule": {
+    "full_backup": "Daily at 2:00 AM",
+    "incremental_backup": "Every 4 hours",
+    "retention_policy": "30 days for full backups, 7 days for incremental"
+  },
+  "performance_metrics": {
+    "average_query_time_ms": 45,
+    "slow_query_threshold_ms": 1000,
+    "connection_pool_size": 100,
+    "max_connections": 500
+  }
+} 

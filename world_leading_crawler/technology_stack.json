@@ -1,0 +1,92 @@
+{
+  "infrastructure": {
+    "cloud_providers": [
+      "AWS",
+      "GCP"
+    ],
+    "containerization": [
+      "Docker",
+      "Kubernetes"
+    ],
+    "orchestration": [
+      "Terraform",
+      "Helm"
+    ],
+    "monitoring": [
+      "Prometheus",
+      "Grafana",
+      "Jaeger"
+    ]
+  },
+  "ai_ml": {
+    "deep_learning": [
+      "PyTorch",
+      "TensorFlow"
+    ],
+    "transformers": [
+      "Hugging Face",
+      "BERT",
+      "GPT"
+    ],
+    "reinforcement_learning": [
+      "Stable Baselines3",
+      "RLlib"
+    ],
+    "computer_vision": [
+      "OpenCV",
+      "Pillow",
+      "Albumentations"
+    ]
+  },
+  "data_processing": {
+    "streaming": [
+      "Apache Kafka",
+      "Apache Flink"
+    ],
+    "batch_processing": [
+      "Apache Spark",
+      "Delta Lake"
+    ],
+    "databases": [
+      "PostgreSQL",
+      "Redis",
+      "Elasticsearch"
+    ],
+    "analytics": [
+      "Apache Superset",
+      "Power BI"
+    ]
+  },
+  "frontend": {
+    "framework": [
+      "Next.js",
+      "React"
+    ],
+    "visualization": [
+      "D3.js",
+      "React Three Fiber"
+    ],
+    "styling": [
+      "Tailwind CSS",
+      "Framer Motion"
+    ],
+    "state_management": [
+      "Zustand",
+      "React Query"
+    ]
+  },
+  "proxy_services": {
+    "primary": [
+      "ScrapFly API",
+      "Bright Data"
+    ],
+    "backup": [
+      "Oxylabs",
+      "Smartproxy"
+    ],
+    "captcha_solving": [
+      "2captcha",
+      "Anti-Captcha"
+    ]
+  }
+}

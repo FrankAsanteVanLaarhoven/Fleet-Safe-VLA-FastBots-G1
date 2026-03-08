@@ -1,0 +1,11 @@
+{
+  "labels": ["Jan", "Feb", "Mar", "Apr", "May"],
+  "datasets": [
+    {
+      "label": "Revenue ($M)",
+      "data": [120, 135, 150, 160, 175],
+      "borderColor": "#6366f1",
+      "backgroundColor": "#a5b4fc"
+    }
+  ]
+} 

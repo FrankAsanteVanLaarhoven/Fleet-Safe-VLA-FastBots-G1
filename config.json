@@ -1,0 +1,88 @@
+{
+  "database": {
+    "url": "sqlite:///crawler.db",
+    "pool_size": 10,
+    "max_overflow": 20,
+    "echo": false
+  },
+  "storage": {
+    "base_path": "crawl_data",
+    "max_size_gb": 100,
+    "compression_enabled": true,
+    "retention_days": 30,
+    "backup_enabled": true,
+    "backup_path": "backups"
+  },
+  "network": {
+    "timeout": 30,
+    "max_retries": 3,
+    "retry_delay": 1.0,
+    "max_concurrent_requests": 10,
+    "rate_limit_requests_per_minute": 60,
+    "user_agent_rotation": true,
+    "proxy_enabled": false,
+    "proxy_list": []
+  },
+  "security": {
+    "ssl_verify": true,
+    "allow_self_signed": false,
+    "certificate_path": null,
+    "key_path": null,
+    "encryption_enabled": false,
+    "encryption_key": null
+  },
+  "compliance": {
+    "gdpr_compliant": true,
+    "ccpa_compliant": true,
+    "respect_robots_txt": true,
+    "respect_rate_limits": true,
+    "data_retention_days": 30,
+    "anonymize_data": true,
+    "audit_logging": true
+  },
+  "api": {
+    "host": "0.0.0.0",
+    "port": 8000,
+    "workers": 4,
+    "cors_origins": [
+      "*"
+    ],
+    "api_key_required": false,
+    "rate_limit_enabled": true,
+    "rate_limit_requests_per_minute": 100
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    "file_enabled": true,
+    "file_path": "logs/crawler.log",
+    "max_file_size_mb": 100,
+    "backup_count": 5,
+    "console_enabled": true
+  },
+  "crawler": {
+    "default_mode": "enhanced",
+    "default_max_depth": 3,
+    "default_max_pages": 100,
+    "default_delay": 1.0,
+    "extract_images": true,
+    "extract_links": true,
+    "extract_forms": true,
+    "extract_scripts": true,
+    "extract_styles": true,
+    "extract_meta": true,
+    "ocr_enabled": false,
+    "ast_analysis": false,
+    "network_analysis": false,
+    "screenshot_enabled": false,
+    "pdf_export_enabled": false
+  },
+  "monitoring": {
+    "metrics_enabled": true,
+    "prometheus_enabled": false,
+    "health_check_interval": 30,
+    "performance_monitoring": true,
+    "alerting_enabled": false,
+    "alert_email": null
+  }
+}

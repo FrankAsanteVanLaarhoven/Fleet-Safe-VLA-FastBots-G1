@@ -1,0 +1,147 @@
+{
+  "endpoint": "/api/v1/companies/MSFT/financials",
+  "method": "GET",
+  "status": 200,
+  "timestamp": "2024-07-21T16:30:00Z",
+  "request_id": "req_7f8e9a2b3c4d5e6f",
+  "response": {
+    "company_id": "MSFT",
+    "company_name": "Microsoft Corporation",
+    "fiscal_year": 2024,
+    "currency": "USD",
+    "financial_statements": {
+      "income_statement": {
+        "revenue": {
+          "total": 212000000000,
+          "productivity_and_business_processes": 69000000000,
+          "intelligent_cloud": 89000000000,
+          "more_personal_computing": 54000000000
+        },
+        "cost_of_revenue": {
+          "total": 65800000000,
+          "productivity_and_business_processes": 18500000000,
+          "intelligent_cloud": 28500000000,
+          "more_personal_computing": 18800000000
+        },
+        "gross_profit": 146200000000,
+        "operating_expenses": {
+          "research_and_development": 27000000000,
+          "sales_and_marketing": 22000000000,
+          "general_and_administrative": 8500000000
+        },
+        "operating_income": 87200000000,
+        "net_income": 72300000000,
+        "earnings_per_share": {
+          "basic": 9.72,
+          "diluted": 9.65
+        }
+      },
+      "balance_sheet": {
+        "assets": {
+          "current_assets": {
+            "cash_and_cash_equivalents": 80000000000,
+            "short_term_investments": 120000000000,
+            "accounts_receivable": 45000000000,
+            "inventories": 2500000000,
+            "other_current_assets": 15000000000
+          },
+          "total_current_assets": 262500000000,
+          "non_current_assets": {
+            "property_and_equipment": 120000000000,
+            "goodwill": 85000000000,
+            "intangible_assets": 25000000000,
+            "other_assets": 35000000000
+          },
+          "total_assets": 527500000000
+        },
+        "liabilities": {
+          "current_liabilities": {
+            "accounts_payable": 18000000000,
+            "accrued_compensation": 12000000000,
+            "income_taxes": 8500000000,
+            "other_current_liabilities": 25000000000
+          },
+          "total_current_liabilities": 63500000000,
+          "long_term_debt": 95000000000,
+          "other_liabilities": 35000000000,
+          "total_liabilities": 193500000000
+        },
+        "equity": {
+          "common_stock": 850000000,
+          "retained_earnings": 280000000000,
+          "accumulated_other_comprehensive_income": 45000000000,
+          "total_equity": 334000000000
+        }
+      },
+      "cash_flow_statement": {
+        "operating_cash_flow": 89000000000,
+        "investing_cash_flow": -45000000000,
+        "financing_cash_flow": -25000000000,
+        "net_cash_flow": 19000000000,
+        "free_cash_flow": 67000000000
+      }
+    },
+    "key_metrics": {
+      "profitability": {
+        "gross_margin": 68.9,
+        "operating_margin": 34.1,
+        "net_margin": 34.1,
+        "return_on_equity": 38.7,
+        "return_on_assets": 13.7
+      },
+      "liquidity": {
+        "current_ratio": 4.13,
+        "quick_ratio": 4.08,
+        "cash_ratio": 1.26
+      },
+      "solvency": {
+        "debt_to_equity": 0.35,
+        "debt_to_assets": 0.18,
+        "interest_coverage": 45.2
+      },
+      "efficiency": {
+        "asset_turnover": 0.40,
+        "inventory_turnover": 26.4,
+        "receivables_turnover": 4.71
+      }
+    },
+    "quarterly_data": {
+      "q1_2024": {
+        "revenue": 56500000000,
+        "net_income": 22300000000,
+        "eps": 2.99
+      },
+      "q2_2024": {
+        "revenue": 62000000000,
+        "net_income": 21800000000,
+        "eps": 2.93
+      },
+      "q3_2024": {
+        "revenue": 61800000000,
+        "net_income": 21900000000,
+        "eps": 2.94
+      },
+      "q4_2024": {
+        "revenue": 31700000000,
+        "net_income": 6300000000,
+        "eps": 0.85
+      }
+    },
+    "growth_rates": {
+      "revenue_growth_yoy": 14.3,
+      "net_income_growth_yoy": 20.1,
+      "eps_growth_yoy": 21.5
+    }
+  },
+  "metadata": {
+    "data_source": "SEC Filings (10-K, 10-Q)",
+    "last_filing_date": "2024-07-18",
+    "next_filing_date": "2024-10-24",
+    "currency_conversion": "None (Original USD)",
+    "api_version": "1.0",
+    "rate_limit": {
+      "requests_per_minute": 100,
+      "requests_per_hour": 1000
+    }
+  }
+} 

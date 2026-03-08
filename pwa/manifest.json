@@ -1,0 +1,70 @@
+{
+  "name": "SAFER-VLA Command Center",
+  "short_name": "SAFER-VLA",
+  "description": "State-of-the-Art Fleet Autonomy for Robotics Education — Digital Twin Command Center with WebRTC streaming, VLA inference, and fleet control for Unitree G1 humanoid robots.",
+  "start_url": "/fastbot_command_center.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "landscape",
+  "theme_color": "#0a0e17",
+  "background_color": "#0a0e17",
+  "categories": ["education", "productivity", "utilities"],
+  "lang": "en",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/pwa/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/pwa/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/pwa/screenshots/command-center.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "label": "FastBot Digital Twin with 3D hospital environment"
+    },
+    {
+      "src": "/pwa/screenshots/fleet-panel.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "label": "G1 Fleet Controller with FSM and virtual gamepad"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Fleet Controller",
+      "short_name": "Fleet",
+      "description": "Open the G1 Fleet Controller panel",
+      "url": "/fastbot_command_center.html?panel=fleet"
+    },
+    {
+      "name": "VLA Inference",
+      "short_name": "VLA",
+      "description": "Open the GR00T VLA Inference panel",
+      "url": "/fastbot_command_center.html?panel=vla"
+    },
+    {
+      "name": "Dataset Manager",
+      "short_name": "Data",
+      "description": "Open the dataset manager",
+      "url": "/fastbot_command_center.html?panel=dataset"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "protocol_handlers": [
+    {
+      "protocol": "web+safervla",
+      "url": "/fastbot_command_center.html?action=%s"
+    }
+  ]
+}

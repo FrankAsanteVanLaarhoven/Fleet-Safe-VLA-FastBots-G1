@@ -1,0 +1,47 @@
+{
+  "seed_round": {
+    "amount": "$2.7M",
+    "use_of_funds": {
+      "development_team": "$2M (15 engineers \u00d7 18 months)",
+      "infrastructure": "$500K (AWS/GCP multi-cloud)",
+      "premium_apis": "$200K (Proxy services, CAPTCHA solving)"
+    },
+    "timeline": "Month 1",
+    "investor_profile": "AI/ML focused VCs, data infrastructure investors"
+  },
+  "series_a": {
+    "amount": "$10M",
+    "use_of_funds": {
+      "team_expansion": "$5M (30 engineers)",
+      "marketing_sales": "$3M (Enterprise go-to-market)",
+      "infrastructure_scale": "$2M (Global expansion)"
+    },
+    "timeline": "Month 12",
+    "milestone": "100 enterprise customers, $5M ARR"
+  },
+  "series_b": {
+    "amount": "$50M",
+    "use_of_funds": {
+      "international_expansion": "$20M",
+      "product_development": "$15M",
+      "acquisitions": "$10M",
+      "working_capital": "$5M"
+    },
+    "timeline": "Month 24",
+    "milestone": "500 enterprise customers, $25M ARR"
+  },
+  "exit_strategy": {
+    "ipo_timeline": "Year 5",
+    "projected_valuation": "$1B+",
+    "acquisition_targets": [
+      "Palantir",
+      "Snowflake",
+      "Databricks"
+    ],
+    "strategic_buyers": [
+      "Microsoft",
+      "Google",
+      "Amazon"
+    ]
+  }
+}

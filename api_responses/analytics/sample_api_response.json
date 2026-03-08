@@ -1,0 +1,9 @@
+{
+  "endpoint": "/api/v1/companies/acme",
+  "status": 200,
+  "data": {
+    "name": "Acme Corp",
+    "sector": "Technology",
+    "trefisScore": 87
+  }
+} 

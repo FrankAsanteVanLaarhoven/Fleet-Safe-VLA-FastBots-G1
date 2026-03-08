@@ -1,0 +1,216 @@
+{
+  "cache_system": "Redis",
+  "version": "7.0.12",
+  "configuration": {
+    "host": "trefis-cache-redis-01.prod.internal",
+    "port": 6379,
+    "database_count": 16,
+    "max_memory": "32GB",
+    "max_memory_policy": "allkeys-lru",
+    "persistence": {
+      "rdb": {
+        "enabled": true,
+        "save_interval": "900 1 300 10 60 10000"
+      },
+      "aof": {
+        "enabled": true,
+        "appendfsync": "everysec"
+      }
+    }
+  },
+  "cache_keys": {
+    "company_data": {
+      "pattern": "company:{company_id}",
+      "ttl": 3600,
+      "description": "Company profile and basic information",
+      "example": {
+        "key": "company:MSFT",
+        "value": {
+          "name": "Microsoft Corporation",
+          "sector": "Technology",
+          "market_cap": 3120000000000,
+          "trefis_score": 92,
+          "last_updated": "2024-07-21T15:45:00Z"
+        }
+      }
+    },
+    "financial_data": {
+      "pattern": "financials:{company_id}:{period}",
+      "ttl": 1800,
+      "description": "Financial statement data",
+      "example": {
+        "key": "financials:MSFT:2024-Q3",
+        "value": {
+          "revenue": 61800000000,
+          "net_income": 21900000000,
+          "eps": 2.94,
+          "filing_date": "2024-07-18"
+        }
+      }
+    },
+    "market_data": {
+      "pattern": "market:{company_id}:{date}",
+      "ttl": 300,
+      "description": "Daily market price data",
+      "example": {
+        "key": "market:MSFT:2024-07-21",
+        "value": {
+          "open": 412.50,
+          "high": 418.75,
+          "low": 410.20,
+          "close": 415.30,
+          "volume": 28500000
+        }
+      }
+    },
+    "analyst_reports": {
+      "pattern": "report:{report_id}",
+      "ttl": 7200,
+      "description": "Analyst report content",
+      "example": {
+        "key": "report:TREFIS-TECH-2024-Q3",
+        "value": {
+          "title": "Technology Sector Q3 2024: AI Revolution and Cloud Migration Acceleration",
+          "author": "Dr. Sarah Chen",
+          "summary": "The technology sector continues to experience unprecedented growth...",
+          "key_findings": ["Cloud computing market reached $650B in Q2 2024..."]
+        }
+      }
+    },
+    "api_responses": {
+      "pattern": "api:{endpoint_hash}:{params_hash}",
+      "ttl": 600,
+      "description": "Cached API responses",
+      "example": {
+        "key": "api:company_financials:abc123:def456",
+        "value": {
+          "status": 200,
+          "data": {
+            "company_id": "MSFT",
+            "financials": {...}
+          },
+          "cached_at": "2024-07-21T16:30:00Z"
+        }
+      }
+    },
+    "user_sessions": {
+      "pattern": "session:{session_id}",
+      "ttl": 86400,
+      "description": "User session data",
+      "example": {
+        "key": "session:sess_abc123def456",
+        "value": {
+          "user_id": "user_12345",
+          "permissions": ["read:companies", "read:reports"],
+          "last_activity": "2024-07-21T16:45:00Z"
+        }
+      }
+    },
+    "rate_limiting": {
+      "pattern": "rate_limit:{user_id}:{endpoint}",
+      "ttl": 60,
+      "description": "API rate limiting counters",
+      "example": {
+        "key": "rate_limit:user_12345:/api/v1/companies",
+        "value": {
+          "requests": 45,
+          "window_start": "2024-07-21T16:40:00Z",
+          "limit": 100
+        }
+      }
+    },
+    "search_index": {
+      "pattern": "search:{query_hash}",
+      "ttl": 1800,
+      "description": "Search result caching",
+      "example": {
+        "key": "search:tech_companies_cloud",
+        "value": {
+          "results": [
+            {"company_id": "MSFT", "relevance": 0.95},
+            {"company_id": "AMZN", "relevance": 0.92}
+          ],
+          "total_count": 25,
+          "search_time_ms": 45
+        }
+      }
+    }
+  },
+  "cache_databases": {
+    "db_0": {
+      "purpose": "Company data and profiles",
+      "key_count": 8500,
+      "memory_usage": "2.1GB"
+    },
+    "db_1": {
+      "purpose": "Financial data",
+      "key_count": 125000,
+      "memory_usage": "8.5GB"
+    },
+    "db_2": {
+      "purpose": "Market data",
+      "key_count": 8500000,
+      "memory_usage": "12.3GB"
+    },
+    "db_3": {
+      "purpose": "Analyst reports",
+      "key_count": 15000,
+      "memory_usage": "3.2GB"
+    },
+    "db_4": {
+      "purpose": "API responses",
+      "key_count": 50000,
+      "memory_usage": "1.8GB"
+    },
+    "db_5": {
+      "purpose": "User sessions",
+      "key_count": 2500,
+      "memory_usage": "0.5GB"
+    },
+    "db_6": {
+      "purpose": "Rate limiting",
+      "key_count": 1000,
+      "memory_usage": "0.2GB"
+    },
+    "db_7": {
+      "purpose": "Search cache",
+      "key_count": 5000,
+      "memory_usage": "0.8GB"
+    }
+  },
+  "performance_metrics": {
+    "hit_rate": 87.5,
+    "miss_rate": 12.5,
+    "average_response_time_ms": 2.3,
+    "max_response_time_ms": 15.7,
+    "total_operations_per_second": 45000,
+    "memory_usage_percentage": 78.2
+  },
+  "monitoring": {
+    "metrics_collected": [
+      "hit_rate",
+      "miss_rate",
+      "response_time",
+      "memory_usage",
+      "connection_count",
+      "command_stats"
+    ],
+    "alerts": {
+      "high_memory_usage": "> 85%",
+      "low_hit_rate": "< 80%",
+      "high_response_time": "> 10ms"
+    }
+  },
+  "backup_strategy": {
+    "rdb_backup": "Every 6 hours",
+    "aof_backup": "Continuous",
+    "backup_retention": "7 days",
+    "backup_location": "s3://trefis-cache-backups/"
+  },
+  "security": {
+    "authentication": "Redis ACL",
+    "encryption": "TLS 1.3",
+    "network_security": "VPC isolation",
+    "access_control": "IP whitelisting"
+  }
+} 

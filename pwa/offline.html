@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SAFER-VLA — Offline</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:#0a0e17;color:#e2e8f0;height:100vh;
+  display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+.offline-card{max-width:420px;padding:48px 32px;background:rgba(15,22,35,.9);border:1px solid #1e293b;
+  border-radius:16px;backdrop-filter:blur(16px);box-shadow:0 8px 32px rgba(0,0,0,.6)}
+.icon{font-size:64px;margin-bottom:16px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+h1{font-size:20px;font-weight:700;margin-bottom:8px;color:#00ffe5}
+p{font-size:14px;color:#64748b;line-height:1.6;margin-bottom:24px}
+.retry-btn{padding:12px 32px;background:rgba(0,255,229,.1);border:1px solid rgba(0,255,229,.3);
+  border-radius:8px;color:#00ffe5;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;
+  font-family:inherit}
+.retry-btn:hover{background:rgba(0,255,229,.2);border-color:rgba(0,255,229,.5)}
+.status{margin-top:16px;font-size:11px;color:#334155;font-family:'JetBrains Mono',monospace}
+</style>
+</head>
+<body>
+<div class="offline-card">
+  <div class="icon">🤖</div>
+  <h1>SAFER-VLA — Offline Mode</h1>
+  <p>No network connection detected. The Command Center requires an initial load to cache Three.js and robot assets. Please reconnect and try again.</p>
+  <button class="retry-btn" onclick="location.reload()">↻ Retry Connection</button>
+  <div class="status" id="status">Cached: checking...</div>
+</div>
+<script>
+(async()=>{
+  const cache=await caches.open('safer-vla-v1');
+  const keys=await cache.keys();
+  document.getElementById('status').textContent=
+    'Cached: '+keys.length+' assets | SW: '+(navigator.serviceWorker?.controller?'active':'waiting');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,268 @@
+version: '3.8'
+
+services:
+  # Jellyfin - Open Source Media Server (Recommended)
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: dataminerai-jellyfin
+    ports:
+      - "8096:8096"  # Web interface
+      - "8920:8920"  # DLNA
+    environment:
+      - JELLYFIN_PublishedServerUrl=http://localhost:8096
+      - JELLYFIN_EnableRemoteAccess=true
+    volumes:
+      - jellyfin_config:/config
+      - jellyfin_cache:/cache
+      - ./media:/media:ro  # Your media files
+      - ./downloads:/downloads:ro  # Downloads folder
+    networks:
+      - dataminerai-network
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.localhost`)"
+      - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
+
+  # Plex Media Server
+  plex:
+    image: plexinc/pms-docker:latest
+    container_name: dataminerai-plex
+    ports:
+      - "32400:32400"  # Plex Media Server
+      - "32400:32400/udp"  # Plex Media Server (UDP)
+      - "32469:32469"  # Plex DLNA
+      - "8324:8324"    # Plex for Roku
+      - "1900:1900/udp"  # Plex DLNA
+      - "3005:3005"    # Plex Companion
+      - "5353:5353/udp"  # Plex Companion
+      - "32410:32410/udp"  # Plex Companion
+      - "32412:32412/udp"  # Plex Companion
+      - "32413:32413/udp"  # Plex Companion
+      - "32414:32414/udp"  # Plex Companion
+    environment:
+      - PLEX_CLAIM=  # Add your Plex claim token here
+      - PLEX_UID=1000
+      - PLEX_GID=1000
+      - TZ=UTC
+    volumes:
+      - plex_config:/config
+      - plex_transcode:/transcode
+      - ./media:/media:ro
+      - ./downloads:/downloads:ro
+    networks:
+      - dataminerai-network
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.plex.rule=Host(`plex.localhost`)"
+      - "traefik.http.services.plex.loadbalancer.server.port=32400"
+
+  # Emby Media Server
+  emby:
+    image: emby/embyserver:latest
+    container_name: dataminerai-emby
+    ports:
+      - "8096:8096"  # Web interface
+      - "8920:8920"  # DLNA
+    environment:
+      - UID=1000
+      - GID=1000
+      - GIDLIST=1000
+    volumes:
+      - emby_config:/config
+      - emby_cache:/cache
+      - ./media:/media:ro
+      - ./downloads:/downloads:ro
+    networks:
+      - dataminerai-network
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.emby.rule=Host(`emby.localhost`)"
+      - "traefik.http.services.emby.loadbalancer.server.port=8096"
+
+  # Transmission BitTorrent Client
+  transmission:
+    image: linuxserver/transmission:latest
+    container_name: dataminerai-transmission
+    ports:
+      - "9091:9091"  # Web interface
+      - "51413:51413"  # BitTorrent
+      - "51413:51413/udp"  # BitTorrent UDP
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+      - USER=admin
+      - PASS=password123  # Change this!
+    volumes:
+      - transmission_config:/config
+      - ./downloads:/downloads
+      - ./media:/media
+    networks:
+      - dataminerai-network
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.transmission.rule=Host(`transmission.localhost`)"
+      - "traefik.http.services.transmission.loadbalancer.server.port=9091"
+
+  # Sonarr - TV Show Management
+  sonarr:
+    image: linuxserver/sonarr:latest
+    container_name: dataminerai-sonarr
+    ports:
+      - "8989:8989"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+    volumes:
+      - sonarr_config:/config
+      - ./media:/media
+      - ./downloads:/downloads
+    networks:
+      - dataminerai-network
+    restart: unless-stopped
+    depends_on:
+      - transmission
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.localhost`)"
+      - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
+
+  # Radarr - Movie Management
+  radarr:
+    image: linuxserver/radarr:latest
+    container_name: dataminerai-radarr
+    ports:
+      - "7878:7878"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+    volumes:
+      - radarr_config:/config
+      - ./media:/media
+      - ./downloads:/downloads
+    networks:
+      - dataminerai-network
+    restart: unless-stopped
+    depends_on:
+      - transmission
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.radarr.rule=Host(`radarr.localhost`)"
+      - "traefik.http.services.radarr.loadbalancer.server.port=7878"
+
+  # Lidarr - Music Management
+  lidarr:
+    image: linuxserver/lidarr:latest
+    container_name: dataminerai-lidarr
+    ports:
+      - "8686:8686"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+    volumes:
+      - lidarr_config:/config
+      - ./media:/media
+      - ./downloads:/downloads
+    networks:
+      - dataminerai-network
+    restart: unless-stopped
+    depends_on:
+      - transmission
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.lidarr.rule=Host(`lidarr.localhost`)"
+      - "traefik.http.services.lidarr.loadbalancer.server.port=8686"
+
+  # Bazarr - Subtitle Management
+  bazarr:
+    image: linuxserver/bazarr:latest
+    container_name: dataminerai-bazarr
+    ports:
+      - "6767:6767"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+    volumes:
+      - bazarr_config:/config
+      - ./media:/media
+    networks:
+      - dataminerai-network
+    restart: unless-stopped
+    depends_on:
+      - sonarr
+      - radarr
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.bazarr.rule=Host(`bazarr.localhost`)"
+      - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
+
+  # Tautulli - Plex Statistics
+  tautulli:
+    image: linuxserver/tautulli:latest
+    container_name: dataminerai-tautulli
+    ports:
+      - "8181:8181"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+    volumes:
+      - tautulli_config:/config
+      - plex_config:/plex_logs:ro
+    networks:
+      - dataminerai-network
+    restart: unless-stopped
+    depends_on:
+      - plex
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tautulli.rule=Host(`tautulli.localhost`)"
+      - "traefik.http.services.tautulli.loadbalancer.server.port=8181"
+
+  # Traefik - Reverse Proxy (Optional)
+  traefik:
+    image: traefik:v2.10
+    container_name: dataminerai-traefik
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"  # Traefik dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik_config:/etc/traefik
+    networks:
+      - dataminerai-network
+    restart: unless-stopped
+    command:
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+
+volumes:
+  jellyfin_config:
+  jellyfin_cache:
+  plex_config:
+  plex_transcode:
+  emby_config:
+  emby_cache:
+  transmission_config:
+  sonarr_config:
+  radarr_config:
+  lidarr_config:
+  bazarr_config:
+  tautulli_config:
+  traefik_config:
+
+networks:
+  dataminerai-network:
+    external: true

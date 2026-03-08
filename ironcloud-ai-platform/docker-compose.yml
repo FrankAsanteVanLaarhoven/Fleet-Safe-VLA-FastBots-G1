@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: ironcloud-postgres
+    environment:
+      POSTGRES_DB: ironcloud_ai
+      POSTGRES_USER: ironcloud_user
+      POSTGRES_PASSWORD: ironcloud_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - ironcloud-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: ironcloud-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ironcloud-network
+
+  # IronCloud-AI Backend API
+  backend:
+    build:
+      context: ./python
+      dockerfile: Dockerfile
+    container_name: ironcloud-backend
+    environment:
+      - DATABASE_URL=postgresql://ironcloud_user:ironcloud_password@postgres:5432/ironcloud_ai
+      - REDIS_URL=redis://redis:6379
+      - MCP_SERVER_PORT=8051
+    ports:
+      - "8000:8000"
+      - "8051:8051"
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./python:/app
+    networks:
+      - ironcloud-network
+    restart: unless-stopped
+
+  # IronCloud-AI Frontend
+  frontend:
+    build:
+      context: ./ironcloud-ai-frontend
+      dockerfile: Dockerfile
+    container_name: ironcloud-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+      - VITE_MCP_URL=http://localhost:8051
+    depends_on:
+      - backend
+    networks:
+      - ironcloud-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  ironcloud-network:
+    driver: bridge

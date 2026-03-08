@@ -1,0 +1,79 @@
+{
+  "chart_id": "TECH-SECTOR-PERF-2024",
+  "title": "Technology Sector Performance Q1-Q3 2024",
+  "type": "multi_line",
+  "timeframe": "quarterly",
+  "data": {
+    "labels": ["Q1 2024", "Q2 2024", "Q3 2024"],
+    "datasets": [
+      {
+        "label": "Microsoft (MSFT)",
+        "data": [412.50, 445.20, 485.00],
+        "borderColor": "#00A4EF",
+        "backgroundColor": "rgba(0, 164, 239, 0.1)",
+        "tension": 0.4
+      },
+      {
+        "label": "Amazon (AMZN)",
+        "data": [168.00, 175.30, 185.00],
+        "borderColor": "#FF9900",
+        "backgroundColor": "rgba(255, 153, 0, 0.1)",
+        "tension": 0.4
+      },
+      {
+        "label": "Alphabet (GOOGL)",
+        "data": [142.00, 155.80, 165.00],
+        "borderColor": "#4285F4",
+        "backgroundColor": "rgba(66, 133, 244, 0.1)",
+        "tension": 0.4
+      },
+      {
+        "label": "Apple (AAPL)",
+        "data": [185.00, 198.50, 210.00],
+        "borderColor": "#A2AAAD",
+        "backgroundColor": "rgba(162, 170, 173, 0.1)",
+        "tension": 0.4
+      },
+      {
+        "label": "NVIDIA (NVDA)",
+        "data": [875.00, 950.00, 1100.00],
+        "borderColor": "#76B900",
+        "backgroundColor": "rgba(118, 185, 0, 0.1)",
+        "tension": 0.4
+      }
+    ]
+  },
+  "options": {
+    "responsive": true,
+    "plugins": {
+      "title": {
+        "display": true,
+        "text": "Technology Sector Stock Performance (Q1-Q3 2024)"
+      },
+      "legend": {
+        "position": "top"
+      }
+    },
+    "scales": {
+      "y": {
+        "beginAtZero": false,
+        "title": {
+          "display": true,
+          "text": "Stock Price ($)"
+        }
+      },
+      "x": {
+        "title": {
+          "display": true,
+          "text": "Quarter"
+        }
+      }
+    }
+  },
+  "metadata": {
+    "data_source": "Yahoo Finance, Trefis Analysis",
+    "last_updated": "2024-07-21T16:00:00Z",
+    "currency": "USD",
+    "frequency": "quarterly"
+  }
+} 

@@ -1,0 +1,39 @@
+# hospital_fleet.yaml
+scene:
+  usd_path: '/workspace/isaaclab/assets/scenes/hospital/ward_a.usd'
+  frame_id: 'map'
+
+robots:
+  - id: 'robot_1'
+    type: 'nav2_hospital_base'
+    initial_pose: { x: 1.0, y: 2.0, yaw: 0.0 }
+    ros2_namespace: '/nava/robot_1'
+    nav2:
+      use_bt_navigator: true
+      planner: 'smac_planner'
+      controller: 'mpc_controller'
+
+waypoints:
+  pharmacy: { x: 5.0, y: 1.0, yaw: 0.0 }
+  ward_a: { x: 10.0, y: 3.0, yaw: 1.57 }
+  dock: { x: 0.0, y: 0.0, yaw: 3.14 }
+
+safety:
+  min_distance_to_patient_area: 0.4
+  forbidden_zones:
+    - name: 'icu'
+      polygon:
+        - { x: 8.0, y: 2.0 }
+        - { x: 9.0, y: 2.0 }
+        - { x: 9.0, y: 4.0 }
+        - { x: 8.0, y: 4.0 }
+
+camera:
+  follow_offset: { x: -5.0, y: 0.0, z: 3.0 }
+  look_at_offset: { x: 0.0, y: 0.0, z: 0.5 }
+
+visual:
+  robot_scale: 2.5
+  body_color: [0.0, 1.0, 0.82]      # Cyan
+  beacon_color: [1.0, 0.9, 0.0]     # Yellow
+  direction_color: [0.0, 1.0, 0.0]  # Green

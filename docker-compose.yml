@@ -1,0 +1,136 @@
+version: '3.8'
+
+services:
+  # DataMinerAI Main Backend Server
+  dataminerai-backend:
+    build:
+      context: ./Archon-main/python
+      dockerfile: Dockerfile
+    container_name: dataminerai-backend
+    ports:
+      - "8181:8181"  # Main API server
+    environment:
+      - SUPABASE_URL=https://rwjuwwagiqgmdfmorysk.supabase.co
+      - SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3anV3d2FnaXFnbWRmbW9yeXNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzkwODcsImV4cCI6MjA3MTAxNTA4N30.-2LIENAiCbxudZFdBvmKIlDHiq-yCuUUe89FaesLphg
+      - ARCHON_SERVER_PORT=8181
+      - AI_OS_LLM_PROVIDER=ollama
+      - AI_OS_CACHE_PROVIDER=redis
+      - AI_OS_VECTOR_DB_PROVIDER=chroma
+      - LOGFIRE_ENABLED=false
+      - PROJECTS_ENABLED=true
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    networks:
+      - dataminerai-network
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - ollama
+
+  # DataMinerAI MCP Server
+  dataminerai-mcp:
+    build:
+      context: ./Archon-main/python
+      dockerfile: Dockerfile
+    container_name: dataminerai-mcp
+    ports:
+      - "8051:8051"  # MCP server port
+    environment:
+      - SUPABASE_URL=https://rwjuwwagiqgmdfmorysk.supabase.co
+      - SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3anV3d2FnaXFnbWRmbW9yeXNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzkwODcsImV4cCI6MjA3MTAxNTA4N30.-2LIENAiCbxudZFdBvmKIlDHiq-yCuUUe89FaesLphg
+      - ARCHON_MCP_PORT=8051
+      - ARCHON_SERVER_PORT=8181
+      - TRANSPORT=sse
+      - PROJECTS_ENABLED=true
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    networks:
+      - dataminerai-network
+    restart: unless-stopped
+    depends_on:
+      - dataminerai-backend
+
+  # DataMinerAI Frontend
+  dataminerai-frontend:
+    build:
+      context: ./Archon-main/archon-ui-main
+      dockerfile: Dockerfile
+    container_name: dataminerai-frontend
+    ports:
+      - "3737:3737"  # Frontend port
+    environment:
+      - VITE_API_URL=http://localhost:8181
+      - VITE_MCP_URL=http://localhost:8051
+    volumes:
+      - ./Archon-main/archon-ui-main/src:/app/src
+      - ./Archon-main/archon-ui-main/public:/app/public
+    networks:
+      - dataminerai-network
+    restart: unless-stopped
+    depends_on:
+      - dataminerai-backend
+
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    container_name: dataminerai-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - dataminerai-network
+    restart: unless-stopped
+
+  # Ollama for local LLM
+  ollama:
+    image: ollama/ollama:latest
+    container_name: dataminerai-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - dataminerai-network
+    restart: unless-stopped
+
+  # ChromaDB for vector storage
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: dataminerai-chromadb
+    ports:
+      - "8000:8000"
+    volumes:
+      - chromadb_data:/chroma/chroma
+    networks:
+      - dataminerai-network
+    restart: unless-stopped
+
+  # Nginx reverse proxy (optional)
+  nginx:
+    image: nginx:alpine
+    container_name: dataminerai-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    networks:
+      - dataminerai-network
+    restart: unless-stopped
+    depends_on:
+      - dataminerai-frontend
+      - dataminerai-backend
+      - dataminerai-mcp
+
+volumes:
+  redis_data:
+  ollama_data:
+  chromadb_data:
+
+networks:
+  dataminerai-network:
+    driver: bridge

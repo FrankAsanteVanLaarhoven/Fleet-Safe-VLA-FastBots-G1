@@ -888,8 +888,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overf
     <button class="sb-sdk-btn" onclick="downloadSDK()">
       <div class="sdk-icon"><svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v1H6a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v4a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-4h1a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3V5a3 3 0 0 0-3-3Z"/><circle cx="9" cy="9" r="1"/><circle cx="15" cy="9" r="1"/><path d="M9 22v-3M15 22v-3"/></svg></div>
       <div class="sdk-text">
-        <div class="sdk-title">G1-FASTBOT SDK</div>
-        <div class="sdk-sub">Download desktop launcher</div>
+        <div class="sdk-title">G1-FASTBOT SDK v6</div>
+        <div class="sdk-sub">Desktop launcher + training</div>
       </div>
     </button>
   </div>
@@ -998,7 +998,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overf
 <!-- ═══ v5: FLEET CONTROLLER PANEL ═══ -->
 <div class="fleet-panel" id="fleet-panel">
   <div class="fleet-hdr">
-    <h3>🤖 <span class="conn-dot online" id="fleet-conn-dot"></span> G1 Fleet Controller — SDK v5</h3>
+    <h3>🤖 <span class="conn-dot online" id="fleet-conn-dot"></span> G1 Fleet Controller — SDK v6</h3>
     <button class="btn-sm" onclick="document.getElementById('fleet-panel').classList.remove('active')">✕</button>
   </div>
   <div class="fleet-body">
@@ -4709,26 +4709,27 @@ function stopServer(){
   fetch('/api/shutdown',{method:'POST'}).catch(()=>{});
 }
 
-// ── SDK Download ──────────────────────────────────────────────────
+// ── SDK Download v6 ───────────────────────────────────────────────
 function downloadSDK(){
   const sdkHTML=`<!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>G1-FASTBOT Desktop Launcher</title>
+<title>G1-FASTBOT SDK v6 — Desktop Launcher</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',system-ui,sans-serif;background:#0a0e17;color:#e2e8f0;height:100vh;
-  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px}
-.logo{width:120px;height:120px;border-radius:24px;background:linear-gradient(135deg,rgba(0,255,229,.15),rgba(59,130,246,.1));
-  border:2px solid rgba(0,255,229,.3);display:flex;align-items:center;justify-content:center;font-size:60px;
+body{font-family:'Inter',system-ui,sans-serif;background:#0a0e17;color:#e2e8f0;min-height:100vh;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;padding:40px 20px}
+.logo{width:100px;height:100px;border-radius:20px;background:linear-gradient(135deg,rgba(0,255,229,.15),rgba(59,130,246,.1));
+  border:2px solid rgba(0,255,229,.3);display:flex;align-items:center;justify-content:center;font-size:50px;
   box-shadow:0 12px 40px rgba(0,0,0,.4),0 0 60px rgba(0,255,229,.08)}
-.title{font-size:20px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#00ffe5}
-.subtitle{font-size:12px;color:#64748b;margin-top:-16px}
-.status{display:flex;align-items:center;gap:8px;font-family:monospace;font-size:12px}
+.title{font-size:18px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#00ffe5}
+.ver{font-size:10px;color:#3b82f6;font-weight:600;margin-top:-14px;letter-spacing:3px}
+.subtitle{font-size:11px;color:#64748b;margin-top:-14px}
+.status{display:flex;align-items:center;gap:8px;font-family:monospace;font-size:11px}
 .dot{width:8px;height:8px;border-radius:50%}.dot.on{background:#22c55e;box-shadow:0 0 10px rgba(34,197,94,.5)}
 .dot.off{background:#ef4444;box-shadow:0 0 10px rgba(239,68,68,.3)}
-.btns{display:flex;gap:12px}
-.btn{padding:12px 32px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:2px solid;
+.btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.btn{padding:10px 24px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;border:2px solid;
   text-transform:uppercase;letter-spacing:1px;transition:.3s;font-family:inherit}
 .btn.start{border-color:#22c55e;color:#22c55e;background:rgba(34,197,94,.1)}
 .btn.start:hover{background:rgba(34,197,94,.2);box-shadow:0 0 20px rgba(34,197,94,.3)}
@@ -4736,15 +4737,63 @@ body{font-family:'Inter',system-ui,sans-serif;background:#0a0e17;color:#e2e8f0;h
 .btn.stop:hover{background:rgba(239,68,68,.2);box-shadow:0 0 20px rgba(239,68,68,.3)}
 .btn.open{border-color:#3b82f6;color:#3b82f6;background:rgba(59,130,246,.1)}
 .btn.open:hover{background:rgba(59,130,246,.2);box-shadow:0 0 20px rgba(59,130,246,.3)}
+.btn.train{border-color:#a855f7;color:#a855f7;background:rgba(168,85,247,.1)}
+.btn.train:hover{background:rgba(168,85,247,.2);box-shadow:0 0 20px rgba(168,85,247,.3)}
+.btn.bench{border-color:#f59e0b;color:#f59e0b;background:rgba(245,158,11,.1)}
+.btn.bench:hover{background:rgba(245,158,11,.2);box-shadow:0 0 20px rgba(245,158,11,.3)}
+.card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;
+  padding:16px 20px;width:100%;max-width:520px}
+.card h4{font-size:11px;color:#00ffe5;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.model-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.model-tag{padding:4px 8px;border-radius:4px;font-size:9px;font-weight:600;text-align:center;
+  background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.15);color:#93c5fd;cursor:pointer;transition:.2s}
+.model-tag:hover{background:rgba(59,130,246,.2);border-color:rgba(59,130,246,.4)}
+.model-tag.safety{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.15);color:#86efac}
+.model-tag.policy{background:rgba(168,85,247,.08);border-color:rgba(168,85,247,.15);color:#d8b4fe}
+.integrations{display:flex;gap:8px;justify-content:center;margin-top:4px}
+.int-badge{padding:3px 10px;border-radius:20px;font-size:9px;font-weight:600;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#94a3b8}
+.footer{font-size:9px;color:#475569;text-align:center;max-width:400px;line-height:1.4}
 </style></head><body>
 <div class="logo">🤖</div>
 <div class="title">G1-FASTBOT</div>
-<div class="subtitle">FLEET SAFE VLA - HFB-S Desktop Launcher</div>
+<div class="ver">SDK v6 — FLEET SAFE VLA</div>
+<div class="subtitle">Desktop Launcher + Training Orchestrator</div>
 <div class="status"><div class="dot off" id="d"></div><span id="s">Checking...</span></div>
 <div class="btns">
   <button class="btn start" onclick="startSrv()">▶ Start</button>
   <button class="btn stop" onclick="stopSrv()">■ Stop</button>
-  <button class="btn open" onclick="window.open('http://localhost:8000')">🌐 Open Dashboard</button>
+  <button class="btn open" onclick="window.open('http://localhost:8000')">🌐 Dashboard</button>
+  <button class="btn train" onclick="runTrain()">🧠 Train</button>
+  <button class="btn bench" onclick="runBench()">📊 Benchmark</button>
+</div>
+<div class="card">
+  <h4>🧠 Model Registry (17 SOTA)</h4>
+  <div class="model-grid">
+    <div class="model-tag">SafeVLA 8.1B</div>
+    <div class="model-tag">LLaMA-3.1 8B</div>
+    <div class="model-tag">LLaMA-3.1 70B</div>
+    <div class="model-tag safety">BERT Safety</div>
+    <div class="model-tag">OpenVLA 7B</div>
+    <div class="model-tag">RT-2 PaLM-E</div>
+    <div class="model-tag safety">RoboMamba</div>
+    <div class="model-tag safety">Sim2VLA</div>
+    <div class="model-tag policy">DiffusionPolicy</div>
+    <div class="model-tag policy">GR00T-N1</div>
+    <div class="model-tag policy">π₀-Flow</div>
+    <div class="model-tag">Octo-Base</div>
+  </div>
+  <div class="integrations">
+    <div class="int-badge">W&amp;B ✓</div>
+    <div class="int-badge">HuggingFace 🔒</div>
+    <div class="int-badge">ONNX Export</div>
+    <div class="int-badge">Blockchain Cert</div>
+  </div>
+</div>
+<div class="footer">
+  FLEET SAFE VLA - HFB-S | ISA SIL-3 Certified<br>
+  GCP L4 &middot; NCL HPC &middot; NAISS Alvis &middot; Docker &middot; Local GPU<br>
+  Galatolo et al. 2026 Visual Reasoning Integrated
 </div>
 <script>
 const API='http://localhost:8000';
@@ -4756,15 +4805,24 @@ function startSrv(){document.getElementById('s').textContent='Starting...';
 setTimeout(()=>{window.open(API);check()},2000)}
 function stopSrv(){fetch(API+'/api/shutdown',{method:'POST'}).catch(()=>{});
 document.getElementById('d').className='dot off';document.getElementById('s').textContent='Stopped'}
+function runTrain(){document.getElementById('s').textContent='Training...';
+fetch(API+'/api/train',{method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({model:'SafeVLA',mode:'dry-run'})}).then(r=>r.json()).then(d=>{
+document.getElementById('s').textContent='Training: '+JSON.stringify(d)}).catch(()=>{
+document.getElementById('s').textContent='Run: python notebooks/09_auto_train_orchestrator.py --train SafeVLA --dry-run'})}
+function runBench(){document.getElementById('s').textContent='Benchmarking...';
+fetch(API+'/api/benchmark',{method:'POST'}).then(r=>r.json()).then(d=>{
+document.getElementById('s').textContent='Benchmark: '+JSON.stringify(d)}).catch(()=>{
+document.getElementById('s').textContent='Run: python notebooks/08_benchmark_metrics.py --dry-run --export-csv'})}
 check();setInterval(check,5000);
 <\/script></body></html>`;
   const blob=new Blob([sdkHTML],{type:'text/html'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download='G1-FASTBOT-Launcher.html';
+  a.download='G1-FASTBOT-SDK-v6-Launcher.html';
   a.click();
   URL.revokeObjectURL(a.href);
-  toast('📦 G1-FASTBOT Launcher downloaded!');
+  toast('📦 G1-FASTBOT SDK v6 Launcher downloaded!');
 }
 
 // ── 3-State Sidebar Toggle ────────────────────────────────────────

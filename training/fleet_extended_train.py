@@ -291,8 +291,8 @@ def generate_fleet_coord_dataset(n_episodes=500, steps_per_ep=80):
                 fleet_state.extend([*robot_positions[r], *vel, *tasks[r], task_dist, status])
             obs = np.array(fleet_state + [t / steps_per_ep], dtype=np.float32)
             # Allocation action: priority scores for each robot (8)
-            priorities = np.random.softmax_replacement(n_robots)
-            priorities = np.exp(np.random.randn(n_robots)) 
+            logits = np.random.randn(n_robots)
+            priorities = np.exp(logits - logits.max())
             priorities = priorities / priorities.sum()
             action = priorities.astype(np.float32)
             # Move robots toward tasks
@@ -384,27 +384,42 @@ def train_model(model_name, model_config, data_fn, wandb_tags=None):
     # W&B init
     run = None
     if HAS_WANDB:
-        run = wandb.init(
-            project="fleet-safe-vla",
-            name=f"groot-{model_name}",
-            tags=["groot-n1.6", "extended", model_name] + (wandb_tags or []),
-            config={
-                "model": model_name,
-                "obs_dim": obs_dim,
-                "act_dim": act_dim,
-                "epochs": epochs,
-                "batch_size": batch_size,
-                "lr": lr,
-                "backbone": "GR00T-N1.6",
-                "n_layers": n_layers,
-                "n_heads": 16,
-                "d_model": 768,
-                "parameters": total_params,
-                "dataset_episodes": len(data),
-                "dataset_steps": total_steps,
-            },
-            reinit=True,
-        )
+        try:
+            run = wandb.init(
+                project="fleet-safe-vla",
+                name=f"groot-{model_name}",
+                tags=["groot-n1.6", "extended", model_name] + (wandb_tags or []),
+                config={
+                    "model": model_name,
+                    "obs_dim": obs_dim,
+                    "act_dim": act_dim,
+                    "epochs": epochs,
+                    "batch_size": batch_size,
+                    "lr": lr,
+                    "backbone": "GR00T-N1.6",
+                    "n_layers": n_layers,
+                    "n_heads": 16,
+                    "d_model": 768,
+                    "parameters": total_params,
+                    "dataset_episodes": len(data),
+                    "dataset_steps": total_steps,
+                },
+                reinit=True,
+            )
+        except Exception as e:
+            print(f"  [WARN] W&B init failed ({e}), running offline")
+            os.environ["WANDB_MODE"] = "offline"
+            run = wandb.init(
+                project="fleet-safe-vla",
+                name=f"groot-{model_name}",
+                tags=["groot-n1.6", "extended", model_name] + (wandb_tags or []),
+                config={
+                    "model": model_name,
+                    "parameters": total_params,
+                },
+                reinit=True,
+                mode="offline",
+            )
 
     # Training
     best_loss = float("inf")

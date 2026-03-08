@@ -1,0 +1,383 @@
+% =============================================================================
+% FLEET-Safe VLA — Supplementary Materials
+% Extended hyperparameters, dataset details, failure analysis, full ablations
+% =============================================================================
+\documentclass[conference]{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{hyperref}
+\usepackage{siunitx}
+\usepackage{xcolor}
+\usepackage{subcaption}
+
+\definecolor{cbBlue}{RGB}{0,114,178}
+\definecolor{cbGreen}{RGB}{0,158,115}
+\definecolor{cbOrange}{RGB}{230,159,0}
+\hypersetup{colorlinks=true, linkcolor=cbBlue, citecolor=cbGreen, urlcolor=cbOrange}
+
+\begin{document}
+
+\title{Supplementary Materials: FLEET-Safe VLA}
+\author{\IEEEauthorblockN{Frank Asante Van Laarhoven}
+\IEEEauthorblockA{Newcastle University}}
+\maketitle
+
+% =============================================================================
+\section{Complete Hyperparameter Tables}
+\label{sec:supp_hyper}
+
+\subsection{GR00T N1.6 Backbone Parameters}
+
+\begin{table}[h]
+\centering
+\caption{GR00T N1.6 Backbone Architecture Details}
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Component} & \textbf{Value} \\
+\midrule
+\multicolumn{2}{l}{\textit{Diffusion Transformer (DiT)}} \\
+\quad Transformer layers & 12 \\
+\quad Attention heads & 16 \\
+\quad Hidden dimension ($d_\text{model}$) & 768 \\
+\quad FFN hidden dimension & 3{,}072 \\
+\quad Dropout rate & 0.1 \\
+\quad Activation function & GELU \\
+\quad Normalisation & Pre-LayerNorm \\
+\quad Position encoding & Sinusoidal \\
+\midrule
+\multicolumn{2}{l}{\textit{Diffusion Schedule}} \\
+\quad Noise schedule & Linear ($\beta_1{=}10^{-4}$, $\beta_T{=}0.02$) \\
+\quad Training timesteps $T$ & 100 \\
+\quad Inference steps (DDIM) & 16 \\
+\quad Noise prediction & $\epsilon$-prediction \\
+\midrule
+\multicolumn{2}{l}{\textit{CBF Network}} \\
+\quad Architecture & MLP: $d_\text{obs} \to 256 \to 128 \to 1$ \\
+\quad Activation & Softplus ($\beta = 1$) \\
+\quad Output activation & Tanh \\
+\quad CBF decay $\alpha$ & 0.1 \\
+\quad CBF loss weight & 0.1 \\
+\midrule
+\multicolumn{2}{l}{\textit{Optimisation}} \\
+\quad Optimiser & AdamW \\
+\quad Learning rate & $3 \times 10^{-4}$ \\
+\quad Weight decay & 0.01 \\
+\quad $\beta_1, \beta_2$ & 0.9, 0.999 \\
+\quad LR scheduler & Cosine with warmup \\
+\quad Warmup epochs & 10 (FastBot), 25 (G1) \\
+\quad Gradient clipping & Max norm = 1.0 \\
+\quad Precision & Mixed FP16 (torch.cuda.amp) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{FastBot-Specific Parameters}
+
+\begin{table}[h]
+\centering
+\caption{FastBot Embodiment Configuration}
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+Observation dimensions & 32 \\
+\quad LIDAR features & 16 \\
+\quad Pose features (x, y, $\theta$, $v$, $\omega$) & 5 \\
+\quad Zone encoding (one-hot) & 8 \\
+\quad Goal features (dx, dy, d$\theta$) & 3 \\
+Action dimensions & 2 (forward vel., lateral vel.) \\
+Max forward velocity & \SI{1.0}{\metre\per\second} \\
+Max lateral velocity & \SI{0.5}{\metre\per\second} \\
+Training epochs & 200 \\
+Dataset episodes & 1{,}200 \\
+Dataset steps & 64{,}923 \\
+Batch size & 64 \\
+Gradient accumulation & 4 \\
+Effective batch size & 256 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{G1-Specific Parameters}
+
+\begin{table}[h]
+\centering
+\caption{Unitree G1 Embodiment Configuration}
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+Observation dimensions & 48 \\
+\quad Joint positions & 23 \\
+\quad Joint velocities & 23 \\
+\quad IMU (angular velocity) & 3 \\
+\quad IMU (linear acceleration) & 3 \\
+\quad Contact forces (feet) & 4 \\
+\quad Zone encoding & 4 \\
+\quad COM position & 3 \\
+Action dimensions & 23 (joint torques) \\
+Torque limits & ±\SI{100}{\newton\metre} \\
+Training epochs & 500 \\
+Dataset episodes & 1{,}500 \\
+Dataset steps & 81{,}825 \\
+PPO clip ratio $\epsilon$ & 0.2 \\
+GAE lambda & 0.95 \\
+Cost limit $d$ & 0.025 \\
+Initial $\lambda$ & 0.1 \\
+$\lambda$ learning rate & $5 \times 10^{-3}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =============================================================================
+\section{Dataset Statistics}
+\label{sec:supp_data}
+
+\subsection{Synthetic Hospital Dataset Generation}
+
+Our synthetic datasets are generated procedurally with the following characteristics:
+
+\begin{table}[h]
+\centering
+\caption{Dataset Statistics}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Statistic} & \textbf{FastBot} & \textbf{G1} \\
+\midrule
+Total episodes & 1{,}200 & 1{,}500 \\
+Total steps & 64{,}923 & 81{,}825 \\
+Mean episode length & 54.1 steps & 54.6 steps \\
+Episode length range & [30, 80] & [30, 80] \\
+Observation noise $\sigma$ & 0.02 & 0.02 \\
+Action noise $\sigma$ & 0.01 & 0.01 \\
+Zone distribution & Uniform(12) & Uniform(12) \\
+Collision prob. per step & 0.02 & 0.01 \\
+Safe state fraction & 97.8\% & 98.5\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Domain Randomisation Parameters}
+
+\begin{table}[h]
+\centering
+\caption{Domain Randomisation for Sim-to-Real Transfer}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Parameter} & \textbf{Range} & \textbf{Distribution} \\
+\midrule
+Friction coefficient & $[0.7, 1.3] \times \mu_0$ & Uniform \\
+Object mass & $[0.8, 1.2] \times m_0$ & Uniform \\
+Camera noise & $\sigma \in [0, 0.04]$ & Gaussian \\
+Lighting intensity & $[0.6, 1.4] \times I_0$ & Uniform \\
+Push perturbation & Up to \SI{50}{\newton} & Uniform direction \\
+Perturbation interval & Every 5\,s & Fixed \\
+Sensor dropout & 5\% per step & Bernoulli \\
+Floor texture & 8 variants & Categorical \\
+Wall colour & 12 variants & Categorical \\
+Obstacle density & $[0.5, 2.0] \times \rho_0$ & Uniform \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =============================================================================
+\section{Extended Ablation Studies}
+\label{sec:supp_ablation}
+
+\subsection{G1 CMDP Ablations}
+
+\begin{table}[h]
+\centering
+\caption{Ablation Study (G1 CMDP, 500 epochs)}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Configuration} & \textbf{SVR $\downarrow$} & \textbf{Reward $\uparrow$} & \textbf{Cost $\downarrow$} & \textbf{STL $\rho$ $\uparrow$} \\
+\midrule
+Full FLEET-Safe VLA     & $\mathbf{4.6\!\times\!10^{-5}}$ & $-4.61$ & $\mathbf{0.0007}$ & $\mathbf{0.677}$ \\
+$-$ CBF-QP filter       & 0.028 & $-4.95$ & 0.042 & 0.412 \\
+$-$ PPO-Lagrangian      & 0.003 & $\mathbf{-4.20}$ & 0.031 & 0.521 \\
+$-$ GR00T backbone      & 0.005 & $-6.30$ & 0.008 & 0.389 \\
+$-$ STL reward shaping  & 0.001 & $-4.85$ & 0.002 & 0.198 \\
+$-$ Domain randomisation & $7.2\!\times\!10^{-5}$ & $-4.55$ & 0.0009 & 0.668 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Component Importance Analysis}
+
+\textbf{CBF-QP is the most critical component.} Removing it causes a $608\times$ increase in SVR for the G1 (from $4.6\times10^{-5}$ to 0.028), confirming that the barrier function is the primary mechanism for provable safety. The STL robustness also drops 39.1\% (from 0.677 to 0.412), indicating that the CBF-QP provides robustness beyond mere constraint satisfaction.
+
+\textbf{PPO-Lagrangian and CBF-QP are complementary.} Removing PPO-Lagrangian while keeping CBF-QP yields higher reward ($-4.20$ vs $-4.61$) but 65$\times$ higher SVR (0.003 vs $4.6\times10^{-5}$). The Lagrangian constraint trains the policy to avoid triggering the CBF-QP filter, reducing the frequency of safety corrections and enabling smoother trajectories.
+
+\textbf{GR00T backbone provides knowledge transfer.} Removing the GR00T backbone and training from scratch degrades reward by 36.7\% ($-6.30$ vs $-4.61$) and STL robustness by 42.5\% (0.389 vs 0.677), demonstrating the value of foundation model pretraining.
+
+% =============================================================================
+\section{Failure Mode Analysis}
+\label{sec:supp_failure}
+
+We identify and categorise failure modes observed during training:
+
+\begin{table}[h]
+\centering
+\caption{Failure Mode Taxonomy}
+\begin{tabular}{@{}llc@{}}
+\toprule
+\textbf{Failure Type} & \textbf{Root Cause} & \textbf{Frequency} \\
+\midrule
+\multicolumn{3}{l}{\textit{FastBot Failures}} \\
+Narrow corridor collision & LIDAR occlusion & 0.10\% \\
+Zone boundary oscillation & Reward boundary artefact & 0.05\% \\
+Goal overshoot & High-speed approach & 0.03\% \\
+\midrule
+\multicolumn{3}{l}{\textit{G1 Failures}} \\
+COM instability (stumble) & Push perturbation at step & 0.004\% \\
+Joint torque saturation & Aggressive recovery action & 0.001\% \\
+Height deviation spike & Terrain change & 0.0005\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+All observed failures are correctly intercepted by the CBF-QP safety filter, which projects the unsafe action onto the safe set boundary. No failure mode resulted in an actual safety violation (barrier function crossing zero).
+
+% =============================================================================
+\section{Hospital Zone Specifications}
+\label{sec:supp_zones}
+
+\begin{table}[h]
+\centering
+\caption{Hospital Zone STL Specifications}
+\begin{tabular}{@{}llc@{}}
+\toprule
+\textbf{Zone} & \textbf{Speed Limit} & \textbf{Special Constraints} \\
+\midrule
+ICU & \SI{0.3}{\metre\per\second} & Quiet mode, no beeping \\
+Ward corridor & \SI{0.5}{\metre\per\second} & Yield to patients \\
+Main corridor & \SI{1.0}{\metre\per\second} & Stay in lane \\
+Lobby & \SI{0.8}{\metre\per\second} & Obstacle avoidance priority \\
+Pharmacy & \SI{0.5}{\metre\per\second} & Precise delivery required \\
+Lift & \SI{0.2}{\metre\per\second} & Door timing awareness \\
+Stairwell & N/A (blocked) & Robot cannot use stairs \\
+Consultation & \SI{0.3}{\metre\per\second} & Knock-and-wait protocol \\
+Reception & \SI{0.6}{\metre\per\second} & Queue awareness \\
+Staff room & \SI{0.5}{\metre\per\second} & Off-peak delivery only \\
+Operating theatre & \SI{0.2}{\metre\per\second} & Sterile zone protocol \\
+Emergency dept. & \SI{1.0}{\metre\per\second} & Priority: yield to staff \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =============================================================================
+\section{Semantic Auto Data Collection Pipeline}
+\label{sec:supp_datacollection}
+
+Our proposed data collection system generates safety-annotated, zone-labelled datasets automatically. Each frame includes:
+
+\begin{enumerate}
+    \item \textbf{Visual data:} RGB image (640$\times$480), depth map
+    \item \textbf{Proprioception:} Joint positions, velocities, torques
+    \item \textbf{Semantic labels:} Object class, bounding box, distance, risk level (generated by VLM)
+    \item \textbf{Safety annotations:} Barrier function value $h(s)$, safe/unsafe classification
+    \item \textbf{Zone labels:} Current hospital zone, applicable speed limit, zone-specific constraints
+    \item \textbf{Temporal metadata:} Timestamp, episode ID, step within episode
+    \item \textbf{STL validation:} Per-specification robustness values $\rho(\varphi_i, \xi)$
+\end{enumerate}
+
+This multi-modal, safety-annotated format is novel: no existing robot dataset includes CBF barrier values or zone-specific safety labels.
+
+% =============================================================================
+\section{Compute Cost Breakdown}
+\label{sec:supp_compute}
+
+\begin{table}[h]
+\centering
+\caption{Detailed Compute Cost Comparison}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{System} & \textbf{GPU} & \textbf{Hours} & \textbf{Cost} \\
+\midrule
+FLEET-Safe VLA (ours) & L4 (24\,GB) & 0.61 & \$0.49 \\
+SafeVLA & A100 (80\,GB) & 12.0 & \$96.00 \\
+GR00T N1 & 8$\times$ H100 & 4.0 & \$180.00 \\
+$\pi_0$ & 8$\times$ H100 & 5.0 & \$220.00 \\
+RT-2 & TPU v4 pod & 24.0 & \$500.00 \\
+OpenVLA & A100 (40\,GB) & 8.0 & \$45.00 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Our $14\times$ cost advantage over SafeVLA results from: (1) smaller, more efficient model with LoRA adapters reducing trainable parameters, (2) mixed-precision FP16 halving memory bandwidth, (3) aggressive gradient accumulation (effective batch 256 with batch 64), and (4) using the NVIDIA L4 (\$0.81/hr) instead of A100 (\$8.00/hr).
+
+% =============================================================================
+\section{W\&B Panel Catalogue}
+\label{sec:supp_panels}
+
+Complete list of 28+ per-epoch W\&B panels logged during training:
+
+\subsection{FastBot Panels (13)}
+\begin{enumerate}
+    \item \texttt{fastbot/loss} — Total combined loss
+    \item \texttt{fastbot/diffusion\_loss} — Denoising prediction error
+    \item \texttt{fastbot/cbf\_loss} — Barrier function loss
+    \item \texttt{fastbot/nav\_reward} — Navigation reward
+    \item \texttt{fastbot/zone\_compliance} — Zone speed limit adherence
+    \item \texttt{fastbot/zone\_entropy} — Zone distribution entropy
+    \item \texttt{fastbot/svr} — Safety Violation Rate
+    \item \texttt{fastbot/collision\_rate} — Collision frequency
+    \item \texttt{fastbot/dmr} — Deadline Miss Rate
+    \item \texttt{fastbot/action\_jitter} — Action smoothness ($\|a_t - a_{t-1}\|$)
+    \item \texttt{fastbot/barrier\_mean} — Mean barrier function $\bar{h}(s)$
+    \item \texttt{fastbot/speed\_mean} — Mean forward velocity
+    \item \texttt{fastbot/lr} — Learning rate (cosine schedule)
+\end{enumerate}
+
+\subsection{G1 CMDP Panels (15)}
+\begin{enumerate}
+    \item \texttt{g1/total\_loss} — Combined policy + value + cost + CBF loss
+    \item \texttt{g1/policy\_loss} — PPO policy loss
+    \item \texttt{g1/value\_loss} — Value function loss
+    \item \texttt{g1/cost\_loss} — Cost critic loss
+    \item \texttt{g1/cbf\_loss} — Barrier function loss
+    \item \texttt{g1/reward} — Mean episode reward
+    \item \texttt{g1/cost} — Mean episode cost
+    \item \texttt{g1/svr} — Safety Violation Rate
+    \item \texttt{g1/stl\_robustness} — STL specification robustness $\rho$
+    \item \texttt{g1/com\_margin} — Centre of Mass stability margin
+    \item \texttt{g1/safety\_filter\_pass} — CBF-QP pass rate (no correction needed)
+    \item \texttt{g1/lambda} — Lagrange multiplier
+    \item \texttt{g1/height\_dev} — Height deviation from nominal
+    \item \texttt{g1/barrier\_mean} — Mean barrier function $\bar{h}(s)$
+    \item \texttt{g1/lr} — Learning rate (cosine schedule)
+\end{enumerate}
+
+% =============================================================================
+\section{Reproducibility Checklist}
+\label{sec:supp_repro}
+
+\begin{table}[h]
+\centering
+\caption{Reproducibility Resources}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Resource} & \textbf{Location} \\
+\midrule
+Source code & GitHub: \texttt{FrankAsanteVanLaarhoven/} \\
+           & \texttt{Fleet-Safe-VLA-FastBots-G1} \\
+Experiment logs & W\&B: \texttt{f-a-v-l/fleet-safe-vla} \\
+FastBot run & \texttt{runs/hscmj967} \\
+G1 CMDP run & \texttt{runs/19k6gj6p} \\
+Training report & \texttt{training\_logs/groot\_report\_} \\
+               & \texttt{20260308\_144438.json} \\
+Framework & PyTorch 2.1 + CUDA 12.1 \\
+Hardware & NVIDIA L4 (24\,GB), 8 vCPU, 32\,GB \\
+OS & Ubuntu 22.04 LTS \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

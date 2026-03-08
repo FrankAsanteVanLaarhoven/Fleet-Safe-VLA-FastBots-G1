@@ -456,3 +456,43 @@ git_*.md
 simple_qr_generator.py
 a.scpt
 dataminerAI.code-workspace
+
+# ── Training Infrastructure ──────────────────────────────
+# Model weights & checkpoints (large binaries)
+checkpoints/
+models/*.onnx
+models/*.pt
+models/*.bin
+models/*.safetensors
+*.ckpt
+
+# Training logs (regenerated on each run)
+training_logs/
+wandb/
+runs/
+
+# W&B offline sync
+training_logs/wandb_offline/
+
+# HuggingFace cache
+.cache/huggingface/
+
+# API keys / secrets (NEVER commit)
+.env
+.env.local
+*.key
+*.pem
+wandb_api_key.txt
+hf_token.txt
+
+# Large data files
+*.h5
+*.hdf5
+*.zarr
+*.npy
+*.npz
+
+# Compiled Python
+__pycache__/
+*.pyc
+*.pyo

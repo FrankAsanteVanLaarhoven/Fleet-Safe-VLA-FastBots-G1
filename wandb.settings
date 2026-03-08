@@ -1,0 +1,33 @@
+# ═══════════════════════════════════════════════════════════════
+# FLEET SAFE VLA — Weights & Biases Configuration
+# ═══════════════════════════════════════════════════════════════
+# Usage: Place at project root. Set WANDB_API_KEY as env var.
+# Docs: https://docs.wandb.ai/ref/run-settings
+# ═══════════════════════════════════════════════════════════════
+
+[default]
+project = fleet-safe-vla
+entity = FrankAsanteVanLaarhoven
+
+# Logging
+log_model = true
+log_artifact = true
+log_code = true
+
+# Privacy
+anonymous = never
+
+# Sync
+save_code = true
+mode = online
+
+# Tags for organization
+[default.config]
+framework = "pytorch"
+domain = "robotics-safety"
+robot = "unitree-g1"
+safety_standard = "IEC-61508-SIL3"
+
+[offline]
+mode = offline
+dir = training_logs/wandb_offline

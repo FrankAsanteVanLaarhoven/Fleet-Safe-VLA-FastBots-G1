@@ -1,0 +1,69 @@
+# ═══════════════════════════════════════════════════════════════
+#  FLEET SAFE VLA - HFB-S | Training Requirements
+# ═══════════════════════════════════════════════════════════════
+#  For full training on GPU servers.
+#  Local dev only needs: numpy
+# ═══════════════════════════════════════════════════════════════
+
+# ── Core ─────────────────────────────────────────────────────
+numpy>=1.24.0
+torch>=2.2.0
+torchvision>=0.17.0
+torchaudio>=2.2.0
+
+# ── RL & Optimization ───────────────────────────────────────
+gymnasium>=0.29.0
+stable-baselines3>=2.2.0
+scipy>=1.11.0
+
+# ── VLM Backbones ────────────────────────────────────────────
+transformers>=4.40.0
+accelerate>=0.27.0
+peft>=0.10.0                    # LoRA, AdaLoRA
+bitsandbytes>=0.43.0            # 4-bit quantization
+safetensors>=0.4.0
+
+# ── Diffusion Policy ────────────────────────────────────────
+diffusers>=0.27.0
+einops>=0.7.0
+
+# ── Model Export ─────────────────────────────────────────────
+onnx>=1.15.0
+onnxruntime-gpu>=1.17.0
+onnxsim>=0.4.35
+
+# ── Experiment Tracking ─────────────────────────────────────
+wandb>=0.16.0
+tensorboard>=2.15.0
+
+# ── HuggingFace ──────────────────────────────────────────────
+huggingface_hub>=0.21.0
+datasets>=2.17.0
+tokenizers>=0.15.0
+
+# ── Robot Frameworks ─────────────────────────────────────────
+# lerobot>=0.1.0               # Install from source: pip install git+https://github.com/huggingface/lerobot.git
+# isaacsim>=4.2.0              # Installed via Omniverse Launcher
+
+# ── Visualization ────────────────────────────────────────────
+matplotlib>=3.8.0
+seaborn>=0.13.0
+plotly>=5.18.0
+
+# ── Utilities ────────────────────────────────────────────────
+pyyaml>=6.0
+tqdm>=4.66.0
+rich>=13.7.0
+typer>=0.9.0
+psutil>=5.9.0
+
+# ── GCP Integration ──────────────────────────────────────────
+google-cloud-compute>=1.16.0
+google-cloud-storage>=2.14.0
+
+# ── State-Space Models (RoboMamba) ───────────────────────────
+mamba-ssm>=1.2.0; sys_platform == 'linux'
+causal-conv1d>=1.2.0; sys_platform == 'linux'
+
+# ── Safety ───────────────────────────────────────────────────
+cvxpy>=1.4.0                    # CBF-QP solver

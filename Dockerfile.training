@@ -1,0 +1,53 @@
+# ═══════════════════════════════════════════════════════════════
+#  FLEET SAFE VLA - HFB-S | Multi-Server Training Dockerfile
+# ═══════════════════════════════════════════════════════════════
+#  Supports: GCP L4 / A100, NCL HPC, NAISS Alvis, Local GPU
+#
+#  Usage:
+#    docker build -t fleet-safe-vla:latest -f Dockerfile.training .
+#    docker run --gpus all -v $(pwd)/training_logs:/app/training_logs \
+#      -e WANDB_API_KEY=$WANDB_API_KEY \
+#      -e HF_TOKEN=$HF_TOKEN \
+#      fleet-safe-vla:latest \
+#      python notebooks/09_auto_train_orchestrator.py --train SafeVLA --dry-run
+# ═══════════════════════════════════════════════════════════════
+
+FROM nvidia/cuda:12.4.1-devel-ubuntu22.04 AS base
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# System dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3.10 python3.10-venv python3-pip git curl wget \
+    libgl1-mesa-glx libglib2.0-0 libsm6 libxext6 libxrender-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN ln -sf /usr/bin/python3.10 /usr/bin/python && \
+    ln -sf /usr/bin/python3.10 /usr/bin/python3
+
+WORKDIR /app
+
+# ── Python Dependencies ─────────────────────────────────────
+COPY requirements_training.txt .
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements_training.txt
+
+# ── Project Code ─────────────────────────────────────────────
+COPY fleet/ fleet/
+COPY robopocket/ robopocket/
+COPY pipeline/ pipeline/
+COPY notebooks/ notebooks/
+COPY training/ training/
+COPY wandb.settings .
+
+# ── Directories ──────────────────────────────────────────────
+RUN mkdir -p training_logs checkpoints models
+
+# ── Health Check ─────────────────────────────────────────────
+HEALTHCHECK --interval=60s --timeout=10s \
+    CMD python -c "import torch; print(f'GPU: {torch.cuda.is_available()}')"
+
+# ── Default: list models ────────────────────────────────────
+CMD ["python", "notebooks/09_auto_train_orchestrator.py", "--list-models"]

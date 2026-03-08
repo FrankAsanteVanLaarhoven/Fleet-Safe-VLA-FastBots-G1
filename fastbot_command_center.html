@@ -28,36 +28,52 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overf
 /* ── Layout ─────────────────────────────────────────────────────── */
 .app{display:grid;grid-template-rows:48px 1fr;grid-template-columns:1fr;height:100vh;gap:0}
 
-/* ═══ v7: EPHEMERAL SIDEBAR ═══════════════════════════════════════ */
+/* ═══ v8: PREMIUM SIDEBAR — 3-State ═══════════════════════════════ */
+/* States: rail (4px) → icons (48px) → full (280px) */
 .eph-sidebar{position:fixed;left:0;top:48px;bottom:0;width:4px;z-index:300;
   transition:width .3s cubic-bezier(.4,0,.2,1),background .3s;
   background:transparent;display:flex;flex-direction:column;overflow:hidden}
-.eph-sidebar:hover,.eph-sidebar.expanded{width:280px;background:rgba(10,14,23,.97);
+/* Icon-only state */
+.eph-sidebar.icons-only{width:48px;background:rgba(10,14,23,.98);
+  border-right:1px solid var(--bd);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  box-shadow:2px 0 16px rgba(0,0,0,.4);overflow-y:auto;overflow-x:hidden}
+/* Full expanded state */
+.eph-sidebar.expanded{width:280px;background:rgba(10,14,23,.97);
   border-right:1px solid var(--bd);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   box-shadow:4px 0 24px rgba(0,0,0,.5)}
-.eph-sidebar .sb-toggle{position:absolute;right:-28px;top:12px;width:28px;height:36px;
-  background:rgba(15,22,35,.95);border:1px solid var(--bd);border-left:none;
-  border-radius:0 8px 8px 0;cursor:pointer;display:flex;align-items:center;justify-content:center;
-  color:var(--muted);font-size:14px;transition:all .3s;z-index:301}
-.eph-sidebar:hover .sb-toggle,.eph-sidebar.expanded .sb-toggle{right:0;border-radius:0;
-  border-left:none;border-right:none;position:relative;width:100%;height:auto;
-  padding:8px 14px;justify-content:flex-start;gap:8px;margin:0}
-.eph-sidebar .sb-toggle:hover{color:var(--cyan);background:rgba(0,255,229,.05)}
+
+/* Header */
 .sb-header{padding:14px 16px 10px;display:flex;align-items:center;gap:10px;
   border-bottom:1px solid var(--bd);opacity:0;transition:opacity .2s;white-space:nowrap}
-.eph-sidebar:hover .sb-header,.eph-sidebar.expanded .sb-header{opacity:1}
+.eph-sidebar.icons-only .sb-header{padding:8px 0;justify-content:center;opacity:1}
+.eph-sidebar.icons-only .sb-header h3{display:none}
+.eph-sidebar.icons-only .sb-header .sb-close{display:none}
+.eph-sidebar.expanded .sb-header{opacity:1}
 .sb-header h3{font-size:12px;font-weight:700;color:var(--cyan);letter-spacing:.5px;text-transform:uppercase}
 .sb-header .sb-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;margin-left:auto}
 .sb-header .sb-close:hover{color:var(--red)}
+
+/* Catalog */
 .sb-catalog{flex:1;overflow-y:auto;padding:8px 12px;opacity:0;transition:opacity .25s .05s}
-.eph-sidebar:hover .sb-catalog,.eph-sidebar.expanded .sb-catalog{opacity:1}
+.eph-sidebar.icons-only .sb-catalog{padding:4px;opacity:1}
+.eph-sidebar.expanded .sb-catalog{opacity:1}
 .sb-section-label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;
   color:var(--dim);padding:8px 4px 4px;white-space:nowrap}
+.eph-sidebar.icons-only .sb-section-label{display:none}
+
+/* Items */
 .sb-item{display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:4px;
-  border-radius:8px;cursor:grab;transition:all .2s;border:1px solid transparent;white-space:nowrap}
+  border-radius:8px;cursor:grab;transition:all .2s;border:1px solid transparent;white-space:nowrap;position:relative}
 .sb-item:hover{background:rgba(0,255,229,.04);border-color:rgba(0,255,229,.15)}
 .sb-item:active{cursor:grabbing;transform:scale(.97);background:rgba(0,255,229,.08)}
-.sb-item .sb-icon{font-size:18px;width:28px;text-align:center;flex-shrink:0}
+/* Icon container */
+.sb-item .sb-icon{width:28px;height:28px;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;color:var(--muted);transition:color .2s}
+.sb-item .sb-icon svg{width:18px;height:18px;stroke:currentColor;fill:none;
+  stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.sb-item:hover .sb-icon{color:var(--cyan)}
+.sb-item.active .sb-icon{color:var(--cyan)}
+/* Info */
 .sb-item .sb-info{flex:1;min-width:0}
 .sb-item .sb-name{font-size:11px;font-weight:600;color:var(--text)}
 .sb-item .sb-desc{font-size:9px;color:var(--dim);margin-top:1px}
@@ -65,19 +81,45 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overf
 .sb-item:hover .sb-add{opacity:1}
 .sb-item.active{background:rgba(0,255,229,.06);border-color:rgba(0,255,229,.2)}
 .sb-item.active .sb-name{color:var(--cyan)}
+
+/* Icon-only mode: hide labels, center icon, show tooltip */
+.eph-sidebar.icons-only .sb-item{padding:8px;justify-content:center;margin-bottom:2px;border-radius:6px}
+.eph-sidebar.icons-only .sb-item .sb-info{display:none}
+.eph-sidebar.icons-only .sb-item .sb-add{display:none}
+.eph-sidebar.icons-only .sb-item .sb-icon{width:24px;height:24px}
+.eph-sidebar.icons-only .sb-item .sb-icon svg{width:20px;height:20px}
+.eph-sidebar.icons-only .sb-item::after{content:attr(data-tooltip);position:absolute;
+  left:52px;top:50%;transform:translateY(-50%);padding:4px 10px;background:rgba(10,14,23,.97);
+  border:1px solid var(--bd);border-radius:6px;font-size:10px;font-weight:600;color:var(--text);
+  white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:400;
+  box-shadow:0 4px 12px rgba(0,0,0,.5)}
+.eph-sidebar.icons-only .sb-item:hover::after{opacity:1}
+
 /* SDK Footer */
 .sb-footer{padding:12px;border-top:1px solid var(--bd);opacity:0;transition:opacity .2s}
-.eph-sidebar:hover .sb-footer,.eph-sidebar.expanded .sb-footer{opacity:1}
+.eph-sidebar.icons-only .sb-footer{padding:4px;opacity:1}
+.eph-sidebar.expanded .sb-footer{opacity:1}
 .sb-sdk-btn{width:100%;display:flex;align-items:center;gap:10px;padding:10px 14px;
   background:linear-gradient(135deg,rgba(0,255,229,.08),rgba(59,130,246,.08));
   border:1px solid rgba(0,255,229,.2);border-radius:8px;color:var(--text);
   cursor:pointer;font-family:'Inter',sans-serif;transition:all .3s}
 .sb-sdk-btn:hover{background:linear-gradient(135deg,rgba(0,255,229,.15),rgba(59,130,246,.15));
   border-color:rgba(0,255,229,.4);box-shadow:0 4px 16px rgba(0,255,229,.1);transform:translateY(-1px)}
-.sb-sdk-btn .sdk-icon{font-size:20px}
+.sb-sdk-btn .sdk-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;color:var(--cyan)}
+.sb-sdk-btn .sdk-icon svg{width:20px;height:20px;stroke:currentColor;fill:none;
+  stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .sb-sdk-btn .sdk-text{text-align:left}
 .sb-sdk-btn .sdk-title{font-size:10px;font-weight:700;color:var(--cyan)}
 .sb-sdk-btn .sdk-sub{font-size:8px;color:var(--dim)}
+.eph-sidebar.icons-only .sb-sdk-btn{padding:8px;justify-content:center;border-radius:6px}
+.eph-sidebar.icons-only .sb-sdk-btn .sdk-text{display:none}
+
+/* Sidebar toggle button in header */
+.sb-mode-btn{background:none;border:1px solid var(--bd);border-radius:4px;padding:2px 8px;
+  cursor:pointer;color:var(--muted);font-size:11px;margin-left:12px;transition:all .2s;
+  font-family:'Inter',sans-serif}
+.sb-mode-btn:hover{color:var(--cyan);border-color:rgba(0,255,229,.3);background:rgba(0,255,229,.05)}
 
 /* ═══ v7: FLOATING WIDGET SYSTEM ══════════════════════════════════ */
 .widget{position:fixed;z-index:200;min-width:260px;max-width:90vw;
@@ -550,7 +592,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overf
   <!-- Header -->
   <div class="hdr">
     <h1><span class="pulse"></span>FLEET SAFE VLA - HFB-S — Command Center
-      <button onclick="document.getElementById('eph-sidebar').classList.toggle('expanded')" style="background:none;border:1px solid var(--bd);border-radius:4px;padding:2px 8px;cursor:pointer;color:var(--muted);font-size:11px;margin-left:12px" title="Toggle Sidebar (≡)">☰</button>
+      <button class="sb-mode-btn" onclick="toggleSidebarMode()" title="Toggle Sidebar: Rail → Icons → Full">☰</button>
     </h1>
     <div class="right">
       <div class="mode-toggle">
@@ -677,83 +719,83 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overf
 </div>
 
 <!-- ═══ v7: EPHEMERAL SIDEBAR ═══════════════════════════════════════ -->
-<div class="eph-sidebar" id="eph-sidebar">
+<div class="eph-sidebar icons-only" id="eph-sidebar">
   <div class="sb-header">
     <h3>⚡ Services</h3>
-    <button class="sb-close" onclick="document.getElementById('eph-sidebar').classList.remove('expanded')" title="Close">✕</button>
+    <button class="sb-close" onclick="toggleSidebarMode()" title="Collapse">✕</button>
   </div>
   <div class="sb-catalog" id="sb-catalog">
     <div class="sb-section-label">FLEET CONTROL</div>
-    <div class="sb-item" data-widget="fleet" draggable="true" onclick="widgetMgr.spawn('fleet')">
-      <div class="sb-icon">🤖</div>
+    <div class="sb-item" data-widget="fleet" data-tooltip="Fleet Controller" draggable="true" onclick="widgetMgr.spawn('fleet')">
+      <div class="sb-icon"><svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v1H6a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v4a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-4h1a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3V5a3 3 0 0 0-3-3Z"/><circle cx="9" cy="9" r="1"/><circle cx="15" cy="9" r="1"/><path d="M9 22v-3M15 22v-3"/></svg></div>
       <div class="sb-info"><div class="sb-name">Fleet Controller</div><div class="sb-desc">FSM • Gamepad • Policy • Arms</div></div>
       <div class="sb-add">+</div>
     </div>
-    <div class="sb-item" data-widget="vla" draggable="true" onclick="widgetMgr.spawn('vla')">
-      <div class="sb-icon">🧠</div>
+    <div class="sb-item" data-widget="vla" data-tooltip="VLA Inference" draggable="true" onclick="widgetMgr.spawn('vla')">
+      <div class="sb-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2Z"/><path d="M2 12h4M18 12h4M12 2v4M12 18v4"/><path d="M4.9 4.9l2.9 2.9M16.2 16.2l2.9 2.9M4.9 19.1l2.9-2.9M16.2 7.8l2.9-2.9"/></svg></div>
       <div class="sb-info"><div class="sb-name">VLA Inference</div><div class="sb-desc">GR00T N1.6 • Pipeline</div></div>
       <div class="sb-add">+</div>
     </div>
-    <div class="sb-item" data-widget="dataset" draggable="true" onclick="widgetMgr.spawn('dataset')">
-      <div class="sb-icon">📊</div>
+    <div class="sb-item" data-widget="dataset" data-tooltip="Dataset Manager" draggable="true" onclick="widgetMgr.spawn('dataset')">
+      <div class="sb-icon"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
       <div class="sb-info"><div class="sb-name">Dataset Manager</div><div class="sb-desc">Isaac Mimic • HDF5</div></div>
       <div class="sb-add">+</div>
     </div>
 
     <div class="sb-section-label">TELEMETRY</div>
-    <div class="sb-item" data-widget="telemetry" draggable="true" onclick="widgetMgr.spawn('telemetry')">
-      <div class="sb-icon">📡</div>
+    <div class="sb-item" data-widget="telemetry" data-tooltip="Telemetry" draggable="true" onclick="widgetMgr.spawn('telemetry')">
+      <div class="sb-icon"><svg viewBox="0 0 24 24"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.4"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.4"/><path d="M19.1 4.9c3.9 3.9 3.9 10.3 0 14.2"/></svg></div>
       <div class="sb-info"><div class="sb-name">Telemetry</div><div class="sb-desc">Position • Speed • Heading</div></div>
       <div class="sb-add">+</div>
     </div>
-    <div class="sb-item" data-widget="safety" draggable="true" onclick="widgetMgr.spawn('safety')">
-      <div class="sb-icon">🛡️</div>
+    <div class="sb-item" data-widget="safety" data-tooltip="Safety Monitor" draggable="true" onclick="widgetMgr.spawn('safety')">
+      <div class="sb-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="M9 12l2 2 4-4"/></svg></div>
       <div class="sb-info"><div class="sb-name">Safety Monitor</div><div class="sb-desc">Zones • Violations</div></div>
       <div class="sb-add">+</div>
     </div>
-    <div class="sb-item" data-widget="dds" draggable="true" onclick="widgetMgr.spawn('dds')">
-      <div class="sb-icon">📈</div>
+    <div class="sb-item" data-widget="dds" data-tooltip="DDS Telemetry" draggable="true" onclick="widgetMgr.spawn('dds')">
+      <div class="sb-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
       <div class="sb-info"><div class="sb-name">DDS Telemetry</div><div class="sb-desc">Hz • DoF • IMU</div></div>
       <div class="sb-add">+</div>
     </div>
 
     <div class="sb-section-label">MONITORING</div>
-    <div class="sb-item" data-widget="network" draggable="true" onclick="widgetMgr.spawn('network')">
-      <div class="sb-icon">🌐</div>
+    <div class="sb-item" data-widget="network" data-tooltip="Network Health" draggable="true" onclick="widgetMgr.spawn('network')">
+      <div class="sb-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"/></svg></div>
       <div class="sb-info"><div class="sb-name">Network Health</div><div class="sb-desc">Ping • DDS Bridge</div></div>
       <div class="sb-add">+</div>
     </div>
-    <div class="sb-item" data-widget="cameras" draggable="true" onclick="widgetMgr.spawn('cameras')">
-      <div class="sb-icon">📹</div>
+    <div class="sb-item" data-widget="cameras" data-tooltip="Camera Feeds" draggable="true" onclick="widgetMgr.spawn('cameras')">
+      <div class="sb-icon"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"/><circle cx="12" cy="13" r="4"/></svg></div>
       <div class="sb-info"><div class="sb-name">Camera Feeds</div><div class="sb-desc">Follow • Top • FPV • Security</div></div>
       <div class="sb-add">+</div>
     </div>
-    <div class="sb-item" data-widget="log" draggable="true" onclick="widgetMgr.spawn('log')">
-      <div class="sb-icon">📝</div>
+    <div class="sb-item" data-widget="log" data-tooltip="Event Log" draggable="true" onclick="widgetMgr.spawn('log')">
+      <div class="sb-icon"><svg viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></div>
       <div class="sb-info"><div class="sb-name">Event Log</div><div class="sb-desc">System events • FSM transitions</div></div>
       <div class="sb-add">+</div>
     </div>
 
     <div class="sb-section-label">SAFETY & POLICY</div>
-    <div class="sb-item" data-widget="robopocket" draggable="true" onclick="widgetMgr.spawn('robopocket')">
-      <div class="sb-icon">📱</div>
+    <div class="sb-item" data-widget="robopocket" data-tooltip="RoboPocket" draggable="true" onclick="widgetMgr.spawn('robopocket')">
+      <div class="sb-icon"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18" x2="12" y2="18.01"/><path d="M9 2v1.5a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5V2"/></svg></div>
       <div class="sb-info"><div class="sb-name">RoboPocket</div><div class="sb-desc">Inference • AR Foresight • Finetuning</div></div>
       <div class="sb-add">+</div>
     </div>
-    <div class="sb-item" data-widget="dseo" draggable="true" onclick="widgetMgr.spawn('dseo')">
-      <div class="sb-icon">🔒</div>
+    <div class="sb-item" data-widget="dseo" data-tooltip="DSEO Monitor" draggable="true" onclick="widgetMgr.spawn('dseo')">
+      <div class="sb-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><rect x="10" y="10" width="4" height="6" rx="1"/><circle cx="12" cy="8" r="1"/></svg></div>
       <div class="sb-info"><div class="sb-name">DSEO Monitor</div><div class="sb-desc">Risk Score • Mode • QoS</div></div>
       <div class="sb-add">+</div>
     </div>
-    <div class="sb-item" data-widget="safetymetrics" draggable="true" onclick="widgetMgr.spawn('safetymetrics')">
-      <div class="sb-icon">📐</div>
+    <div class="sb-item" data-widget="safetymetrics" data-tooltip="Safety Metrics" draggable="true" onclick="widgetMgr.spawn('safetymetrics')">
+      <div class="sb-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/><path d="M16.24 7.76l1.42-1.42"/><path d="M18 12h2"/></svg></div>
       <div class="sb-info"><div class="sb-name">Safety Metrics</div><div class="sb-desc">COM Margin • Forces • Height</div></div>
       <div class="sb-add">+</div>
     </div>
   </div>
   <div class="sb-footer">
     <button class="sb-sdk-btn" onclick="downloadSDK()">
-      <div class="sdk-icon">🤖</div>
+      <div class="sdk-icon"><svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v1H6a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v4a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-4h1a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3V5a3 3 0 0 0-3-3Z"/><circle cx="9" cy="9" r="1"/><circle cx="15" cy="9" r="1"/><path d="M9 22v-3M15 22v-3"/></svg></div>
       <div class="sdk-text">
         <div class="sdk-title">G1-FASTBOT SDK</div>
         <div class="sdk-sub">Download desktop launcher</div>
@@ -4346,6 +4388,19 @@ check();setInterval(check,5000);
   a.click();
   URL.revokeObjectURL(a.href);
   toast('📦 G1-FASTBOT Launcher downloaded!');
+}
+
+// ── 3-State Sidebar Toggle ────────────────────────────────────────
+// States cycle: rail (no classes) → icons-only → expanded → rail
+function toggleSidebarMode(){
+  const sb=document.getElementById('eph-sidebar');
+  if(!sb)return;
+  const isIcons=sb.classList.contains('icons-only');
+  const isExpanded=sb.classList.contains('expanded');
+  sb.classList.remove('icons-only','expanded');
+  if(!isIcons&&!isExpanded){sb.classList.add('icons-only')} // rail → icons
+  else if(isIcons){sb.classList.add('expanded')} // icons → full
+  // full → rail (already removed both classes)
 }
 
 // ── Override panel toggling for widget system ─────────────────────

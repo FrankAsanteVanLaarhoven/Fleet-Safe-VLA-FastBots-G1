@@ -1,154 +1,175 @@
-# SAFER-VLA: State-of-the-Art Fleet Autonomy for Robotics Education
+# FLEET SAFE VLA - HFB-S
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-cyan.svg)](LICENSE)
-[![PWA](https://img.shields.io/badge/PWA-installable-00ffe5?logo=pwa)](https://web.dev/progressive-web-apps/)
-[![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776ab.svg?logo=python)](https://python.org)
-[![HuggingFace](https://img.shields.io/badge/🤗_HuggingFace-FAVL-yellow)](https://huggingface.co/FAVL)
+**State-of-the-Art Fleet Autonomy & Safety for Humanoid Robots**
 
-> **Open-source Digital Twin Command Center** with WebRTC streaming, VLA inference, and fleet control for Unitree G1 humanoid robots in hospital environments.
+Digital Twin Command Center with WebRTC streaming, VLA inference, RoboPocket phone-based policy iteration, DDS Safety Envelope Orchestrator (DSEO), and fleet control for Unitree G1 humanoid robots.
+
+> Built on GCP G2 GPU instances with Isaac Sim 4.2.0 + ROS 2 Humble
 
 ---
 
-## 🚀 Quick Start
+## Architecture
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│  FLEET SAFE VLA - HFB-S                                         │
+├──────────────┬───────────────┬────────────────┬──────────────────┤
+│ Command      │ Fleet         │ RoboPocket     │ Safety           │
+│ Center (PWA) │ Controller    │ System         │ Layer            │
+├──────────────┼───────────────┼────────────────┼──────────────────┤
+│ Dashboard    │ DDS Bridge    │ Inference Srv  │ DSEO Node        │
+│ 3D Viewport  │ Policy Engine │ AR Foresight   │ Safety Monitor   │
+│ Widget Mgr   │ FSM Control   │ Online Finetune│ MDP Extensions   │
+│ SDK Launcher │ Arm Control   │ SLAM Monitor   │ QoS Profiles     │
+│ WebRTC       │ Rewards       │ BLE Gripper    │ Metrics Pub      │
+│              │               │ Multi-Device   │ E-Stop           │
+└──────────────┴───────────────┴────────────────┴──────────────────┘
+         │                │                │
+    ┌────┴────┐     ┌─────┴─────┐    ┌────┴────┐
+    │ GCP VM  │     │ CycloneDDS│    │ Isaac   │
+    │ G2 GPU  │     │ QoS       │    │ Sim 4.2 │
+    └─────────┘     └───────────┘    └─────────┘
+```
+
+## Components
+
+### 🤖 Command Center (`fastbot_command_center.html`)
+- **Ephemeral Dashboard** — Drag-and-drop floating widgets, fully customisable layout
+- **3-State Sidebar** — Rail (4px) → Icon-only (48px) → Full (280px) with premium SVG icons
+- **12 Service Widgets** — Fleet, VLA, Dataset, Telemetry, Safety, DDS, Network, Cameras, Log, RoboPocket, DSEO, Safety Metrics
+- **PWA** — Installable, offline-capable, with downloadable SDK launcher
+- **WebRTC** — Low-latency Isaac Sim streaming via GCP
+
+### 🧠 Fleet Controller (`fleet/`)
+| Module | Purpose |
+|--------|---------|
+| `dds_bridge.py` | CycloneDDS ↔ Python bridge |
+| `policy_engine.py` | GR00T N1.6 VLA inference |
+| `fsm_controller.py` | Finite State Machine for robot behavior |
+| `arm_controller.py` | Dual arm manipulation |
+| `rewards.py` | Reward functions for RL training |
+| `mdp_safe_extensions.py` | Safety observables, rewards, terminations, action filter, C-walk |
+| `safe_g1_env_cfg.py` | Full environment config with curriculum |
+| `dseo_node.py` | DDS Safety Envelope Orchestrator — risk scoring + mode switching |
+| `safety_monitor_node.py` | Hard E-stop controller with command watchdog |
+| `dds_metrics_publisher.py` | Per-topic deadline, latency, liveliness metrics |
+
+### 📱 RoboPocket (`robopocket/`)
+Phone-based policy iteration — improve robot policies without a robot.
+
+| Module | Purpose |
+|--------|---------|
+| `inference_server.py` | FastAPI DiffusionPolicy server (<150ms RTT) |
+| `ar_visual_foresight.py` | AR coin-path trajectory projection |
+| `data_serving_node.py` | RLPD 50/50 offline/online batch sampler |
+| `online_finetuning.py` | Async DDPM training with model sync |
+| `isomorphic_gripper.py` | ESP32 BLE + Jacobian DLS IK solver |
+| `slam_quality_monitor.py` | 5-stage VIO validation |
+| `multi_device_sync.py` | Cristian's clock sync + ARKit map merge |
+
+### 🔒 Safety Layer
+- **3 DSEO Modes**: Normal (20ms QoS) → Degraded (10ms) → Emergency (5ms)
+- **Hysteresis** mode switching prevents chattering
+- **Hard E-stop** with command watchdog and safe-stop commands
+- **Safety MDP**: COM margin rewards (weight=5.0), contact force limits, progressive curriculum
+
+### 🏗️ Pipeline (`pipeline/`)
+- GR00T training scripts (single & multi-GPU)
+- HDF5 → LeRobot dataset conversion
+- CycloneDDS XML configuration
+- DDS QoS profiles (Normal/Degraded/Emergency)
+
+---
+
+## GCP Server Setup
+
+### Prerequisites
+- GCP account with GPU quota (G2 series recommended)
+- Docker & Docker Compose
+- Python 3.10+
+
+### 1. Provision GCP VM
+```bash
+# Create G2 GPU instance for Isaac Sim
+./setup_isaac_sim_vm.sh
+
+# Install Isaac Sim dependencies
+./install_isaac_deps.sh
+```
+
+### 2. Launch the Server
+```bash
+# Start the FastAPI server + WebRTC signaling
+cd server && pip install -r requirements.txt
+python -m uvicorn api:app --host 0.0.0.0 --port 8000
+
+# Or use Docker
+docker-compose up -d
+```
+
+### 3. Launch Isaac Sim + ROS 2
+```bash
+# Launch hospital simulation
+./launch_fastbot_hospital.sh
+
+# Or launch Isaac Lab with ROS 2
+./launch_isaac_lab_ros2.sh
+```
+
+### 4. Open the Dashboard
+Navigate to `http://<GCP_EXTERNAL_IP>:8000` — the Command Center PWA loads automatically.
+
+---
+
+## Quick Start (Local Development)
 
 ```bash
-# 1. Clone
-git clone https://github.com/FAVL/safer-vla.git && cd safer-vla
+# Clone
+git clone https://github.com/FrankAsanteVanLaarhoven/Fleet-Safe-VLA-FastBots-G1.git
+cd Fleet-Safe-VLA-FastBots-G1
 
-# 2. Install
+# Install server deps
 pip install -r server/requirements.txt
 
-# 3. Launch
-python server/api.py
-# → Open http://localhost:8000
-```
+# Start server
+python -m uvicorn server.api:app --host 0.0.0.0 --port 8000
 
-## 📱 Install as PWA
-
-Visit the Command Center in Chrome/Edge and click **"Install SAFER-VLA"** to add it to your desktop/home screen. Works offline once cached.
-
----
-
-## 🏗 Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     SAFER-VLA Command Center                      │
-│  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌───────────┐ │
-│  │  3D Scene   │  │ Fleet Ctrl │  │ VLA Panel  │  │  Dataset  │ │
-│  │ Three.js    │  │ FSM/Gamepad│  │ GR00T N1.6 │  │  Manager  │ │
-│  └──────┬─────┘  └──────┬─────┘  └──────┬─────┘  └─────┬─────┘ │
-│         │               │               │              │        │
-│  ┌──────┴───────────────┴───────────────┴──────────────┴─────┐  │
-│  │              v6 WebRTC / WebRTX / API Engine               │  │
-│  │  WebRTCClient   FleetAPIClient   ServiceWorker   PWA      │  │
-│  └──────┬──────────────┬──────────────────────────────────────┘  │
-└─────────┼──────────────┼────────────────────────────────────────┘
-          │              │
-    ┌─────┴─────┐  ┌─────┴─────┐
-    │ Signaling │  │ FastAPI   │
-    │ Server    │  │ Backend   │
-    │ ws://8765 │  │ :8000     │
-    └─────┬─────┘  └─────┬─────┘
-          │              │
-    ┌─────┴──────────────┴─────────────────────────┐
-    │              Fleet Controller                  │
-    │  dds_messages │ dds_bridge │ fsm_controller   │
-    │  policy_engine │ rewards │ arm_controller     │
-    └──────────────────────────────────────────────┘
+# Open browser
+open http://localhost:8000
 ```
 
 ---
 
-## 📦 Project Structure
+## Project Structure
 
 ```
-safer-vla/
-├── fastbot_command_center.html   # Main PWA (v1-v6 engines, ~3800 lines)
-├── pwa/
-│   ├── manifest.json             # PWA manifest (standalone, shortcuts)
-│   ├── sw.js                     # Service worker (offline, cache, push)
-│   ├── offline.html              # Offline fallback page
-│   └── icons/                    # App icons (192, 512)
-├── server/
-│   ├── api.py                    # FastAPI backend (fleet + pipeline API)
-│   ├── signaling.py              # WebRTC signaling (WebSocket rooms)
-│   └── requirements.txt          # Python dependencies
-├── fleet/
-│   ├── dds_messages.py           # G1 DDS protocol (LowCmd/LowState)
-│   ├── dds_bridge.py             # DDS communication layer
-│   ├── fsm_controller.py         # 7-state FSM (hospital modes)
-│   ├── policy_engine.py          # RL policy inference (ONNX/simulated)
-│   ├── rewards.py                # 9 hospital reward functions
-│   └── arm_controller.py         # Arm SDK with CSV motions
-├── pipeline/
-│   ├── convert_recordings_to_hdf5.py
-│   ├── convert_hdf5_to_lerobot.py
-│   ├── upload_to_hf.py
-│   ├── train_groot.sh
-│   └── deploy_groot.sh
-└── .github/workflows/
-    └── deploy.yml                # GitHub Pages auto-deploy
+├── fastbot_command_center.html   # Main PWA dashboard
+├── fleet/                        # Fleet controller + safety layer
+│   ├── dds_bridge.py
+│   ├── policy_engine.py
+│   ├── dseo_node.py
+│   ├── safety_monitor_node.py
+│   ├── mdp_safe_extensions.py
+│   └── ...
+├── robopocket/                   # Phone-based policy iteration
+│   ├── inference_server.py
+│   ├── ar_visual_foresight.py
+│   ├── online_finetuning.py
+│   └── ...
+├── pipeline/                     # Training & DDS config
+│   ├── cyclonedds.xml
+│   ├── g1_safety_qos.xml
+│   └── train_groot.sh
+├── server/                       # FastAPI + WebRTC
+│   ├── api.py
+│   └── signaling.py
+├── pwa/                          # PWA assets
+├── docker-compose.yml
+└── setup_isaac_sim_vm.sh
 ```
 
 ---
 
-## 🎮 Keyboard Shortcuts
+## License
 
-| Key | Panel |
-|-----|-------|
-| `G` | Fleet Controller (FSM, Gamepad, DDS, Arms) |
-| `I` | VLA Inference (GR00T, Pipeline) |
-| `D` | Dataset Manager |
-| `R` | Toggle Recording |
-| `F` | Free Orbit Camera |
-| `M` | Split View |
-| `X` | Wireframe Mode |
-| `B` | Bounding Boxes |
-
----
-
-## 🤖 Unitree G1 Course Implementation Map
-
-| Course | Module | Implementation |
-|--------|--------|---------------|
-| 1.2 Network Config | `fleet/dds_bridge.py` | Multi-domain DDS, WiFi/Ethernet |
-| 2.1 DDS Control | `fleet/dds_messages.py` | LowCmd/LowState, CRC32 |
-| 3.1 FSM Controller | `fleet/fsm_controller.py` | 7 hospital states |
-| 4.1 RL Walking | `fleet/policy_engine.py` | 45-dim obs, ONNX inference |
-| 5.1 Isaac Mimic | `pipeline/` | HDF5 → LeRobot → GR00T |
-| 6.1 VLAs | Command Center v4 | GR00T N1.6 inference panel |
-| Arm SDK | `fleet/arm_controller.py` | CSV capture, 4 motions |
-
----
-
-## 🌐 WebRTC Streaming
-
-```bash
-# Start signaling server
-python server/signaling.py --port 8765
-
-# In another terminal, start the API
-python server/api.py
-
-# Connect Isaac Sim WebRTC
-# The Command Center auto-connects to signaling at ws://localhost:8765
-```
-
-**WebRTX Protocol** (binary DataChannel):
-
-| Msg ID | Direction | Payload |
-|--------|-----------|---------|
-| `0x01` | Client → Robot | Gamepad: lx, ly, rx, ry (4×f32) |
-| `0x02` | Client → Robot | FSM command: state_id (u16) |
-| `0x10` | Robot → Client | Pose: xyz + yaw + 23 joints (27×f32) |
-| `0x11` | Robot → Client | FSM state: state_id (u16) |
-| `0x12` | Robot → Client | IMU: roll, pitch, yaw (3×f32) |
-
----
-
-## 📄 License
-
-MIT — see [LICENSE](LICENSE) for details.
-
-**Built with** Three.js, FastAPI, WebRTC, and the Unitree G1 SDK curriculum.
+MIT License — see [LICENSE](LICENSE)

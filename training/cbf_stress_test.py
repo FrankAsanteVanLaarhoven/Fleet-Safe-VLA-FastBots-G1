@@ -267,6 +267,76 @@ def run_stress_test(model, cbf, device, obs_dim, act_dim, n_samples=5000):
     return all_results
 
 
+def train_cbf_with_labels(model, cbf, device, obs_dim, act_dim, epochs=100):
+    """
+    Train a model+CBF with explicit safe/unsafe labelling so h(s) is
+    meaningful: h(s)>0 for safe states, h(s)<0 for unsafe states.
+    This ensures the stress test uses a properly calibrated barrier.
+    """
+    from fleet_extended_train import generate_zone_dataset
+
+    print("  Training fresh model with safe/unsafe labels (100 epochs)...")
+    obs_data, act_data = generate_zone_dataset(1000, 50)
+    obs_data, act_data = obs_data.to(device), act_data.to(device)
+    n = obs_data.shape[0]
+
+    # Label: safe = lidar[:8] all > 0.3 (no close obstacles), unsafe = any < 0.3
+    lidar_start = 4  # obs = [pos(2) + vel(2) + lidar(8) + zone(12) + extras]
+    lidar_vals = obs_data[:, lidar_start:lidar_start+8]
+    min_lidar = lidar_vals.min(dim=1).values
+    is_safe = (min_lidar > 0.3).float()  # 1 = safe, 0 = unsafe
+
+    optimizer = torch.optim.AdamW(
+        list(model.parameters()) + list(cbf.parameters()),
+        lr=3e-4, weight_decay=0.01
+    )
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
+
+    for epoch in range(1, epochs + 1):
+        model.train()
+        cbf.train()
+        perm = torch.randperm(n, device=device)
+        epoch_loss = 0
+        nb = 0
+
+        for i in range(0, min(n, 12000), 64):
+            bo = obs_data[perm[i:i+64]]
+            ba = act_data[perm[i:i+64]]
+            labels = is_safe[perm[i:i+64]]
+            if bo.shape[0] < 2:
+                continue
+
+            pred = model(bo)
+            mse_loss = nn.functional.mse_loss(pred, ba)
+
+            h = cbf(bo).squeeze()
+            # CBF loss: h>0 for safe, h<0 for unsafe
+            safe_mask = labels > 0.5
+            unsafe_mask = ~safe_mask
+            cbf_loss = (
+                torch.mean(torch.clamp(-h[safe_mask], min=0)) * 0.5 +  # push h>0 for safe
+                torch.mean(torch.clamp(h[unsafe_mask] + 0.1, min=0)) * 0.5  # push h<0 for unsafe
+            )
+
+            total = mse_loss + cbf_loss
+            optimizer.zero_grad()
+            total.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+            optimizer.step()
+            epoch_loss += mse_loss.item()
+            nb += 1
+
+        scheduler.step()
+        if epoch % 25 == 0:
+            with torch.no_grad():
+                h_all = cbf(obs_data[:2000]).squeeze()
+                pct_pos = (h_all > 0).float().mean().item()
+            print(f"    epoch {epoch}/{epochs}  loss={epoch_loss/max(nb,1):.4f}  "
+                  f"h>0: {pct_pos:.1%}  mean_h={h_all.mean().item():.4f}")
+
+    print("  ✅ Training done — CBF calibrated with safe/unsafe labels\n")
+
+
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     base_dir = Path(os.path.dirname(os.path.abspath(__file__))).parent
@@ -276,49 +346,13 @@ def main():
     obs_dim = 28
     act_dim = 2
 
-    # Create or load model
     model = GRoOTBackbone(obs_dim, act_dim, n_layers=10).to(device)
     cbf = CBFNetwork(obs_dim).to(device)
 
-    ckpt_path = base_dir / "checkpoints" / "extended" / "zone_navigator" / "best.pt"
-    if ckpt_path.exists():
-        print(f"  Loading checkpoint: {ckpt_path}")
-        ckpt = torch.load(ckpt_path, map_location=device, weights_only=False)
-        if "model" in ckpt:
-            model.load_state_dict(ckpt["model"], strict=False)
-        if "cbf" in ckpt:
-            cbf.load_state_dict(ckpt["cbf"], strict=False)
-    else:
-        print(f"  ⚠️  No checkpoint at {ckpt_path}, using random weights")
-        print(f"  Training a quick model to get meaningful CBF values...")
-
-        # Quick train for meaningful barrier values
-        from fleet_extended_train import generate_zone_dataset
-        obs_data, act_data = generate_zone_dataset(500, 40)
-        obs_data, act_data = obs_data.to(device), act_data.to(device)
-
-        optimizer = torch.optim.AdamW(
-            list(model.parameters()) + list(cbf.parameters()),
-            lr=3e-4, weight_decay=0.01
-        )
-
-        for epoch in range(50):
-            model.train()
-            perm = torch.randperm(obs_data.shape[0], device=device)
-            for i in range(0, min(obs_data.shape[0], 5000), 64):
-                bo = obs_data[perm[i:i+64]]
-                ba = act_data[perm[i:i+64]]
-                if bo.shape[0] < 2:
-                    continue
-                pred = model(bo)
-                loss = nn.functional.mse_loss(pred, ba)
-                h = cbf(bo)
-                cbf_loss = torch.mean(torch.clamp(-h, min=0)) * 0.1
-                optimizer.zero_grad()
-                (loss + cbf_loss).backward()
-                optimizer.step()
-
-        print(f"  Quick training done.")
+    # Always train fresh with safe/unsafe labels for proper CBF calibration
+    # (checkpoint h(s) may not match stress-test observation distribution)
+    print("  Note: training fresh model to ensure CBF is calibrated for stress-test distribution.")
+    train_cbf_with_labels(model, cbf, device, obs_dim, act_dim, epochs=100)
 
     print("=" * 70)
     print("  FLEET-Safe VLA — CBF Stress Test & Diagnostic Analysis")

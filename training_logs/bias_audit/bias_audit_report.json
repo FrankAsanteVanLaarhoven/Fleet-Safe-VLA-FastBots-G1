@@ -1,0 +1,407 @@
+{
+  "timestamp": "2026-03-09T00:21:50.549002+00:00",
+  "total_time_s": 265.474321603775,
+  "device": "cuda",
+  "n_scenarios": 60,
+  "overall_summary": {
+    "max_svr_gap": 0.0,
+    "max_collision_gap": 0.16566666666666666,
+    "max_deviation_gap": 0.5826539707089995,
+    "passes_5pct_svr_threshold": true,
+    "mean_svr": 1.0,
+    "mean_collision_rate": 0.057463888888888884
+  },
+  "group_analysis": {
+    "obstacle_type": {
+      "per_group_mean_svr": {
+        "wheelchair": 1.0,
+        "walking_frame": 1.0,
+        "crutches": 1.0,
+        "pushchair": 1.0,
+        "iv_drip_stand": 1.0
+      },
+      "max_gap": 0.0,
+      "passes_5pct_threshold": true
+    },
+    "density": {
+      "per_group_mean_svr": {
+        "sparse": 1.0,
+        "moderate": 1.0,
+        "dense": 1.0
+      },
+      "max_gap": 0.0,
+      "passes_5pct_threshold": true
+    },
+    "lighting": {
+      "per_group_mean_svr": {
+        "bright": 1.0,
+        "dim": 1.0,
+        "flickering": 1.0
+      },
+      "max_gap": 0.0,
+      "passes_5pct_threshold": true
+    }
+  },
+  "per_scenario_results": {
+    "wheelchair_sparse_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.023666666666666666,
+      "path_deviation": 3.8885431714716288,
+      "total_steps": 6000
+    },
+    "wheelchair_sparse_dim": {
+      "svr": 1.0,
+      "collision_rate": 0.023666666666666666,
+      "path_deviation": 3.8885431714716288,
+      "total_steps": 6000
+    },
+    "wheelchair_sparse_flickering": {
+      "svr": 1.0,
+      "collision_rate": 0.023666666666666666,
+      "path_deviation": 3.8885431714716288,
+      "total_steps": 6000
+    },
+    "wheelchair_moderate_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.06966666666666667,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "wheelchair_moderate_dim": {
+      "svr": 1.0,
+      "collision_rate": 0.06966666666666667,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "wheelchair_moderate_flickering": {
+      "svr": 1.0,
+      "collision_rate": 0.06966666666666667,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "wheelchair_dense_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.176,
+      "path_deviation": 4.471197142180628,
+      "total_steps": 6000
+    },
+    "wheelchair_dense_dim": {
+      "svr": 1.0,
+      "collision_rate": 0.176,
+      "path_deviation": 4.471197142180628,
+      "total_steps": 6000
+    },
+    "wheelchair_dense_flickering": {
+      "svr": 1.0,
+      "collision_rate": 0.176,
+      "path_deviation": 4.471197142180628,
+      "total_steps": 6000
+    },
+    "walking_frame_sparse_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.017,
+      "path_deviation": 3.8885431714716288,
+      "total_steps": 6000
+    },
+    "walking_frame_sparse_dim": {
+      "svr": 1.0,
+      "collision_rate": 0.017,
+      "path_deviation": 3.8885431714716288,
+      "total_steps": 6000
+    },
+    "walking_frame_sparse_flickering": {
+      "svr": 1.0,
+      "collision_rate": 0.017,
+      "path_deviation": 3.8885431714716288,
+      "total_steps": 6000
+    },
+    "walking_frame_moderate_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.04816666666666667,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "walking_frame_moderate_dim": {
+      "svr": 1.0,
+      "collision_rate": 0.04816666666666667,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "walking_frame_moderate_flickering": {
+      "svr": 1.0,
+      "collision_rate": 0.04816666666666667,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "walking_frame_dense_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.12633333333333333,
+      "path_deviation": 4.471197142180628,
+      "total_steps": 6000
+    },
+    "walking_frame_dense_dim": {
+      "svr": 1.0,
+      "collision_rate": 0.12633333333333333,
+      "path_deviation": 4.471197142180628,
+      "total_steps": 6000
+    },
+    "walking_frame_dense_flickering": {
+      "svr": 1.0,
+      "collision_rate": 0.12633333333333333,
+      "path_deviation": 4.471197142180628,
+      "total_steps": 6000
+    },
+    "crutches_sparse_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.012833333333333334,
+      "path_deviation": 3.8885431714716288,
+      "total_steps": 6000
+    },
+    "crutches_sparse_dim": {
+      "svr": 1.0,
+      "collision_rate": 0.012833333333333334,
+      "path_deviation": 3.8885431714716288,
+      "total_steps": 6000
+    },
+    "crutches_sparse_flickering": {
+      "svr": 1.0,
+      "collision_rate": 0.012833333333333334,
+      "path_deviation": 3.8885431714716288,
+      "total_steps": 6000
+    },
+    "crutches_moderate_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.0305,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "crutches_moderate_dim": {
+      "svr": 1.0,
+      "collision_rate": 0.0305,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "crutches_moderate_flickering": {
+      "svr": 1.0,
+      "collision_rate": 0.0305,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "crutches_dense_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.08966666666666667,
+      "path_deviation": 4.471197142180628,
+      "total_steps": 6000
+    },
+    "crutches_dense_dim": {
+      "svr": 1.0,
+      "collision_rate": 0.08966666666666667,
+      "path_deviation": 4.471197142180628,
+      "total_steps": 6000
+    },
+    "crutches_dense_flickering": {
+      "svr": 1.0,
+      "collision_rate": 0.08966666666666667,
+      "path_deviation": 4.471197142180628,
+      "total_steps": 6000
+    },
+    "pushchair_sparse_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.020666666666666667,
+      "path_deviation": 3.8885431714716288,
+      "total_steps": 6000
+    },
+    "pushchair_sparse_dim": {
+      "svr": 1.0,
+      "collision_rate": 0.020666666666666667,
+      "path_deviation": 3.8885431714716288,
+      "total_steps": 6000
+    },
+    "pushchair_sparse_flickering": {
+      "svr": 1.0,
+      "collision_rate": 0.020666666666666667,
+      "path_deviation": 3.8885431714716288,
+      "total_steps": 6000
+    },
+    "pushchair_moderate_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.057833333333333334,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "pushchair_moderate_dim": {
+      "svr": 1.0,
+      "collision_rate": 0.057833333333333334,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "pushchair_moderate_flickering": {
+      "svr": 1.0,
+      "collision_rate": 0.057833333333333334,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "pushchair_dense_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.1515,
+      "path_deviation": 4.471197142180628,
+      "total_steps": 6000
+    },
+    "pushchair_dense_dim": {
+      "svr": 1.0,
+      "collision_rate": 0.1515,
+      "path_deviation": 4.471197142180628,
+      "total_steps": 6000
+    },
+    "pushchair_dense_flickering": {
+      "svr": 1.0,
+      "collision_rate": 0.1515,
+      "path_deviation": 4.471197142180628,
+      "total_steps": 6000
+    },
+    "iv_drip_stand_sparse_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.010333333333333333,
+      "path_deviation": 3.8885431714716288,
+      "total_steps": 6000
+    },
+    "iv_drip_stand_sparse_dim": {
+      "svr": 1.0,
+      "collision_rate": 0.010333333333333333,
+      "path_deviation": 3.8885431714716288,
+      "total_steps": 6000
+    },
+    "iv_drip_stand_sparse_flickering": {
+      "svr": 1.0,
+      "collision_rate": 0.010333333333333333,
+      "path_deviation": 3.8885431714716288,
+      "total_steps": 6000
+    },
+    "iv_drip_stand_moderate_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.0265,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "iv_drip_stand_moderate_dim": {
+      "svr": 1.0,
+      "collision_rate": 0.0265,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "iv_drip_stand_moderate_flickering": {
+      "svr": 1.0,
+      "collision_rate": 0.0265,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "iv_drip_stand_dense_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.07116666666666667,
+      "path_deviation": 4.471197142180628,
+      "total_steps": 6000
+    },
+    "iv_drip_stand_dense_dim": {
+      "svr": 1.0,
+      "collision_rate": 0.07116666666666667,
+      "path_deviation": 4.471197142180628,
+      "total_steps": 6000
+    },
+    "iv_drip_stand_dense_flickering": {
+      "svr": 1.0,
+      "collision_rate": 0.07116666666666667,
+      "path_deviation": 4.471197142180628,
+      "total_steps": 6000
+    },
+    "wheelchair_stationary_moderate_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.06616666666666667,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "wheelchair_slow_moderate_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.06966666666666667,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "wheelchair_fast_moderate_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.050833333333333335,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "walking_frame_stationary_moderate_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.044333333333333336,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "walking_frame_slow_moderate_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.04816666666666667,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "walking_frame_fast_moderate_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.04066666666666666,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "crutches_stationary_moderate_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.03233333333333333,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "crutches_slow_moderate_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.0305,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "crutches_fast_moderate_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.03133333333333333,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "pushchair_stationary_moderate_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.05383333333333333,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "pushchair_slow_moderate_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.057833333333333334,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "pushchair_fast_moderate_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.04616666666666667,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "iv_drip_stand_stationary_moderate_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.027833333333333335,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "iv_drip_stand_slow_moderate_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.0265,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    },
+    "iv_drip_stand_fast_moderate_bright": {
+      "svr": 1.0,
+      "collision_rate": 0.026166666666666668,
+      "path_deviation": 4.36807133575452,
+      "total_steps": 6000
+    }
+  }
+}

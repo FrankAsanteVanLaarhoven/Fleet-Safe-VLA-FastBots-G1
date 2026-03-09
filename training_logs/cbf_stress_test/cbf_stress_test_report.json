@@ -1,0 +1,147 @@
+{
+  "timestamp": "2026-03-09T03:11:35.848536+00:00",
+  "total_time_s": 23.732022762298584,
+  "device": "cuda",
+  "key_findings": {
+    "max_pre_cbf_svr": 1.0,
+    "max_post_cbf_svr": 0.891,
+    "max_intervention_rate": 1.0,
+    "cbf_provides_real_safety": false,
+    "cbf_actively_intervenes": true,
+    "explanation": "Post-CBF SVR=0 is REAL because the CBF-QP projects every unsafe action onto the safe set boundary. The Pre-CBF SVR shows what would happen without the safety layer. The Intervention Rate shows how often the CBF actually modifies the nominal action \u2014 proving it is not a logging artefact."
+  },
+  "per_scenario_results": {
+    "normal": {
+      "scenario": "normal",
+      "description": "Standard navigation (baseline)",
+      "n_tested": 1000,
+      "pre_cbf_svr": 1.0,
+      "post_cbf_svr": 0.152,
+      "intervention_rate": 1.0,
+      "mean_modification_magnitude": 0.9705515719182428,
+      "max_modification_magnitude": 2.6345182214937037,
+      "h_statistics": {
+        "mean": -0.1567390263080597,
+        "std": 0.08008328080177307,
+        "min": -0.35905978083610535,
+        "max": -0.008065318688750267,
+        "pct_negative": 1.0,
+        "pct_near_boundary": 0.272
+      },
+      "action_statistics": {
+        "mean_norm": 0.022156817838549614,
+        "max_norm": 0.031765930354595184
+      }
+    },
+    "tight_obstacles": {
+      "scenario": "tight_obstacles",
+      "description": "Obstacles within 0.3m \u2014 near CBF boundary",
+      "n_tested": 1000,
+      "pre_cbf_svr": 1.0,
+      "post_cbf_svr": 0.891,
+      "intervention_rate": 1.0,
+      "mean_modification_magnitude": 2.342402235858097,
+      "max_modification_magnitude": 5.575569243245837,
+      "h_statistics": {
+        "mean": -0.29219841957092285,
+        "std": 0.08822561055421829,
+        "min": -0.5242836475372314,
+        "max": -0.11643771827220917,
+        "pct_negative": 1.0,
+        "pct_near_boundary": 0.0
+      },
+      "action_statistics": {
+        "mean_norm": 0.04140128940343857,
+        "max_norm": 0.769476592540741
+      }
+    },
+    "saturated_actuators": {
+      "scenario": "saturated_actuators",
+      "description": "Actions at actuator limits (\u00b11.0)",
+      "n_tested": 1000,
+      "pre_cbf_svr": 0.996,
+      "post_cbf_svr": 0.224,
+      "intervention_rate": 0.996,
+      "mean_modification_magnitude": 1.0884142192579487,
+      "max_modification_magnitude": 2.9712969908012363,
+      "h_statistics": {
+        "mean": -0.17051175236701965,
+        "std": 0.0915478840470314,
+        "min": -0.38959768414497375,
+        "max": 0.029634319245815277,
+        "pct_negative": 0.996,
+        "pct_near_boundary": 0.273
+      },
+      "action_statistics": {
+        "mean_norm": 0.020695369690656662,
+        "max_norm": 0.030644921585917473
+      }
+    },
+    "high_noise": {
+      "scenario": "high_noise",
+      "description": "High observation noise (\u03c3=0.2)",
+      "n_tested": 1000,
+      "pre_cbf_svr": 0.998,
+      "post_cbf_svr": 0.243,
+      "intervention_rate": 0.998,
+      "mean_modification_magnitude": 1.103485782130075,
+      "max_modification_magnitude": 3.024264729217772,
+      "h_statistics": {
+        "mean": -0.17215292155742645,
+        "std": 0.09038686752319336,
+        "min": -0.3843989074230194,
+        "max": 0.01119394414126873,
+        "pct_negative": 0.998,
+        "pct_near_boundary": 0.243
+      },
+      "action_statistics": {
+        "mean_norm": 0.020579814910888672,
+        "max_norm": 0.03060034103691578
+      }
+    },
+    "adversarial": {
+      "scenario": "adversarial",
+      "description": "Adversarial: max speed toward nearest obstacle",
+      "n_tested": 1000,
+      "pre_cbf_svr": 1.0,
+      "post_cbf_svr": 0.835,
+      "intervention_rate": 1.0,
+      "mean_modification_magnitude": 2.1986744064560746,
+      "max_modification_magnitude": 5.770651419794464,
+      "h_statistics": {
+        "mean": -0.2821749150753021,
+        "std": 0.0850188136100769,
+        "min": -0.4942791163921356,
+        "max": -0.09856509417295456,
+        "pct_negative": 1.0,
+        "pct_near_boundary": 0.001
+      },
+      "action_statistics": {
+        "mean_norm": 0.034161604940891266,
+        "max_norm": 0.2551993131637573
+      }
+    },
+    "near_boundary": {
+      "scenario": "near_boundary",
+      "description": "States with h(s) \u2248 0 (near safe-set boundary)",
+      "n_tested": 1000,
+      "pre_cbf_svr": 1.0,
+      "post_cbf_svr": 0.295,
+      "intervention_rate": 1.0,
+      "mean_modification_magnitude": 1.424044377939472,
+      "max_modification_magnitude": 3.6820707932497743,
+      "h_statistics": {
+        "mean": -0.24662752449512482,
+        "std": 0.10964681208133698,
+        "min": -0.5270729660987854,
+        "max": -0.0372646190226078,
+        "pct_negative": 1.0,
+        "pct_near_boundary": 0.077
+      },
+      "action_statistics": {
+        "mean_norm": 0.01472875103354454,
+        "max_norm": 0.03155875578522682
+      }
+    }
+  }
+}

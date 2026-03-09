@@ -1,0 +1,47 @@
+{
+  "timestamp": "2026-03-09T00:17:20.839010+00:00",
+  "total_time_s": 58.724899768829346,
+  "fleet_sizes": [
+    4,
+    8
+  ],
+  "episodes_per_size": 500,
+  "results": {
+    "N=4": {
+      "n_robots": 4,
+      "n_episodes": 500,
+      "collisions": 911,
+      "total_steps": 200000,
+      "safety_violations": 20655,
+      "tasks_completed": 442,
+      "tasks_assigned": 2000,
+      "zone_violations": 448,
+      "min_separation_observed": 0.1490599552562558,
+      "episode_metrics": [],
+      "collision_rate": 0.004555,
+      "fleet_svr": 0.103275,
+      "allocation_efficiency": 0.221,
+      "zone_violation_rate": 0.00224,
+      "throughput": 0.884,
+      "eval_time_s": 15.172603130340576
+    },
+    "N=8": {
+      "n_robots": 8,
+      "n_episodes": 500,
+      "collisions": 3775,
+      "total_steps": 400000,
+      "safety_violations": 223613,
+      "tasks_completed": 937,
+      "tasks_assigned": 4000,
+      "zone_violations": 860,
+      "min_separation_observed": 0.113606063444039,
+      "episode_metrics": [],
+      "collision_rate": 0.0094375,
+      "fleet_svr": 0.5590325,
+      "allocation_efficiency": 0.23425,
+      "zone_violation_rate": 0.00215,
+      "throughput": 1.874,
+      "eval_time_s": 43.55207848548889
+    }
+  }
+}

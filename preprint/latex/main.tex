@@ -25,7 +25,7 @@ f.van-laarhoven2@newcastle.ac.uk}}
 \maketitle
 
 \begin{abstract}
-Vision-Language-Action (VLA) models have demonstrated remarkable performance across diverse robotic tasks, leveraging web-scale pre-training. However, deploying these foundation models in continuous environments remains inherently risky, as neural policies provide no formal safety guarantees. While recent works like Safe-VLN attempt to reduce collisions via heuristic occupancy masks and waypoint re-selection, they operate purely at the discrete planning level and only provide probabilistic improvements based on geometry. In this work, we propose \textbf{SafeVLA}, a theoretical framework bridging foundation models, natural language grounding, and formal nonlinear control theory. We introduce Semantic Barrier Functions (SBFs)---Control Barrier Functions dynamically generated from language instructions. Rather than relying solely on geometric heuristics, SafeVLA parses semantic constraints (e.g., ``avoid red zones'', ``stay away from humans'') into an explicit continuous forward-invariant safe set. SafeVLA then actively projects unsafe VLA-generated actions onto the closest permissible safe action via a real-time Quadratic Program (CBF-QP). Our theoretical contribution demonstrates zero violation probability for both geometric and language-conditioned semantic constraints. Evaluated on R2R-CE and Matterport3D across two distinct embodiments (FastBot, Unitree G1), exhaustive comparisons against SOTA baselines demonstrate that SafeVLA eliminates semantic safety violations while achieving a 99\% Instruction Compliance Rate and preserving 82.5\% of the original VLA policy behavior. To accelerate future research, we open-source the \textbf{SafeVLA Semantic Benchmark} and provide real-world Sim-to-Real supplementary video demonstrations, establishing a new paradigm for safe robot foundation models.
+Vision-Language-Action (VLA) models have demonstrated remarkable performance across diverse robotic tasks, leveraging web-scale pre-training. However, deploying these foundation models in continuous environments remains inherently risky, as neural policies provide no formal safety guarantees. While recent works like Safe-VLN attempt to reduce collisions via heuristic occupancy masks and waypoint re-selection, they operate purely at the discrete planning level and only provide probabilistic improvements based on geometry. In this work, we propose \textbf{SafeVLA}, a theoretical framework bridging foundation models, natural language grounding, and formal nonlinear control theory. We introduce Semantic Barrier Functions (SBFs)---Control Barrier Functions dynamically generated from language instructions. Rather than relying solely on geometric heuristics, SafeVLA parses semantic constraints (e.g., ``avoid red zones'', ``stay away from humans'') into an explicit continuous forward-invariant safe set. SafeVLA then actively projects unsafe VLA-generated actions onto the closest permissible safe action via a real-time Quadratic Program (CBF-QP). Our theoretical contribution demonstrates zero violation probability for both geometric and language-conditioned semantic constraints. Evaluated on R2R-CE and Matterport3D across two distinct embodiments (FastBot, Unitree G1), exhaustive comparisons against SOTA baselines demonstrate that SafeVLA eliminates semantic safety violations while achieving a 99\% Instruction Compliance Rate and preserving 82.5\% of the original VLA policy behaviour. To accelerate future research, we open-source the \textbf{SafeVLA Semantic Benchmark} and provide real-world Sim-to-Real supplementary video demonstrations, establishing a new paradigm for safe robot foundation models.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -33,7 +33,7 @@ Language-Conditioned Control Barrier Functions, Semantic Safety, Vision-Language
 \end{IEEEkeywords}
 
 \section{Introduction}
-The ability of autonomous robots to navigate environments using natural language commands has rapidly progressed with the introduction of Vision-Language-Action (VLA) architectures. Training on massive cross-embodiment datasets allows models like RT-2 and OpenVLA to generalize visually and semantically. However, translating high-level semantic plans into continuous motor control poses severe safety hazards. Safe-VLN highlighted this limitation by introducing heuristic mechanisms, such as LiDAR-based occupancy masks, to filter out predicted waypoints that intersect with obstacles. While effective at reducing Navigation-Collisions (N-C), Safe-VLN and similar approaches suffer from two fundamental limitations: they operate purely at the discrete planning level (lacking formal control-level guarantees), and they are entirely geometric. Traditional safety filters do not understand language constraints like ``Do not enter the ICU'' or ``Deliver medicine only to Room 12.''
+The ability of autonomous robots to navigate environments using natural language commands has rapidly progressed with the introduction of Vision-Language-Action (VLA) architectures. Training on massive cross-embodiment datasets allows models like RT-2 and OpenVLA to generalise visually and semantically. However, translating high-level semantic plans into continuous motor control poses severe safety hazards. Safe-VLN highlighted this limitation by introducing heuristic mechanisms, such as LiDAR-based occupancy masks, to filter out predicted waypoints that intersect with obstacles. While effective at reducing Navigation-Collisions (N-C), Safe-VLN and similar approaches suffer from two fundamental limitations: they operate purely at the discrete planning level (lacking formal control-level guarantees), and they are entirely geometric. Traditional safety filters do not understand language constraints like ``Do not enter the ICU'' or ``Deliver medicine only to Room 12.''
 
 To transition VLA models to physical deployments, safety cannot rely exclusively on rigid geometric boundaries; it must obey semantic safety rules. To this end, we introduce \textbf{SafeVLA}, a rigorous framework that combines the representational power of foundation models with the absolute guarantees of nonlinear control theory via Language-Conditioned Safety Constraints.
 
@@ -48,14 +48,14 @@ To transition VLA models to physical deployments, safety cannot rely exclusively
 
 \section{Related Work}
 \subsection{Vision-Language-Action Policies}
-Recent foundation models for robotics (e.g., RT-2, OpenVLA) have shown impressive zero-shot generalization by training on diverse datasets (Open X-Embodiment). However, these architectures map directly from perception to action without an intermediate safety projection, lacking formal guarantees.
+Recent foundation models for robotics (e.g., RT-2, OpenVLA) have shown impressive zero-shot generalisation by training on diverse datasets (Open X-Embodiment). However, these architectures map directly from perception to action without an intermediate safety projection, lacking formal guarantees.
 \subsection{Safe Reinforcement Learning}
-Methods utilizing Constrained Markov Decision Processes (CMDPs) attempt to implicitly learn safe behaviors from penalties. While they improve average-case safety, they remain probabilistic and cannot guarantee zero violations during domain distribution shifts.
+Methods utilising Constrained Markov Decision Processes (CMDPs) attempt to implicitly learn safe behaviours from penalties. While they improve average-case safety, they remain probabilistic and cannot guarantee zero violations during domain distribution shifts.
 \subsection{Control Barrier Functions}
 Control Barrier Functions (CBFs) provide mathematically rigorous forward invariance guarantees. While highly effective for collision avoidance, traditional CBFs are strictly geometric. SafeVLA is the first architecture to dynamically generate barrier constraints directly from semantic language features.
 
 \section{Problem Formulation}
-We model the robotic system utilizing standard nonlinear affine control dynamics:
+We model the robotic system utilising standard nonlinear affine control dynamics:
 \begin{equation}
 \dot{\mathbf{x}} = f(\mathbf{x}) + g(\mathbf{x})\mathbf{u}
 \end{equation}
@@ -101,7 +101,7 @@ VLA-Only & 56.0 & 4.2 & 18.0 & 61.0 \\
 \end{table}
 
 \subsection{Exp 2: Minimal Action Distortion}
-The CBF-QP layer preserves the underlying VLA policy behavior for 82.5\% of navigation iterations, with a Mean $L_2$ Distortion of only $0.042$, intervening strictly to enforce the semantic safety boundary.
+The CBF-QP layer preserves the underlying VLA policy behaviour for 82.5\% of navigation iterations, with a Mean $L_2$ Distortion of only $0.042$, intervening strictly to enforce the semantic safety boundary.
 
 \subsection{Exp 3: R2R-CE SOTA Baseline Comparisons}
 \begin{table}[h]
@@ -123,7 +123,7 @@ Safe-VLN & 51.0 & 4.0 & 45.0 \\
 \subsection{Exp 4: Cross-Embodiment Transfer}
 \begin{table}[h]
 \centering
-\caption{Cross-Embodiment Transfer (Safety Generalization)}
+\caption{Cross-Embodiment Transfer (Safety Generalisation)}
 \begin{tabular}{lccc}
 \toprule
 \textbf{Embodiment} & \textbf{SR (\%)} & \textbf{SVR (\%)} \\

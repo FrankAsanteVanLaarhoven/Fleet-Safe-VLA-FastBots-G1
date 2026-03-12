@@ -268,7 +268,13 @@ We validate the applicability of SBFs on physical hardware by deploying the exac
 \label{fig:hardware}
 \end{figure}
 
-\noindent\textbf{Failure Mode Analysis.} Of the 20 physical trials: in 2 trials, a shadow was classified as a human by the open-vocabulary detector, creating a phantom barrier that caused a 3-second halt before the VLA replanned around it (perception hallucination). In 1 trial, foot slippage on the G1 caused a 2~cm boundary breach (physical, not semantic). In 0 trials was QP infeasibility detected. These observations are consistent with the three failure scenarios identified in our Limitations section.
+\noindent\textbf{Failure Mode Analysis.} Of the 20 physical trials:
+\begin{itemize}
+    \item In 2 trials, a shadow was classified as a human by the open-vocabulary detector, creating a phantom barrier that caused a 3-second halt before replanning (perception hallucination).
+    \item In 1 trial, foot slippage on the G1 caused a 2~cm boundary breach (physical, not semantic).
+    \item In 0 trials was QP infeasibility detected.
+\end{itemize}
+These observations are consistent with the three failure scenarios identified in our Limitations section.
 
 \subsection{Exp 7: Ablation Study}
 We ablate the contribution of each SafeVLA component to isolate the effect of semantic barriers and temporal logic on safety performance.

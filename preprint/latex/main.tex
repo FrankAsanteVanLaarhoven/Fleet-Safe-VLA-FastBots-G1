@@ -79,7 +79,7 @@ a_\text{safe} = \arg\min_a \|a - a_\text{nom}\|^2 \quad \text{s.t.} \quad \dot{h
 \end{equation}
 This formulation provides mathematically provable, per-step guarantees of forward invariance for the safe set $\mathcal{C} = \{s : h(s) \geq 0\}$. 
 
-To rigorously evaluate our approach, we introduce the \textbf{Hospital Fleet Safety Benchmark (HFS-B)}. Designed to deliberately elicit unsafe behavior in complex environments, HFS-B comprises four specific task templates: corridor navigation with shared occupancy, obstacle avoidance, delivery waypoints, and human avoidance. We evaluate performance via success rates, collision rates, SVR, and STL clearance margins.
+To rigorously evaluate our approach, we introduce the \textbf{Hospital Fleet Safety Benchmark (HFS-B)}. Designed to deliberately elicit unsafe behaviour in complex environments, HFS-B comprises four specific task templates: corridor navigation with shared occupancy, obstacle avoidance, delivery waypoints, and human avoidance. We evaluate performance via success rates, collision rates, SVR, and STL clearance margins.
 
 \textbf{Contributions.} Our primary contributions are:
 \begin{enumerate}
@@ -594,7 +594,7 @@ To address the natural question ``Is SVR$\,=\,0$ real or an artefact?'', we cond
 \end{enumerate}
 The \textbf{CBF intervention rate is 99.6--100\%} across all scenarios, confirming the barrier function actively modifies unsafe actions.
 SVR$\,=\,0$ during training is real because the policy learns to propose safe actions within the training distribution; the CBF-QP provides a safety net for out-of-distribution states.
-Crucially, these metrics reflect realistic operational limits: adversarial and tight-obstacle scenarios (such as navigating a 0.3\,m gap that is physically narrower than the robot) inevitably show a high post-CBF SVR because no safe kinematic solution exists. Exposing these realistic physical boundaries validates that our empirical evaluation does not overclaim safety in mathematically impossible scenarios, motivating continued work on robust CBF formulations and active failure-recovery maneuvers.
+Crucially, these metrics reflect realistic operational limits: adversarial and tight-obstacle scenarios (such as navigating a 0.3\,m gap that is physically narrower than the robot) inevitably show a high post-CBF SVR because no safe kinematic solution exists. Exposing these realistic physical boundaries validates that our empirical evaluation does not overclaim safety in mathematically impossible scenarios, motivating continued work on robust CBF formulations and active failure-recovery manoeuvres.
 
 % =============================================================================
 % VII. DISCUSSION
@@ -643,7 +643,7 @@ On-device face blurring (RetinaFace on Jetson Orin) ensures General Data Protect
 The Vision-Language Model (VLM) backbone inherits biases from pretraining; our 60-scenario bias audit (Section~\ref{sec:bias}) confirms SVR gap$\,=\,0.000$ across all demographic groups.
 
 \textbf{Regulatory pathway.}
-We target Medicines and Healthcare products Regulatory Agency (MHRA) Class IIa certification. The CBF-QP guarantee directly supports International Organization for Standardization (ISO) 14971:2019 ``risk control'' requirements by establishing mathematical bounds on maximum speeds and separation distances.
+We target Medicines and Healthcare products Regulatory Agency (MHRA) Class IIa certification. The CBF-QP guarantee directly supports International Organization for Standardisation (ISO) 14971:2019 ``risk control'' requirements by establishing mathematical bounds on maximum speeds and separation distances.
 
 \textbf{Human oversight.}
 A safety envelope ensures a human operator can always override bounding box parameters dynamically via a teleoperation panel.
@@ -659,7 +659,7 @@ By augmenting a VLA backbone with a learned Control Barrier Function and a Quadr
 
 Evaluated on the newly introduced Hospital Navigation Safety Benchmark, our approach achieves fundamentally better safety-performance tradeoffs than existing methods.
 In direct head-to-head evaluation, the CBF-QP augmented policy achieved mathematically near-zero Safety Violation Rates ($5\times10^{-5}$), outperforming SaferPath by $13.8\times$ in collision evasion and outperforming SafeVLA in compute cost and latency by orders of magnitude. 
-Furthermore, we demonstrated that this safety paradigm generalizes across dramatically different robot embodiments, providing identical constraint guarantees for both a 2-DOF mobile base (FastBot) and a 23-DOF humanoid (Unitree G1).
+Furthermore, we demonstrated that this safety paradigm generalises across dramatically different robot embodiments, providing identical constraint guarantees for both a 2-DOF mobile base (FastBot) and a 23-DOF humanoid (Unitree G1).
 
 Future work will focus on deploying the ONNX-exported CBF-QP pipeline onto real-world embedded systems (NVIDIA Jetson Orin) for physical sim-to-real validation, and scaling the action-projection bounds via compositional CBF formulations for highly unstructured, multi-agent navigation.
 We release all code, training logs, and model checkpoints for full reproducibility.

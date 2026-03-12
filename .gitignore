@@ -496,3 +496,27 @@ hf_token.txt
 __pycache__/
 *.pyc
 *.pyo
+
+# ═══ FLEET TRINITY DASHBOARD — FORCE-INCLUDE OVERRIDES ══════════
+# The rules above (public, src/, *.json, tsconfig.json) are legacy
+# DataMiner/Gatsby patterns that inadvertently exclude critical
+# dashboard assets. These negation rules ensure they are tracked.
+
+# Dashboard public assets (URDF robots, STL meshes, icons, etc.)
+!fleet_trinity_dashboard/public/
+!fleet_trinity_dashboard/public/**
+
+# Dashboard source code (React components, hooks, styles)
+!fleet_trinity_dashboard/src/
+!fleet_trinity_dashboard/src/**
+
+# Dashboard config files
+!fleet_trinity_dashboard/tsconfig.json
+!fleet_trinity_dashboard/next.config.ts
+!fleet_trinity_dashboard/package.json
+!fleet_trinity_dashboard/postcss.config.mjs
+!fleet_trinity_dashboard/tailwind.config.ts
+
+# Root robot definitions
+!robots/
+!robots/**

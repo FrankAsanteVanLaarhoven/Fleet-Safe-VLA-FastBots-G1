@@ -8,7 +8,7 @@ docker pull "${IMAGE}"
 
 echo "[launch_isaac_lab_ros2] Starting Isaac Lab/ROS2 shell..."
 
-docker run -it --rm --gpus all \
+docker run -it --rm \
   --network host \
   -e "ACCEPT_EULA=Y" \
   -e "PRIVACY_CONSENT=Y" \

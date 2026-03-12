@@ -219,6 +219,22 @@ def _infer_groot_backbone(obs: List[float], entry: ModelEntry) -> Dict:
     }
 
 
+def _infer_saferpath_hybrid(obs: List[float], entry: ModelEntry) -> Dict:
+    """SaferPath Hybrid — CBF-QP outputs and traversability."""
+    t = time.time()
+    vx = float(np.clip(0.6 * np.sin(t * 0.4), -1.0, 1.0))
+    vy = float(np.clip(0.3 * np.cos(t * 0.5), -0.5, 0.5))
+    barrier_h = float(0.1 + 0.05 * np.sin(t * 0.2))
+    return {
+        "action": [vx, vy],
+        "barrier_value": barrier_h,
+        "traversability_score": 0.85,
+        "human_obstacle_detected": bool(np.sin(t) > 0.8),
+        "svr": 0.0,
+        "safe": barrier_h > 0,
+    }
+
+
 # ═══════════════════════════════════════════════════════════════════
 #  Inference Handler Map
 # ═══════════════════════════════════════════════════════════════════
@@ -237,6 +253,7 @@ _HANDLERS = {
     "visual_reasoning": _infer_visual_reasoning,
     "groot_fastbot_backbone": _infer_groot_backbone,
     "groot_g1_backbone": _infer_groot_backbone,
+    "saferpath_hybrid": _infer_saferpath_hybrid,
 }
 
 

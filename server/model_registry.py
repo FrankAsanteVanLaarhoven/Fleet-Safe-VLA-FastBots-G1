@@ -285,6 +285,22 @@ class ModelRegistry:
             tags=["groot", "backbone", "g1", "cmdp", "DiT"],
         )
 
+        self._models["saferpath_hybrid"] = ModelEntry(
+            id="saferpath_hybrid",
+            name="saferpath_hybrid",
+            display_name="FLEET-SaferPath-Hybrid",
+            category="safety",
+            description="Traversability-aware CBF safety with hybrid zone-aware CMDP Lagrangian cost shaping.",
+            backbone="GR00T-N1.6 Transform",
+            obs_dim=32, act_dim=2,
+            finetuning="full",
+            wandb_run_id="fleet-saferpath-0311-0623",
+            wandb_url="https://wandb.ai/FrankAsanteVanLaarhoven/fleet-safe-vla/runs/fleet-saferpath-0311-0623",
+            checkpoint_path="training_logs/saferpath_hybrid/best_model.pt",
+            training_script="training/saferpath_hybrid_train.py",
+            tags=["saferpath", "hybrid", "cbf", "traversability"]
+        )
+
     # ─── Load Training Reports ────────────────────────────────────
 
     def _load_training_reports(self):
@@ -343,6 +359,24 @@ class ModelRegistry:
                         m.final_svr = metrics["svr"]
                 except Exception:
                     pass
+
+        # SaferPath Hybrid report
+        sp_path = PROJECT_ROOT / "training_logs" / "saferpath_hybrid" / "result.json"
+        if sp_path.exists() and "saferpath_hybrid" in self._models:
+            try:
+                data = json.loads(sp_path.read_text())
+                m = self._models["saferpath_hybrid"]
+                m.training_status = "trained" if data.get("status") in ["trained", "success"] else "pending"
+                m.parameters = data.get("parameters", 0)
+                m.epochs = data.get("epochs", m.epochs)
+                m.final_loss = data.get("final_loss", 0.0)
+                m.final_svr = data.get("final_svr", 0.0)
+                m.training_time_s = data.get("training_time_s", 0.0)
+                m.device = data.get("device", "cuda")
+                m.timestamp = data.get("timestamp", "")
+                m.training_results = data
+            except Exception:
+                pass
 
         # GR00T backbone inherits from core
         for backbone_id, core_id in [

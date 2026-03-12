@@ -132,16 +132,6 @@ J.~Bjorck, A.~Prasad, C.~Zhou \emph{et~al.}, ``{GR00T N1}: An open foundation
   model for generalist humanoid robots,'' in \emph{Proceedings of Robotics:
   Science and Systems (RSS)}, 2025.
 
-\bibitem{groot_n1_6}
-{NVIDIA}, ``{GR00T} n1.6: Cross-embodiment foundation model for humanoid
-  robots,'' \emph{Technical Report}, 2026, available at
-  \url{https://developer.nvidia.com/groot}.
-
-\bibitem{hu2022lora}
-E.~J. Hu, Y.~Shen, P.~Wallis, Z.~Allen-Zhu, Y.~Li, S.~Wang, L.~Wang, and
-  W.~Chen, ``{LoRA}: Low-rank adaptation of large language models,'' in
-  \emph{International Conference on Learning Representations (ICLR)}, 2022.
-
 \bibitem{maler2004stl}
 O.~Maler and D.~Nickovic, ``Monitoring temporal properties of continuous
   signals,'' \emph{Formal Techniques, Modelling and Analysis of Timed and

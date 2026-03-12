@@ -129,6 +129,13 @@ class PipelineRequest(BaseModel):
 class InferenceRequest(BaseModel):
     observation: List[float] = []
 
+class LogRequest(BaseModel):
+    event: str
+    target: str
+    policy: str
+    action: str
+    timestamp: float
+
 
 # ═══════════════════════════════════════════════════════════════════
 #  Fleet REST Endpoints
@@ -202,6 +209,35 @@ async def trigger_arm(robot_id: str, req: ArmRequest):
     await fleet.broadcast(event)
 
     return {"ok": True, "robot_id": robot_id, "motion": req.motion}
+
+@app.post("/api/fleet/{robot_id}/log")
+async def log_encounter(robot_id: str, req: LogRequest):
+    """Log spatial memory encounters to a telemetry file."""
+    log_dir = Path(PROJECT_ROOT) / "logs"
+    log_dir.mkdir(exist_ok=True)
+    log_file = log_dir / "mission_telemetry.jsonl"
+    
+    log_entry = {
+        "robot_id": robot_id,
+        "event": req.event,
+        "target": req.target,
+        "policy": req.policy,
+        "action": req.action,
+        "timestamp": req.timestamp
+    }
+    
+    with open(log_file, "a") as f:
+        f.write(json.dumps(log_entry) + "\n")
+        
+    return {"ok": True}
+
+@app.get("/api/fleet/logs/download")
+async def download_logs():
+    """Download the telemetry log file as JSONL."""
+    log_file = Path(PROJECT_ROOT) / "logs" / "mission_telemetry.jsonl"
+    if not log_file.exists():
+        return JSONResponse({"error": "No logs found"}, status_code=404)
+    return FileResponse(log_file, media_type='application/jsonl', filename="mission_telemetry.jsonl")
 
 
 # ═══════════════════════════════════════════════════════════════════

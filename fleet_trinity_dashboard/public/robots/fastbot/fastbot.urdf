@@ -1,0 +1,149 @@
+<?xml version="1.0" ?>
+<!-- FastBot / BoxBot High Fidelity Primitive Model URDF -->
+<!-- Developed for the Fleet Trinity Dashboard -->
+<robot name="fastbot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Materials for sleek visual design -->
+  <material name="chassis_color"><color rgba="0.95 0.95 0.96 1.0"/></material>
+  <material name="wheel_color"><color rgba="0.12 0.12 0.12 1.0"/></material>
+  <material name="lidar_color"><color rgba="0.0 0.8 1.0 1.0"/></material>
+  <material name="camera_color"><color rgba="0.05 0.05 0.05 1.0"/></material>
+  <material name="beacon_color"><color rgba="0.0 1.0 0.5 1.0"/></material>
+  <material name="screen_color"><color rgba="0.1 0.1 0.15 1.0"/></material>
+
+  <!-- Base Link / Main Box Chassis -->
+  <link name="base_link">
+    <visual>
+      <geometry><box size="0.75 0.50 0.55"/></geometry>
+      <origin xyz="0 0 0.35" rpy="0 0 0"/>
+      <material name="chassis_color"/>
+    </visual>
+    <collision>
+      <geometry><box size="0.75 0.50 0.55"/></geometry>
+      <origin xyz="0 0 0.35" rpy="0 0 0"/>
+    </collision>
+    <inertial>
+      <mass value="25.0"/>
+      <inertia ixx="0.5" ixy="0" ixz="0" iyy="0.5" iyz="0" izz="0.5"/>
+    </inertial>
+  </link>
+
+  <!-- Top Display Screen -->
+  <link name="screen_link">
+    <visual>
+      <geometry><box size="0.4 0.3 0.02"/></geometry>
+      <origin xyz="0 0 0" rpy="0 0.1 0"/>
+      <material name="screen_color"/>
+    </visual>
+  </link>
+  <joint name="screen_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="screen_link"/>
+    <origin xyz="0 0 0.63" rpy="0 0 0"/>
+  </joint>
+
+  <!-- LiDAR Sensor -->
+  <link name="lidar_link">
+    <visual>
+      <geometry><cylinder radius="0.08" length="0.08"/></geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <material name="lidar_color"/>
+    </visual>
+  </link>
+  <joint name="lidar_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="lidar_link"/>
+    <origin xyz="0.2 0 0.66" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <!-- Front Depth Camera -->
+  <link name="camera_link">
+    <visual>
+      <geometry><box size="0.04 0.15 0.04"/></geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <material name="camera_color"/>
+    </visual>
+  </link>
+  <joint name="camera_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="camera_link"/>
+    <origin xyz="0.38 0 0.45" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Status Beacon -->
+  <link name="beacon_link">
+    <visual>
+      <geometry><sphere radius="0.04"/></geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <material name="beacon_color"/>
+    </visual>
+  </link>
+  <joint name="beacon_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="beacon_link"/>
+    <origin xyz="-0.3 0 0.65" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Wheels -->
+  <!-- Front Left -->
+  <link name="fl_wheel">
+    <visual>
+      <geometry><cylinder radius="0.12" length="0.08"/></geometry>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <material name="wheel_color"/>
+    </visual>
+  </link>
+  <joint name="fl_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="fl_wheel"/>
+    <origin xyz="0.25 0.29 0.12" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <!-- Front Right -->
+  <link name="fr_wheel">
+    <visual>
+      <geometry><cylinder radius="0.12" length="0.08"/></geometry>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <material name="wheel_color"/>
+    </visual>
+  </link>
+  <joint name="fr_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="fr_wheel"/>
+    <origin xyz="0.25 -0.29 0.12" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <!-- Rear Left -->
+  <link name="rl_wheel">
+    <visual>
+      <geometry><cylinder radius="0.12" length="0.08"/></geometry>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <material name="wheel_color"/>
+    </visual>
+  </link>
+  <joint name="rl_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="rl_wheel"/>
+    <origin xyz="-0.25 0.29 0.12" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <!-- Rear Right -->
+  <link name="rr_wheel">
+    <visual>
+      <geometry><cylinder radius="0.12" length="0.08"/></geometry>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <material name="wheel_color"/>
+    </visual>
+  </link>
+  <joint name="rr_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="rr_wheel"/>
+    <origin xyz="-0.25 -0.29 0.12" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+</robot>

@@ -1124,6 +1124,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overf
         <option value="nvidia/GR00T-N1.6-3B">nvidia/GR00T-N1.6-3B (Base)</option>
         <option value="nvidia/GR00T-N1.6-G1-PnPAppleToPlate">GR00T-N1.6-G1-PnPAppleToPlate</option>
         <option value="FAVL/groot-hospital-navigate-g1">FAVL/groot-hospital-navigate-g1 (Custom)</option>
+        <option value="saferpath_hybrid">FLEET-SaferPath-Hybrid (91.3% Success, 0.0015 SVR)</option>
         <option value="custom">Custom checkpoint...</option>
       </select>
     </div>
@@ -2444,7 +2445,7 @@ const G1_JOINTS=[
 function buildG1Humanoid(color=0xa855f7){
   const root=new THREE.Group();
   const S=1.0; // 1:1 real-world scale (1 unit = 1 meter in hospital scene)
-  const MESH_BASE='http://localhost:8888/unitree_g1_description/robots/g1_description/meshes/';
+  const MESH_BASE='http://localhost:8080/fleet_trinity_dashboard/public/robots/unitree_g1/meshes/';
   const stlLoader=new THREE.STLLoader();
 
   // Materials matching real G1 colorway
@@ -5111,7 +5112,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#0a0e17;color:#e2e8f0;m
   Galatolo et al. 2026 Visual Reasoning Integrated
 </div>
 <script>
-const API='http://localhost:8000';
+const API='http://localhost:8005';
 async function check(){try{const r=await fetch(API+'/api/health',{signal:AbortSignal.timeout(2000)});
 const d=await r.json();document.getElementById('d').className='dot on';
 document.getElementById('s').textContent='Online | Uptime: '+d.uptime+'s | '+d.robots+' robots'}

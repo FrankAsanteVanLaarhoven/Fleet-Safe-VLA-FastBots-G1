@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "urdf-loader": "https://unpkg.com/urdf-loader@0.12.1/umd/URDFLoader.js"
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>URDF Loader Test</h1>
+  <div id="log"></div>
+  <script type="module">
+    import * as THREE from 'three';
+    import 'urdf-loader'; // Defines URDFLoader globally via UMD
+
+    const log = (msg) => document.getElementById('log').innerHTML += msg + '<br>';
+    log("Initializing Loader...");
+    
+    try {
+      const loader = new URDFLoader();
+      log("Loader initialized. Fetching URDF...");
+      loader.load(
+        '/robots/unitree_g1/g1_29dof.urdf',
+        (robot) => {
+          log("SUCCESS! Parsed URDF. Robot name: " + robot.name);
+          let meshCount = 0;
+          robot.traverse(c => { if(c.isMesh) meshCount++; });
+          log("Mesh count: " + meshCount);
+        },
+        undefined,
+        (err) => {
+          log("ERROR: " + err);
+        }
+      );
+    } catch (err) {
+      log("SYNC ERROR: " + err);
+    }
+  </script>
+</body>
+</html>

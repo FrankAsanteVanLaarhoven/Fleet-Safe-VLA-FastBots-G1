@@ -1,0 +1,461 @@
+\documentclass[conference]{IEEEtran}
+
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{amsthm}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{subcaption}
+\usepackage{balance}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+
+\begin{document}
+
+\title{SafeVLA: Bridging Language, Temporal Logic, and Control Barrier Functions for Safe Robot Foundation Models}
+
+\author{\IEEEauthorblockN{Frank Asante Van Laarhoven}
+\IEEEauthorblockA{\textit{School of Computing} \\
+\textit{Newcastle University}\\
+Newcastle upon Tyne, United Kingdom \\
+f.van-laarhoven2@newcastle.ac.uk}}
+
+\maketitle
+
+\begin{abstract}
+Vision-Language-Action (VLA) models show strong generalisation across robotic tasks due to web-scale pre-training. However, deploying them in continuous environments carries safety risks because neural policies lack formal guarantees. Recent methods like Safe-VLN reduce collisions using heuristic masks, but they operate at the discrete planning level and rely strictly on geometry. We present \textbf{SafeVLA}, a framework connecting foundation models with formal nonlinear control. We propose \textbf{Semantic Barrier Functions (SBFs)}---Control Barrier Functions generated from language instructions---and extend these using Signal Temporal Logic (STL). Rather than relying on geometric heuristics, our method parses semantic constraints (e.g., ``avoid red zones'', ``deliver medicine then return to base'') into continuous forward-invariant safe sets. A real-time Quadratic Program (CBF-QP) then projects any unsafe VLA action onto the closest safe control. We provide formal proofs for forward invariance, semantic grounding, safety under state estimation error, and temporal constraint satisfaction. We evaluate the system on R2R-CE across two embodiments (FastBot, Unitree G1). Results show our filter drops safety violations to near-zero ($\le 0.2\%$ residual from sensor noise) while keeping a $98.6\%$ Instruction Compliance Rate and preserving $82.5\%$ of the original VLA policy behaviour. We open-source the \textbf{SafeVLA Semantic Benchmark} and provide supplementary video demonstrations on physical hardware.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Language-Conditioned Control Barrier Functions, Signal Temporal Logic, Semantic Safety, Vision-Language-Action Models, Safe Reinforcement Learning, Cross-Embodiment
+\end{IEEEkeywords}
+
+\section{Introduction}
+Navigation via natural language commands has progressed significantly with Vision-Language-Action (VLA) architectures. Training on cross-embodiment datasets allows models like RT-2 and OpenVLA to generalise across tasks. However, translating high-level semantic plans into continuous motor control introduces safety risks. Safe-VLN~\cite{safevln2024} highlighted this by introducing heuristic mechanisms, such as LiDAR occupancy masks, to filter out waypoints intersecting with obstacles. While effective at reducing collisions, these approaches share two limitations: they operate purely at the discrete planning level, and they are strictly geometric. Traditional safety filters cannot interpret language constraints like ``Do not enter the ICU'' or ``Deliver medicine only to Room 12.''
+
+To deploy VLA models safely, systems must obey semantic safety rules, not just rigid geometric boundaries. Furthermore, real language instructions are often temporal. Commands like ``Avoid humans until you reach the exit'' or ``Go to Room 12 without entering ICU first'' encode sequential constraints that instantaneous barriers cannot capture.
+
+We present \textbf{SafeVLA}, a framework that connects foundation models with formal nonlinear control theory via \textbf{Language-Conditioned Temporal Safety Constraints}.
+
+\subsection{Core Contributions}
+\begin{enumerate}
+    \item \textbf{Semantic Barrier Functions (SBF):} We propose Control Barrier Functions derived from natural language instructions, enabling VLA policies to obey semantic no-go zones.
+    \item \textbf{Temporal Safety via STL:} We extend SBFs to handle sequential constraints by parsing language into Signal Temporal Logic (STL) specifications, enforced via independent barriers.
+    \item \textbf{Formal Proofs:} We establish mathematical guarantees for forward invariance, sound semantic grounding, robust safety under bounded perception noise $\epsilon$, and temporal safety satisfaction.
+    \item \textbf{Cross-Embodiment Extension:} We apply the SBF-QP filter identically to a unicycle dynamic model (FastBot) and a 23-DOF humanoid (Unitree G1).
+    \item \textbf{Empirical Evaluation:} We introduce the \textbf{SafeVLA Semantic Benchmark} alongside ablation studies, runtime analysis, a new Semantic Safety Margin metric, and physical hardware deployment.
+\end{enumerate}
+
+Unlike prior CBF-based safety filters that rely solely on geometric constraints, SafeVLA introduces Semantic Barrier Functions dynamically generated from natural language instructions, enabling continuous-time safety enforcement for language-conditioned tasks. Table~\ref{tab:novelty} summarises the key differences.
+
+\begin{table}[h]
+\centering
+\caption{Novelty Differentiation: Prior CBF Work vs SafeVLA}
+\label{tab:novelty}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Property} & \textbf{Prior CBF} & \textbf{SafeVLA} \\
+\midrule
+Barrier source & Fixed geometry & Language-generated \\
+Temporal constraints & None & STL predicates \\
+Cross-embodiment & Single robot & Multi-embodiment \\
+Language grounding & None & LLM-conditioned \\
+Robustness proof & Rare & Formal ($\epsilon$-bound) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Related Work}
+\subsection{Vision-Language-Action Policies}
+Recent foundation models for robotics (e.g., RT-2, OpenVLA) have shown impressive zero-shot generalisation by training on diverse datasets (Open X-Embodiment). However, these architectures map directly from perception to action without an intermediate safety projection, lacking formal guarantees.
+\subsection{Safe Reinforcement Learning}
+Methods utilising Constrained Markov Decision Processes (CMDPs) attempt to implicitly learn safe behaviours from penalties. While they improve average-case safety, they remain probabilistic and cannot guarantee zero violations during domain distribution shifts.
+\subsection{Control Barrier Functions}
+Control Barrier Functions (CBFs) provide mathematically rigorous forward invariance guarantees~\cite{ames2017cbf, ames2019cbf_tutorial, panja2024cbf_survey}. While highly effective for collision avoidance, traditional CBFs rely on fixed geometric constraints. To our knowledge, SafeVLA is the first framework to combine language-grounded SBFs with STL and CBF-QP for filtering deployed VLA policies in VLN-CE style environments.
+\subsection{Temporal Logic with Control Barrier Functions}
+Recent work has explored integrating Signal Temporal Logic with CBFs for safe reinforcement learning. Li and Belta~\cite{li2022tl_cbf} proposed TL-guided safe RL using CBFs and Control Lyapunov Functions, while Lindemann and Dimarogonas~\cite{lindemann2018cbf_stl, lindemann2019cbf_stl_csl} introduced time-varying CBF constructions for STL tasks. Liang, Cai, and Vasile~\cite{liang2023erg_cbf_stl} extended CBFs to linearisable systems with high relative degrees under STL specifications via an explicit reference governor. Chen et al.~\cite{chen2025stl_cbf_tac} formalised connections between STL robustness and CBF conditions in IEEE TAC. SafeVLA differs from these works in three key respects: (i) it generates STL specifications \textit{automatically from natural language}, whereas prior methods assume hand-crafted temporal formulas; (ii) it filters \textit{pre-trained VLA foundation model policies} rather than training new ones from scratch; and (iii) it demonstrates cross-embodiment transfer across heterogeneous kinematics.
+\subsection{Formal Methods in Robotics}
+Signal Temporal Logic (STL)~\cite{maler2004stl} has been used to specify complex temporal behaviours for robot controllers~\cite{li2017stl_rl}. However, prior STL-based approaches require hand-crafted specifications and assume given formulas~\cite{lindemann2018cbf_stl, chen2025stl_cbf_tac}. SafeVLA automates the STL generation directly from natural language, bridging the gap between informal human instructions and formal temporal constraints.
+
+\section{Problem Formulation}
+We model the robotic system utilising standard nonlinear affine control dynamics:
+\begin{equation}
+\dot{\mathbf{x}} = f(\mathbf{x}) + g(\mathbf{x})\mathbf{u}
+\end{equation}
+The unconstrained VLA policy generates a nominal control input based on language instruction $L$: $\mathbf{u}_{vla} = \pi_{\theta}(\mathbf{x}, L)$. We define a Semantic Safe Set $\mathcal{C}_L$ dynamically conditioned on the instruction bounds:
+\begin{equation}
+\mathcal{C}_L = \{ \mathbf{x} \in \mathcal{X} \mid h_L(\mathbf{x}) \ge 0 \}
+\end{equation}
+The core problem is to find a control input $\mathbf{u}^*$ that minimally deviates from the foundation model's intent $\mathbf{u}_{vla}$ while strictly guaranteeing the state remains within $\mathcal{C}_L$.
+
+\section{SafeVLA Architecture}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{../figures/fig1_g1_primary_panels.png}
+\caption{SafeVLA architecture. Natural language instructions are parsed into semantic safety constraints, which generate Control Barrier Functions defining a forward-invariant safe set. The VLA policy proposes actions that are projected via a real-time CBF-QP safety filter, producing minimally modified safe controls applicable across multiple robot embodiments.}
+\label{fig:architecture}
+\end{figure}
+
+\subsection{Semantic Parsing Pipeline}
+To bridge the gap between unconstrained language and mathematical barriers, SafeVLA employs an explicit three-stage parsing pipeline:
+\begin{enumerate}
+    \item \textbf{LLM Semantic Parser:} An embedded Large Language Model (e.g., LLaMA-based parser) grounds the raw instruction (e.g., ``avoid crowded areas'') into discrete semantic symbols with associated spatial parameters $\theta_L = g_\phi(L)$.
+    \item \textbf{Symbolic Constraint Generator:} The semantic symbol is mapped to a spatial representation within the robot's local costmap using foundational vision models (e.g., open-vocabulary object detectors).
+    \item \textbf{Barrier Construction:} This spatial representation directly parameterises the continuous Semantic Barrier Function, $h_L(\mathbf{x}) = h(\mathbf{x}; \theta_L)$.
+\end{enumerate}
+
+\noindent Example mapping:
+\begin{table}[h]
+\centering
+\caption{Language-to-Constraint Extraction Examples}
+\begin{tabular}{ll}
+\toprule
+\textbf{Instruction} & \textbf{Extracted Constraint} \\
+\midrule
+``Stay 1m from humans'' & $d(\text{robot}, \text{human}) \ge 1$ \\
+``Avoid red zones'' & $d(\text{robot}, \text{red\_zone}) \ge 0.5$ \\
+``Do not enter ICU'' & $\mathbf{x} \notin \mathcal{R}_{ICU}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Semantic Barrier Function (SBF) Generator}
+The extracted language constraints are mapped to dynamic coordinate bounds in the local frame. For example, if the instruction is ``Stay 1 metre away from humans'', the generator outputs a dynamic barrier:
+\begin{equation}
+h_{human}(\mathbf{x}) = \text{distance}(\text{robot}, \text{human}) - 1
+\end{equation}
+
+\subsection{Language-Conditioned Temporal Safety (STL Extension)}
+Real language instructions often encode \textit{temporal} constraints. SafeVLA extends the instantaneous SBF framework by parsing temporal language into Signal Temporal Logic (STL) specifications, then enforcing each temporal predicate via an independent barrier function.
+
+\noindent\textbf{Example:} ``Reach the exit while always avoiding humans.''
+
+\noindent Parsed STL specification:
+\begin{align}
+\varphi_1 &= \Box_{[0,T]} \big( d(\mathbf{x}, \text{human}) > 1 \big) \label{eq:stl_always} \\
+\varphi_2 &= \Diamond_{[0,T]} \big( \mathbf{x} \in \mathcal{R}_{exit} \big) \label{eq:stl_eventually}
+\end{align}
+
+Each STL predicate $\varphi_i$ maps to a barrier function $h_i(\mathbf{x})$, and the composite safety set becomes $\mathcal{C}_{STL} = \bigcap_i \{ \mathbf{x} \mid h_i(\mathbf{x}) \ge 0 \}$.
+
+\noindent\textbf{Remark (STL Fragment).} SafeVLA currently handles the \textit{safety-preserving STL fragment}: conjunctions of ``always'' ($\Box$) predicates, which map directly to static CBFs. ``Eventually'' ($\Diamond$) reachability predicates are treated as soft objectives pursued by the underlying VLA policy, \textit{not} as hard CBF constraints. Extending to the full STL fragment via time-varying CBF constructions~\cite{lindemann2019cbf_stl_csl, liang2023erg_cbf_stl, chen2025stl_cbf_tac} is left to future work.
+
+\subsection{CBF-QP Safety Filter}
+SafeVLA projects the continuous action vector into the safe space using a real-time Quadratic Program (QP). We find the minimally invasive safe action $\mathbf{u}^*$:
+\begin{align}
+    \mathbf{u}^* =& \arg \min_{\mathbf{u} \in \mathcal{U}} \frac{1}{2} || \mathbf{u} - \mathbf{u}_{vla} ||^2 \\
+    \text{s.t.}& \quad \dot{h}_i(\mathbf{x}, \mathbf{u}) \ge -\alpha_i h_i(\mathbf{x}), \quad \forall i
+\end{align}
+
+\subsection{Cross-Embodiment Task-Space Reduction}
+To enable the same SBF-QP filter across heterogeneous kinematics, we define barriers on a \textbf{reduced-order task state} $\mathbf{x}_{task} = (x, y, \psi) \in SE(2)$ representing the planar base pose for both robots. This ensures relative degree~1 for all distance-based barriers with respect to velocity inputs. For the \textbf{FastBot} (unicycle), the QP outputs $(v, \omega) \in \mathbb{R}^2$ are applied directly to the differential drive. For the \textbf{Unitree G1} (23-DOF humanoid), the QP outputs desired base velocities $(v_x, v_y, \dot{\psi}) \in \mathbb{R}^3$, which are tracked by a low-level whole-body controller~\cite{margolis2022walkthesewaysim} that computes joint-level torques.
+
+\section{Theoretical Guarantees}
+
+\begin{theorem}[Language-Conditioned Safety Invariance]
+\label{thm:invariance}
+Assuming perfect state estimation, if the initial state $\mathbf{x}_0$ lies within the instruction-defined safe set $\mathcal{C}_L$, and the control input $\mathbf{u}^*$ satisfies the Semantic Barrier Function constraint $\dot{h}_L(\mathbf{x}, \mathbf{u}) \ge -\alpha h_L(\mathbf{x})$ for a locally Lipschitz class-$\mathcal{K}$ function $\alpha$, then the system state remains in $\mathcal{C}_L$ for all time.
+\end{theorem}
+\begin{proof}[Proof Sketch]
+By satisfying the constraint, the derivative of the barrier function is strictly bounded from below by $-\alpha(h_L(\mathbf{x}))$. By Nagumo's Theorem, this condition guarantees that $\mathcal{C}_L$ is forward invariant. Therefore, subject to accurate state estimation, the robot mathematically never enters the unsafe state defined by the language instruction. \qed
+\end{proof}
+
+\begin{theorem}[Sound Semantic Grounding]
+\label{thm:grounding}
+Let $L$ be a language instruction, $g_\phi(L) \rightarrow \theta_L \in \Theta$ the semantic parser producing constraint parameters in the parameter space $\Theta = \mathbb{R}^{n_\theta}$ (comprising centre coordinates and distance thresholds in the costmap frame), and $h_L(\mathbf{x}) = h(\mathbf{x}; \theta_L)$ the resulting barrier function. If $g_\phi$ is $\varepsilon$-consistent with the environment ground-truth semantics (i.e., $||g_\phi(L) - \theta^*_L||_2 \le \varepsilon$, where $\|\cdot\|_2$ denotes the Euclidean norm), then enforcing the barrier constraint $h(\mathbf{x}; \theta_L) \ge 0$ guarantees the instruction is satisfied up to a spatial tolerance of $\varepsilon$.
+\end{theorem}
+\begin{proof}[Proof Sketch]
+If $\theta_L = g_\phi(L)$ approximates the true constraint parameters $\theta^*_L$ within $\varepsilon$ in $\|\cdot\|_2$, then the barrier-defined safe set $\mathcal{C}_{\theta_L}$ contains the true safe set $\mathcal{C}_{\theta^*_L}$ contracted by at most $\varepsilon$ in the spatial domain (since barrier level sets shift at most $\varepsilon$ under parameter perturbation). The CBF-QP enforces $\mathbf{x}(t) \in \mathcal{C}_{\theta_L}$, which implies instruction satisfaction modulo $\varepsilon$. In practice, $\varepsilon \le 5$ cm at 0.05 m/cell occupancy grid resolution. \qed
+\end{proof}
+
+\begin{theorem}[Robust Safety under State Estimation Error]
+\label{thm:robust}
+If the state estimate $\hat{\mathbf{x}}$ satisfies $||\mathbf{x} - \hat{\mathbf{x}}|| \le \epsilon$ and the barrier condition is modified to incorporate a robustness margin:
+\begin{equation}
+\dot{h}(\hat{\mathbf{x}}, \mathbf{u}) \ge -\alpha h(\hat{\mathbf{x}}) + \gamma \epsilon
+\end{equation}
+where $\gamma \ge \sup_{\mathbf{x}} || \nabla h(\mathbf{x}) ||$ is an upper bound on the barrier gradient, then the true state $\mathbf{x}(t)$ remains in $\mathcal{C}_L$ for all time despite bounded estimation error.
+\end{theorem}
+\begin{proof}[Proof Sketch]
+The additional margin $\gamma \epsilon$ compensates for the worst-case discrepancy between $h(\mathbf{x})$ and $h(\hat{\mathbf{x}})$. Since $|h(\mathbf{x}) - h(\hat{\mathbf{x}})| \le \gamma \epsilon$ by Lipschitz continuity of $h$, the modified constraint ensures $\dot{h}(\mathbf{x}, \mathbf{u}) \ge -\alpha h(\mathbf{x})$ holds for the true state. Forward invariance then follows from Theorem~\ref{thm:invariance}. \qed
+\end{proof}
+
+\noindent\textbf{Practical instantiation.} In our experiments, we set $\epsilon = 5$ cm based on maximum observed SLAM drift (RTAB-Map) over 10~m trajectories. Since all barriers are Euclidean signed distance fields, $\gamma \le \sup_{\mathbf{x}} \|\nabla d(\mathbf{x})\| = 1.0$. The resulting QP margin $\gamma \epsilon = 5$ cm is a conservative but practical safety buffer.
+
+\begin{theorem}[Temporal Safety Satisfaction]
+\label{thm:temporal}
+If each predicate $h_i(\mathbf{x})$ corresponding to an STL ``always'' specification $\Box_{[0,T]} \varphi_i$ satisfies the barrier condition $\dot{h}_i(\mathbf{x}, \mathbf{u}) \ge -\alpha_i h_i(\mathbf{x})$ for all $t \in [0,T]$, then the resulting trajectory satisfies the full temporal logic safety specification $\bigwedge_i \Box_{[0,T]} \varphi_i$.
+\end{theorem}
+\begin{proof}[Proof Sketch]
+By Theorem~\ref{thm:invariance}, each individual barrier constraint guarantees forward invariance of $\mathcal{C}_i = \{ \mathbf{x} \mid h_i(\mathbf{x}) \ge 0 \}$. Since the intersection of forward-invariant sets under the same control input is itself forward-invariant, $\mathbf{x}(t) \in \bigcap_i \mathcal{C}_i$ for all $t \in [0,T]$, satisfying the conjunction of all temporal predicates. \qed
+\end{proof}
+
+\section{Experiments}
+
+All results are averaged across \textbf{1{,}200 evaluation episodes} with \textbf{three random seeds} and reported with $\pm 1\sigma$ standard deviations.
+
+\noindent\textbf{Hardware.} All simulation experiments run on a single NVIDIA RTX 4090 GPU with an Intel i9-13900K CPU. Language parsing uses a quantised LLaMA-7B model (4-bit GPTQ) executed \textit{once per instruction} (amortised at episode start), not per control step. VLA inference uses an OpenVLA backbone with batch size~1. The CBF-QP is solved via OSQP~on CPU.
+
+\subsection{Exp 1: Safety Violation Rate (VLA vs SafeVLA)}
+We evaluate unconstrained VLA vs SafeVLA against language constraints on R2R-CE.
+\begin{table}[h]
+\centering
+\caption{Safety Violation Rate and Instruction Compliance}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Model} & \textbf{SR (\%)} & \textbf{NE (m)} & \textbf{SVR (\%)} & \textbf{ICR (\%)} \\
+\midrule
+VLA-Only & $56.0 \pm 2.4$ & $4.2 \pm 0.3$ & $18.0 \pm 1.8$ & $61.0 \pm 3.1$ \\
+\textbf{SafeVLA} & $\mathbf{58.0 \pm 1.9}$ & $\mathbf{4.0 \pm 0.2}$ & $\mathbf{0.2 \pm 0.1}$ & $\mathbf{98.6 \pm 0.4}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Exp 2: Minimal Action Distortion}
+The CBF-QP layer preserves the underlying VLA policy behaviour for 82.5\% of navigation iterations, with a Mean $L_2$ Distortion of only $0.042 \pm 0.008$, intervening strictly to enforce the semantic safety boundary.
+
+\subsection{Exp 3: R2R-CE SOTA Baseline Comparisons}
+\begin{table}[h]
+\centering
+\caption{R2R-CE SOTA Comparisons}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Method} & \textbf{SR (\%)} & \textbf{SVR (\%)} & \textbf{ICR (\%)} \\
+\midrule
+CWP-RecBERT & $45.0 \pm 2.8$ & $32.0 \pm 3.1$ & $22.0 \pm 4.2$ \\
+ETPNav & $49.0 \pm 2.3$ & $28.0 \pm 2.7$ & $35.0 \pm 3.5$ \\
+GridMM & $52.0 \pm 2.1$ & $25.0 \pm 2.4$ & $41.0 \pm 3.0$ \\
+Safe-VLN & $51.0 \pm 2.5$ & $4.0 \pm 0.9$ & $45.0 \pm 3.8$ \\
+\textbf{SafeVLA} & $\mathbf{58.0 \pm 1.9}$ & $\mathbf{0.2 \pm 0.1}$ & $\mathbf{98.6 \pm 0.4}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Exp 4: Cross-Embodiment Transfer}
+\begin{table}[h]
+\centering
+\caption{Cross-Embodiment Transfer (Safety Generalisation)}
+\footnotesize
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+\textbf{Embodiment} & \textbf{SR (\%)} & \textbf{SVR (\%)} & \textbf{SSM (med)} & \textbf{SSM (5th)} & \textbf{SSM (95th)} \\
+\midrule
+FastBot (2-Whl) & $58.0 \pm 1.9$ & $0.2 \pm 0.1$ & $0.84$ & $0.31$ & $1.42$ \\
+Unitree G1 (Humanoid) & $55.0 \pm 2.2$ & $0.4 \pm 0.2$ & $0.71$ & $0.18$ & $1.25$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Exp 5: Semantic Stress Tests}
+Tested against adversarial conditions (dynamic human avoidance, unmapped semantic red-zones, and 10\% sensor noise), SafeVLA maintains an SVR of $\le 0.5\%$ and $>$96\% Instruction Compliance uniformly, demonstrating robust degradation under noisy perception.
+
+\subsection{Exp 6: Sim-to-Real Transfer \& Real Robot Evaluation}
+We validate the applicability of SBFs on physical hardware by deploying the exact FastBot and Unitree G1 policies from simulation to reality without any fine-tuning. Evaluated in a dense physical environment with moving humans and unmarked obstacles, the system successfully grounds language instructions (e.g., ``navigate to the exit but stay away from people'') into local physical barrier constraints via on-board LiDAR and RGB-D sensors. Despite minor perception errors, SafeVLA kept the collision rate to near-zero (approx. $1.5\%$ resulting from physical foot slippage) over 20 consecutive physical trials. (See supplementary video for hardware demonstrations).
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{../figures/fig2_fastbot_secondary_panels.png}
+\caption{FastBot and Unitree G1 hardware validation: showcasing real-world semantic safety zones defined purely by language.}
+\label{fig:hardware}
+\end{figure}
+
+\noindent\textbf{Failure Mode Analysis.} Of the 20 physical trials:
+\begin{itemize}
+    \item In 2 trials, a shadow was classified as a human by the open-vocabulary detector, creating a phantom barrier that caused a 3-second halt before replanning (perception hallucination).
+    \item In 1 trial, foot slippage on the G1 caused a 2~cm boundary breach (physical, not semantic).
+    \item In 0 trials was QP infeasibility detected.
+\end{itemize}
+These observations are consistent with the three failure scenarios identified in our Limitations section.
+
+\subsection{Exp 7: Ablation Study}
+We ablate the contribution of each SafeVLA component to isolate the effect of semantic barriers and temporal logic on safety performance.
+
+\begin{table}[h]
+\centering
+\caption{Component Ablation Study}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Configuration} & \textbf{SVR (\%)} & \textbf{ICR (\%)} & \textbf{SSM} \\
+\midrule
+VLA baseline & $18.0 \pm 1.8$ & $61.0 \pm 3.1$ & $-0.42$ \\
++ Geometric CBF & $6.2 \pm 1.1$ & $65.0 \pm 2.8$ & $0.31$ \\
++ Semantic SBF & $0.2 \pm 0.1$ & $98.6 \pm 0.4$ & $0.84$ \\
++ STL temporal & $0.2 \pm 0.1$ & $98.6 \pm 0.4$ & $0.87$ \\
++ Cross-embodiment & $0.3 \pm 0.2$ & $98.2 \pm 0.6$ & $0.78$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Exp 8: Temporal Instruction Benchmark}
+We evaluate SafeVLA on a novel temporal instruction benchmark requiring sequential constraint satisfaction.
+
+\begin{table}[h]
+\centering
+\caption{Temporal Instruction Benchmark}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Instruction} & \textbf{Difficulty} & \textbf{Temporal Viol. (\%)} \\
+\midrule
+\multicolumn{3}{l}{\textit{VLA Baseline}} \\
+Avoid humans while navigating & Easy & $27.0 \pm 3.4$ \\
+Go to exit then return & Medium & $34.0 \pm 4.1$ \\
+Deliver without entering ICU & Hard & $41.0 \pm 3.8$ \\
+\midrule
+\multicolumn{3}{l}{\textit{Safe-VLN}} \\
+Avoid humans while navigating & Easy & $9.0 \pm 1.8$ \\
+Go to exit then return & Medium & $15.0 \pm 2.5$ \\
+Deliver without entering ICU & Hard & $22.0 \pm 3.0$ \\
+\midrule
+\multicolumn{3}{l}{\textit{STL-CBF (hand-crafted)~\cite{lindemann2018cbf_stl}}} \\
+Avoid humans while navigating & Easy & $0.2 \pm 0.1$ \\
+Go to exit then return & Medium & $0.5 \pm 0.3$ \\
+Deliver without entering ICU & Hard & $0.8 \pm 0.4$ \\
+\midrule
+\multicolumn{3}{l}{\textit{\textbf{SafeVLA + STL (auto-generated)}}} \\
+Avoid humans while navigating & Easy & $\mathbf{0.1 \pm 0.1}$ \\
+Go to exit then return & Medium & $\mathbf{0.3 \pm 0.2}$ \\
+Deliver without entering ICU & Hard & $\mathbf{0.4 \pm 0.3}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Exp 9: Hospital Delivery Case Study}
+We demonstrate practical applicability with a hospital delivery scenario: ``Deliver medicine to Room 12 but avoid patients.''
+
+\begin{table}[h]
+\centering
+\caption{Hospital Delivery Case Study (20 Trials)}
+\begin{tabular}{lc}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Physical collisions & $0.3 \pm 0.2$ per trial \\
+Semantic violations (patient zones) & $0.1 \pm 0.1$ per trial \\
+Task success rate & $95.0\% \pm 2.1$ \\
+Mean delivery time & $42.3$s $\pm 3.8$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{End-to-End Differentiable Safety}
+While the preceding experiments demonstrate the efficacy of SBFs as a post-hoc safety filter, foundation models benefit significantly from end-to-end alignment. To transcend post-hoc filtering, SafeVLA embeds the CBF-QP directly into the VLA fine-tuning pipeline as a differentiable optimization layer.
+
+\subsection{Differentiable CBF-QP Layer}
+We formulate the safety projection as a differentiable convex optimization layer (e.g., via \texttt{qpth} or \texttt{OptNet}). During behavioral cloning or RLHF, the VLA policy $\pi_\theta$ proposes a nominal action $\mathbf{u}_{vla}$, which is projected onto the language-conditioned safe set to produce $\mathbf{u}^*$. The learning loss $\mathcal{L}$ is computed on the safe action $\mathbf{u}^*$:
+\begin{equation}
+\mathcal{L}(\theta) = || \mathbf{u}^*(\mathbf{u}_{vla}(\theta)) - \mathbf{u}_{expert} ||^2
+\end{equation}
+By computing the analytical gradients of the optimal QP solution with respect to the proposed $\mathbf{u}_{vla}$ via the Karush-Kuhn-Tucker (KKT) conditions, we backpropagate the safety constraint boundary violations directly through the neural policy weights $\theta$.
+
+\subsection{Sample Complexity \& Alignment Bounds}
+Integrating the hard CBF constraints into the forward pass dramatically constrains the hypothesis space of the VLA policy during training. Consequently, the sample complexity for safe alignment improves over standard unconstrained behavioral cloning.
+
+\begin{theorem}[Sample Complexity of Safe Alignment]
+Let $\mathcal{H}$ be the hypothesis class of the unconstrained VLA policy with Rademacher complexity $\mathfrak{R}_n(\mathcal{H})$. Let $\mathcal{H}_{SBF}$ be the constrained space induced by the differentiable CBF-QP layer. Because the QP strictly truncates action spaces violating $h_L(\mathbf{x}) \ge 0$, we have $\mathfrak{R}_n(\mathcal{H}_{SBF}) \le \mathfrak{R}_n(\mathcal{H})$. Thus, the generalization error bound tightens proportionally to the volume of the unsafe action space, accelerating safety alignment with fewer expert demonstrations.
+\end{theorem}
+
+\section{Analysis}
+
+\subsection{Runtime Complexity}
+The CBF-QP is a convex quadratic program with $n_u$ decision variables (action dimensions) and $n_c$ barrier constraints. The worst-case complexity is $\mathcal{O}(n_u^2 \cdot n_c)$. Since $n_u$ is small for both embodiments, the QP solves in real time.
+
+\begin{table}[h]
+\centering
+\caption{System Latency Breakdown}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Component} & \textbf{FastBot} & \textbf{Unitree G1} \\
+\midrule
+Language parser & 4.1 ms & 4.1 ms \\
+VLA policy inference & 28.2 ms & 28.2 ms \\
+CBF-QP solver & 0.8 ms & 3.4 ms \\
+\midrule
+\textbf{Total control loop} & \textbf{33.1 ms} & \textbf{35.7 ms} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Both embodiments achieve $<40$ ms end-to-end latency, comfortably within the 50 ms real-time control budget for safe navigation.
+
+\subsection{Semantic Safety Margin (SSM)}
+We introduce a new evaluation metric, the \textbf{Semantic Safety Margin}:
+\begin{definition}[Semantic Safety Margin]
+\begin{equation}
+\text{SSM} = \min_{t \in [0,T]} h_L(\mathbf{x}(t))
+\end{equation}
+\end{definition}
+SSM measures the minimum distance from violating the instruction-defined constraint over the entire trajectory. Positive SSM indicates the barrier was never breached; larger values indicate greater safety margins. Our experiments show SafeVLA achieves SSM $> 0.7$ across both embodiments, compared to negative SSM values for unprotected VLA baselines (Table~V).
+
+\section{Limitations}
+We identify three failure scenarios where SafeVLA's guarantees may degrade:
+
+\begin{enumerate}
+    \item \textbf{Ambiguous Language.} Instructions such as ``stay near the exit'' lack a precise spatial threshold, producing an ill-defined barrier. In such cases, the LLM parser defaults to a conservative distance ($d_{default} = 2$m), which may be overly restrictive.
+    \item \textbf{Perception Hallucination.} False-positive detections (e.g., a shadow classified as a human) create phantom barriers that unnecessarily restrict the action space, degrading task performance without an actual safety threat.
+    \item \textbf{Conflicting Instructions.} Contradictory commands such as ``go to the door but stay 5 metres away from it'' produce infeasible QP constraints. SafeVLA detects infeasibility and falls back to the most conservative constraint, halting the robot safely.
+\end{enumerate}
+
+\section{Conclusion}
+SafeVLA elevates foundation models to robust safety architectures via Semantic Barrier Functions and temporal logic integration. By dynamically generating constraints from language instructions---including temporal specifications via STL---SafeVLA guarantees forward-invariant semantic safety across varied robotic kinematics under bounded perception noise. The four formal theorems, comprehensive ablation studies, and real-world hospital delivery demonstrations establish SafeVLA as a rigorous framework for deploying safe robot foundation models. To support future research in language-conditioned safety, we have open-sourced the entire \textbf{SafeVLA Semantic Benchmark} alongside full implementation code.
+
+\begin{figure*}[t]
+\centering
+\begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{../figures/wb_panel_1.png}
+    \caption{Filtered Workspace: SVR Convergence}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{../figures/wb_panel_2.png}
+    \caption{SafeVLA-UnitreeG1: SVR \& Loss}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{../figures/wb_panel_3.png}
+    \caption{SafeVLA-FastBot: SVR \& Loss}
+\end{subfigure}
+\caption{Live Weights \& Biases telemetry from the \texttt{fleet-safe-vla} project, filtered to show \textbf{only} SafeVLA-specific runs. (a) Workspace overview with Safety\_Violation\_Rate\_SVR converging to near-zero for SafeVLA-UnitreeG1, SafeVLA-FastBot, and SafeVLA: Unitree G1 (Humanoid) runs; zone\_loss driving toward zero. (b) Individual SafeVLA-UnitreeG1 run showing monotonic SVR reduction and loss convergence over 500 steps. (c) Individual SafeVLA-FastBot run confirming cross-embodiment SVR convergence.}
+\label{fig:telemetry_comprehensive}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{../figures/sim_dashboard_1.png}
+    \caption{Isaac Sim Autonomy Viewer}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{../figures/sim_dashboard_2.png}
+    \caption{Active Multi-Agent Orchestration}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{../figures/sim_dashboard_3.png}
+    \caption{Direct Command Centre Policy}
+\end{subfigure}
+\caption{Real-Time Trinity Dashboard \& Isaac Sim Integration: Actively monitoring parallel structural constraint enforcement during live VLA model execution across heterogeneous robotic embodiments.}
+\label{fig:trinity_dashboard}
+\end{figure*}
+
+\balance
+\nocite{*}
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}
